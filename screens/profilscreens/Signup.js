@@ -42,6 +42,8 @@ export default function Signup(props) {
       style={styles.globalContainer}
     >
       <View style={styles.header}>
+        {/* TITLE */}
+
         <View style={styles.icon}>
           <FontAwesome
             name="arrow-left"
@@ -52,10 +54,31 @@ export default function Signup(props) {
         </View>
         <Text style={styles.title}>Inscription</Text>
       </View>
+
+      {/* PROGRESS BAR  */}
+
+      <View style={styles.progressContainer}>
+        <View style={styles.progressBarEmpty}>
+          <View style={[styles.progressBarCircle, styles.circle1]}></View>
+          <View style={[styles.progressBarCircle, styles.circle2]}></View>
+          <View style={[styles.progressBarCircle, styles.circle3]}></View>
+          <View style={styles.progressBarFull}>
+            <View
+              style={[styles.progressBarCircleFull, styles.circle1Full]}
+            ></View>
+            <View
+              style={[styles.progressBarCircleFull, styles.circle2Full]}
+            ></View>
+            <View
+              style={[styles.progressBarCircleFull, styles.circle3Full]}
+            ></View>
+          </View>
+        </View>
+      </View>
       <View style={fields}>
         {/* STEP 1 */}
 
-        <View style={[styles.step, styles.step1]}>
+        <View style={styles.step}>
           <TextInput
             placeholder="Nom d'utilisateur"
             type="text"
@@ -79,18 +102,18 @@ export default function Signup(props) {
 
         {/* STEP 2 */}
 
-        <View style={[styles.step, styles.step2]}>
+        <View style={styles.step}>
           <TextInput placeholder="Prénom" type="text" style={styles.input} />
           <TextInput placeholder="Nom" type="text" style={styles.input} />
-          <View style={styles.btnContainer}>
+          <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
             <TouchableOpacity
-              style={styles.btn}
+              style={[styles.btn, styles.btnMiddle]}
               onPress={() => handleStepMoins()}
             >
               <Text style={styles.btnText}>Precedent</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.btn}
+              style={[styles.btn, styles.btnMiddle]}
               onPress={() => handleStepPlus()}
             >
               <Text style={styles.btnText}>suivant</Text>
@@ -100,7 +123,7 @@ export default function Signup(props) {
 
         {/* STEP 3 */}
 
-        <View style={[styles.step, styles.step3]}>
+        <View style={styles.step}>
           <TextInput placeholder="Ville" type="text" style={styles.input} />
           <TextInput placeholder="Adresse" type="text" style={styles.input} />
           <TextInput
@@ -119,7 +142,7 @@ export default function Signup(props) {
               style={styles.btn}
               onPress={() => handleStepPlus()}
             >
-              <Text style={styles.btnText}>suivant</Text>
+              <Text style={styles.btnText}>valider le formulaire</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -163,6 +186,76 @@ const styles = StyleSheet.create({
     paddingRight: "15%",
     color: "#FFF",
   },
+
+  //   PROGRESS BAR
+
+  progressContainer: {
+    width: "100%",
+    height: "10%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  progressBarEmpty: {
+    borderWidth: 1.5,
+    borderColor: "#FC727B",
+    height: 10,
+    width: "80%",
+    backgroundColor: "white",
+    alignItems: "center",
+  },
+  progressBarFull: {
+    position: "absolute",
+    alignItems: "center",
+    top: 1,
+    left: 0,
+    backgroundColor: "#2E3740",
+    height: 4,
+    width: "100%",
+  },
+
+  //   PROGRESS CIRCLE
+
+  progressBarCircle: {
+    position: "absolute",
+    borderRadius: "50%",
+    width: 20,
+    height: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: "#FC727B",
+  },
+  circle1: {
+    top: -7,
+    left: -10,
+  },
+  circle2: {
+    top: -7,
+  },
+  circle3: {
+    top: -7,
+    right: -10,
+  },
+
+  //   PROGRESS FULL
+
+  progressBarCircleFull: {
+    position: "absolute",
+    borderRadius: "50%",
+    width: 12,
+    height: 12,
+    backgroundColor: "#2E3740",
+  },
+  circle1Full: {
+    top: "-100%",
+    left: -6,
+  },
+  circle2Full: {
+    top: "-100%",
+  },
+  circle3Full: {
+    top: "-100%",
+    right: -6,
+  },
   //   INPUT CONTAINER
 
   inputContainer: {
@@ -182,6 +275,9 @@ const styles = StyleSheet.create({
   inputContainer3: {
     justifyContent: "flex-end",
   },
+
+  //   STEPS
+
   step: {
     width: "100%",
     height: "100%",
@@ -204,6 +300,18 @@ const styles = StyleSheet.create({
   btnContainer: {
     width: "100%",
     alignItems: "center",
+  },
+
+  //   MIDDLE BUTTON
+
+  btnContainerMiddle: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  btnMiddle: {
+    width: "40%",
+    margin: 10,
+    marginTop: "15%",
   },
   btn: {
     backgroundColor: "#FC727B",
