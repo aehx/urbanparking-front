@@ -1,5 +1,6 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 // NAVIGATION
@@ -41,6 +42,7 @@ export default function App() {
           tabBarInactiveTintColor: "#b2b2b2",
           headerShown: false,
         })}
+        initialRouteName="Parkings"
       >
         <Tab.Screen name="Themes" component={Themescreen} />
         <Tab.Screen name="Parkings" component={Homescreen} />
@@ -49,10 +51,12 @@ export default function App() {
     );
   };
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="TabNavigator" component={TabNavigator} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <SafeAreaProvider>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name="TabNavigator" component={TabNavigator} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </SafeAreaProvider>
   );
 }

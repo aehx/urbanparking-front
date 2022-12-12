@@ -1,51 +1,62 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function Themescreen({ navigation }) {
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.icon}>
-          <FontAwesome
-            name="arrow-left"
-            size={30}
-            onPress={() => {
-              navigation.navigate("Parkings");
-            }}
-          />
-        </View>
-        <Text style={styles.title}>Thèmes</Text>
-      </View>
-      <View style={styles.themeContainer}>
-        <View style={styles.themeCard}>
-          <FontAwesome name="sun-o" style={styles.cardIcon} size={20} />
-          <View style={styles.themeTextContainer}>
-            <Text style={styles.themeText}>Clair</Text>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.globalContainer}>
+        <View style={styles.header}>
+          <View style={styles.icon}>
+            <FontAwesome
+              name="arrow-left"
+              size={30}
+              onPress={() => {
+                navigation.navigate("Parkings");
+              }}
+            />
           </View>
-          <FontAwesome
-            name="check-circle-o"
-            style={styles.cardIcon}
-            size={20}
-          />
+          <Text style={styles.title}>Thèmes</Text>
         </View>
-        <View style={styles.themeCard}>
-          <FontAwesome name="moon-o" style={styles.cardIcon} size={20} />
-          <View style={styles.themeTextContainer}>
-            <Text style={styles.themeText}>Sombre</Text>
+        <View style={styles.themeContainer}>
+          <View style={styles.themeCard}>
+            <FontAwesome name="sun-o" style={styles.cardIcon} size={20} />
+            <View style={styles.themeTextContainer}>
+              <Text style={styles.themeText}>Clair</Text>
+            </View>
+            <FontAwesome
+              name="check-circle-o"
+              style={styles.cardIcon}
+              size={20}
+            />
           </View>
-          <FontAwesome name="check-circle" style={styles.cardIcon} size={20} />
+          <View style={styles.themeCard}>
+            <FontAwesome name="moon-o" style={styles.cardIcon} size={20} />
+            <View style={styles.themeTextContainer}>
+              <Text style={styles.themeText}>Sombre</Text>
+            </View>
+            <FontAwesome
+              name="check-circle"
+              style={styles.cardIcon}
+              size={20}
+            />
+          </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingTop: "13%",
+    flex: 1,
+    backgroundColor: "#333",
+  },
+  globalContainer: {
+    paddingTop: "5%",
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
+    backgroundColor: "white",
   },
 
   // HEADER
