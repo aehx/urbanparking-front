@@ -95,30 +95,4 @@ const styles = StyleSheet.create({
     color: "#2E3740",
     fontWeight: "bold",
   },
-  mainTitle: {
-    color: "white",
-    fontSize: 27,
-    //letterSpacing: "1%",
-    paddingBottom: 150,
-    marginTop: 50,
-    fontWeight: "bold",
-  },
-  textButton: {
-    color: "#2E3740",
-    fontWeight: "bold",
-    paddingLeft: "27%",
-  },
-  button: {
-    backgroundColor: "#FC727B",
-    paddingHorizontal: 100,
-    paddingVertical: 10,
-    marginBottom: 20,
-    borderRadius: 15,
-    width: "80%",
-  },
-  title: {
-    color: "white",
-    marginBottom: 20,
-    fontWeight: "bold",
-  },
 });
