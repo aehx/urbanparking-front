@@ -179,7 +179,7 @@ const styles = StyleSheet.create({
     fontSize: 17,
   },
 
-  // SLIDER
+  //FILTER SLIDER
 
   sliderContainer: {
     marginTop: 10,
