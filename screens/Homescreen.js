@@ -54,6 +54,13 @@ export default function Homescreen({ navigation }) {
     setShowDistance(!showDistance);
     setRange(0);
   };
+
+  // BUTTON "VOIR"
+
+  const handleSubmit = () => {
+    navigation.navigate("Parkingscreen");
+  };
+
   return (
     <View style={styles.container}>
       <MapView
@@ -111,7 +118,7 @@ export default function Homescreen({ navigation }) {
 
       {/* BUTTON PARKING LIST  */}
 
-      <TouchableOpacity style={styles.btn}>
+      <TouchableOpacity style={styles.btn} onPress={() => handleSubmit()}>
         <Text>Voir</Text>
       </TouchableOpacity>
     </View>
@@ -192,7 +199,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10,
     backgroundColor: "#ddd",
-    borderWidth: 1,
+    // borderWidth: 1,
     borderColor: "black",
     borderStyle: "solid",
     borderRadius: 15,
