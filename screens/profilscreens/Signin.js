@@ -1,15 +1,48 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import axios from "axios";
+import { useState } from "react";
 import {
   View,
   Text,
   TextInput,
   StyleSheet,
   KeyboardAvoidingView,
+  TouchableOpacity,
 } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { login } from "../../reducers/user";
+
 export default function Signin(props) {
+  const dispatch = useDispatch();
+  const users = useSelector((state) => state.user.value);
+  const [user, setUser] = useState({ username: "", password: "" });
+  const [securePassword, setSecurePassword] = useState(true);
   const handleSignin = () => {
     props.changeSignin(false);
   };
+  if (users.token) {
+    props.navigation.navigate("TabNavigator", { screen: "Profil" });
+  }
+
+  const validateSignin = () => {
+    axios
+      .post("https://urbanparking-backend.vercel.app/users/signin", user)
+      .then((response) => {
+        dispatch(
+          login({
+            token: response.data.token,
+            username: response.data.username,
+          })
+        );
+      });
+  };
+
+  let eye;
+  if (!securePassword) {
+    eye = "eye-slash";
+  } else {
+    eye = "eye";
+  }
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -31,12 +64,30 @@ export default function Signin(props) {
           placeholder="Nom d'utilisateur"
           type="text"
           style={styles.input}
+          onChangeText={(value) => setUser({ ...user, username: value })}
         />
-        <TextInput
-          placeholder="Mot de passe"
-          type="password"
-          style={styles.input}
-        />
+        <View style={styles.password}>
+          <TextInput
+            placeholder="Mot de passe"
+            secureTextEntry={securePassword}
+            textContentType={"password"}
+            style={styles.input}
+            onChangeText={(value) => setUser({ ...user, password: value })}
+          />
+          <FontAwesome
+            name={eye}
+            size={25}
+            style={styles.eye}
+            onPress={() => {
+              setSecurePassword(!securePassword);
+            }}
+          />
+        </View>
+        <View style={styles.btnContainer}>
+          <TouchableOpacity style={styles.btn} onPress={() => validateSignin()}>
+            <Text style={styles.btnText}>Valider</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </KeyboardAvoidingView>
   );
@@ -93,5 +144,34 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: "7%",
     borderRadius: 15,
+  },
+
+  // PASSWORD INPUT
+
+  password: {
+    alignItems: "center",
+    width: "100%",
+  },
+  eye: {
+    position: "absolute",
+    top: 9,
+    right: "20%",
+  },
+  // BUTTON
+  btnContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
+  btn: {
+    backgroundColor: "#FC727B",
+    borderRadius: 15,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingRight: 20,
+    paddingLeft: 20,
+    width: "70%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30,
   },
 });

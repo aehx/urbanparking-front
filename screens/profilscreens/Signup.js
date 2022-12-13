@@ -7,9 +7,39 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
 } from "react-native";
+
+import { useSelector, useDispatch } from "react-redux";
+import { login } from "../../reducers/user";
+
 import { useState } from "react";
+import axios from "axios";
+
 export default function Signup(props) {
+  const dispatch = useDispatch();
   const [step, setStep] = useState(0);
+
+  //   INPUT USESTATE
+
+  const [wrongEmail, setWrongEmail] = useState(false);
+  const [emptyFields, setEmptyFields] = useState(false);
+  const [showPassword, setShowPassword] = useState(true);
+
+  //   USER
+  const user = useSelector((state) => state.user.value);
+  console.log(user);
+  const [newUser, setNewUser] = useState({
+    username: "",
+    email: "",
+    password: "",
+    firstname: "",
+    lastname: "",
+    city: "",
+    address: "",
+    postal: null,
+  });
+
+  const EMAIL_REGEX =
+    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   const handleSignup = () => {
     props.changeSignup(false);
@@ -21,8 +51,46 @@ export default function Signup(props) {
     }
     setStep(step + 1);
   };
+
   const handleStepMoins = () => {
     setStep(step - 1);
+  };
+
+  //   FORMULAIRE
+
+  const formSubmit = () => {
+    // CHECK EMAIL
+
+    if (!EMAIL_REGEX.test(newUser.email)) {
+      setWrongEmail(true);
+    } else {
+      setWrongEmail(false);
+    }
+
+    // CHECK FIELDS EMPTY OR NOT
+    const checkFields = Object.entries(newUser);
+    const check = checkFields.forEach((field) => {
+      if (field[1] === "" || field[1] === null) {
+        setEmptyFields(true);
+      } else {
+        setEmptyFields(false);
+      }
+    });
+
+    // PUSH IN DB
+    if (!emptyFields && !wrongEmail) {
+      setShowPassword(false);
+      axios
+        .post("https://urbanparking-backend.vercel.app/users/signup", newUser)
+        .then((response) =>
+          dispatch(
+            login({
+              token: response.data.token,
+              username: response.data.username,
+            })
+          )
+        );
+    }
   };
 
   //   SELECT FIELDS
@@ -34,6 +102,37 @@ export default function Signup(props) {
     fields = [styles.inputContainer, styles.inputContainer2];
   } else if (step === 2) {
     fields = [styles.inputContainer, styles.inputContainer3];
+  }
+
+  //   InsideCircle style
+
+  let circle2Style;
+  let circle3Style;
+  let barInsideStyle;
+  if (step < 1) {
+    barInsideStyle = [styles.progressBarInside, { width: 0 }];
+    circle2Style = { display: "none" };
+    circle3Style = { display: "none" };
+  } else if (step === 1) {
+    barInsideStyle = [styles.progressBarInside, { width: "50%" }];
+    circle2Style = [
+      styles.progressBarCircleInside,
+      styles.circle2Inside,
+      { right: -6 },
+    ];
+  } else if (step === 2) {
+    barInsideStyle = [styles.progressBarInside, { width: "100%" }];
+    circle2Style = [styles.progressBarCircleInside, styles.circle2Inside];
+    circle3Style = [styles.progressBarCircleInside, styles.circle3Inside];
+  }
+
+  //   PASSWORD SHOW/DON'T SHOW
+
+  let eye;
+  if (!showPassword) {
+    eye = "eye-slash";
+  } else {
+    eye = "eye";
   }
 
   return (
@@ -49,7 +148,9 @@ export default function Signup(props) {
             name="arrow-left"
             size={30}
             style={{ color: "white" }}
-            onPress={() => handleSignup()}
+            onPress={() => {
+              handleSignup();
+            }}
           />
         </View>
         <Text style={styles.title}>Inscription</Text>
@@ -62,34 +163,60 @@ export default function Signup(props) {
           <View style={[styles.progressBarCircle, styles.circle1]}></View>
           <View style={[styles.progressBarCircle, styles.circle2]}></View>
           <View style={[styles.progressBarCircle, styles.circle3]}></View>
-          <View style={styles.progressBarFull}>
+
+          {/* BAR Inside  */}
+          <View style={barInsideStyle}>
             <View
-              style={[styles.progressBarCircleFull, styles.circle1Full]}
+              style={[styles.progressBarCircleInside, styles.circle1Inside]}
             ></View>
-            <View
-              style={[styles.progressBarCircleFull, styles.circle2Full]}
-            ></View>
-            <View
-              style={[styles.progressBarCircleFull, styles.circle3Full]}
-            ></View>
+            <View style={circle2Style}></View>
+            <View style={circle3Style}></View>
           </View>
         </View>
       </View>
+
+      {/* INPUT CONTAINER */}
+
       <View style={fields}>
         {/* STEP 1 */}
 
         <View style={styles.step}>
           <TextInput
             placeholder="Nom d'utilisateur"
-            type="text"
             style={styles.input}
+            value={newUser.username}
+            onChangeText={(value) =>
+              setNewUser({ ...newUser, username: value })
+            }
           />
-          <TextInput placeholder="E-mail" type="text" style={styles.input} />
           <TextInput
-            placeholder="Mot de passe"
-            type="password"
+            placeholder="E-mail"
+            textContentType={"emailAddress"}
+            keyboardType="email-address"
             style={styles.input}
+            value={newUser.email}
+            onChangeText={(value) => setNewUser({ ...newUser, email: value })}
           />
+          <View style={styles.password}>
+            <TextInput
+              placeholder="Mot de passe"
+              secureTextEntry={showPassword}
+              textContentType={"password"}
+              style={styles.input}
+              value={newUser.password}
+              onChangeText={(value) =>
+                setNewUser({ ...newUser, password: value })
+              }
+            />
+            <FontAwesome
+              name={eye}
+              size={25}
+              style={styles.eye}
+              onPress={() => {
+                setShowPassword(!showPassword);
+              }}
+            />
+          </View>
           <View style={styles.btnContainer}>
             <TouchableOpacity
               style={styles.btn}
@@ -103,8 +230,24 @@ export default function Signup(props) {
         {/* STEP 2 */}
 
         <View style={styles.step}>
-          <TextInput placeholder="Prénom" type="text" style={styles.input} />
-          <TextInput placeholder="Nom" type="text" style={styles.input} />
+          <TextInput
+            placeholder="Prénom"
+            textContentType={"name"}
+            style={styles.input}
+            value={newUser.firstname}
+            onChangeText={(value) =>
+              setNewUser({ ...newUser, firstname: value })
+            }
+          />
+          <TextInput
+            placeholder="Nom"
+            textContentType={"familyName"}
+            style={styles.input}
+            value={newUser.lastname}
+            onChangeText={(value) =>
+              setNewUser({ ...newUser, lastname: value })
+            }
+          />
           <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
             <TouchableOpacity
               style={[styles.btn, styles.btnMiddle]}
@@ -124,12 +267,25 @@ export default function Signup(props) {
         {/* STEP 3 */}
 
         <View style={styles.step}>
-          <TextInput placeholder="Ville" type="text" style={styles.input} />
-          <TextInput placeholder="Adresse" type="text" style={styles.input} />
+          <TextInput
+            placeholder="Ville"
+            style={styles.input}
+            value={newUser.city}
+            onChangeText={(value) => setNewUser({ ...newUser, city: value })}
+          />
+          <TextInput
+            placeholder="Adresse"
+            style={styles.input}
+            value={newUser.address}
+            onChangeText={(value) => setNewUser({ ...newUser, address: value })}
+          />
           <TextInput
             placeholder="Code postal"
-            type="text"
+            textContentType={"postalCode"}
+            keyboardType="phone-pad"
             style={styles.input}
+            value={newUser.postal}
+            onChangeText={(value) => setNewUser({ ...newUser, postal: value })}
           />
           <View style={styles.btnContainer}>
             <TouchableOpacity
@@ -138,10 +294,7 @@ export default function Signup(props) {
             >
               <Text style={styles.btnText}>Precedent</Text>
             </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() => handleStepPlus()}
-            >
+            <TouchableOpacity style={styles.btn} onPress={() => formSubmit()}>
               <Text style={styles.btnText}>valider le formulaire</Text>
             </TouchableOpacity>
           </View>
@@ -197,20 +350,20 @@ const styles = StyleSheet.create({
   },
   progressBarEmpty: {
     borderWidth: 1.5,
-    borderColor: "#FC727B",
+    borderColor: "#333",
     height: 10,
     width: "80%",
     backgroundColor: "white",
     alignItems: "center",
   },
-  progressBarFull: {
+  progressBarInside: {
     position: "absolute",
-    alignItems: "center",
     top: 1,
     left: 0,
-    backgroundColor: "#2E3740",
+    alignItems: "center",
+    backgroundColor: "#FC727B",
     height: 4,
-    width: "100%",
+    transition: "all 2s ease-in-out",
   },
 
   //   PROGRESS CIRCLE
@@ -222,7 +375,7 @@ const styles = StyleSheet.create({
     height: 20,
     backgroundColor: "white",
     borderWidth: 2,
-    borderColor: "#FC727B",
+    borderColor: "#333",
   },
   circle1: {
     top: -7,
@@ -236,23 +389,23 @@ const styles = StyleSheet.create({
     right: -10,
   },
 
-  //   PROGRESS FULL
+  //   PROGRESS Inside
 
-  progressBarCircleFull: {
+  progressBarCircleInside: {
     position: "absolute",
     borderRadius: "50%",
     width: 12,
     height: 12,
-    backgroundColor: "#2E3740",
+    backgroundColor: "#FC727B",
   },
-  circle1Full: {
+  circle1Inside: {
     top: "-100%",
     left: -6,
   },
-  circle2Full: {
+  circle2Inside: {
     top: "-100%",
   },
-  circle3Full: {
+  circle3Inside: {
     top: "-100%",
     right: -6,
   },
@@ -275,8 +428,17 @@ const styles = StyleSheet.create({
   inputContainer3: {
     justifyContent: "flex-end",
   },
+  password: {
+    alignItems: "center",
+    width: "100%",
+  },
+  eye: {
+    position: "absolute",
+    top: 9,
+    right: "20%",
+  },
 
-  //   STEPS
+  //   STEPS (InputContainer child)
 
   step: {
     width: "100%",
@@ -301,18 +463,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
   },
-
-  //   MIDDLE BUTTON
-
-  btnContainerMiddle: {
-    flexDirection: "row",
-    justifyContent: "center",
-  },
-  btnMiddle: {
-    width: "40%",
-    margin: 10,
-    marginTop: "15%",
-  },
   btn: {
     backgroundColor: "#FC727B",
     borderRadius: 15,
@@ -324,5 +474,17 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 30,
+  },
+
+  //  STEP 2  || BUTTON
+
+  btnContainerMiddle: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  btnMiddle: {
+    width: "40%",
+    margin: 10,
+    marginTop: "15%",
   },
 });

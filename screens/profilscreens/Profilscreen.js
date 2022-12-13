@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -6,37 +7,48 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
+import Settings from "./settings";
 import Signin from "../profilscreens/Signin";
 import Signup from "../profilscreens/Signup";
 
 export default function Profilscreen({ navigation, route }) {
+  const user = useSelector((state) => state.user.value);
+  console.log(user);
   const [showSignin, setShowSignin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
-
-  return (
-    <SafeAreaView style={styles.globalContainer}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Bienvenue sur</Text>
-        <Text style={styles.title}>Urban Parkings</Text>
-        <View style={styles.btnContainer}>
-          <TouchableOpacity
-            style={styles.btn}
-            onPress={() => setShowSignup(true)}
-          >
-            <Text style={styles.btnText}>Inscription</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.btn}
-            onPress={() => setShowSignin(true)}
-          >
-            <Text style={styles.btnText}>Connexion</Text>
-          </TouchableOpacity>
+  if (user.token) {
+    return <Settings />;
+  } else {
+    return (
+      <SafeAreaView style={styles.globalContainer}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Bienvenue sur</Text>
+          <Text style={styles.title}>Urban Parkings</Text>
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => setShowSignup(true)}
+            >
+              <Text style={styles.btnText}>Inscription</Text>
+            </TouchableOpacity>
+            <Text style={styles.text}>Déjà inscrit ? Connectez-vous !</Text>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => setShowSignin(true)}
+            >
+              <Text style={styles.btnText}>Connexion</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-      {showSignin && <Signin changeSignin={(state) => setShowSignin(state)} />}
-      {showSignup && <Signup changeSignup={(state) => setShowSignup(state)} />}
-    </SafeAreaView>
-  );
+        {showSignin && (
+          <Signin changeSignin={(state) => setShowSignin(state)} />
+        )}
+        {showSignup && (
+          <Signup changeSignup={(state) => setShowSignup(state)} />
+        )}
+      </SafeAreaView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -55,6 +67,11 @@ const styles = StyleSheet.create({
   title: {
     color: "#FFF",
     fontSize: 30,
+  },
+  text: {
+    color: "#FFF",
+    fontSize: 15,
+    marginBottom: 10,
   },
   btnContainer: {
     flex: 1,
