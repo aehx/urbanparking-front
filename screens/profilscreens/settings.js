@@ -9,9 +9,13 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../reducers/user";
 
-export default function Settings() {
+export default function Settings(props) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+
+  const handleLogout = () => {
+    dispatch(logout()), props.changeSignup(false), props.changeSignin(false);
+  };
 
   return (
     <SafeAreaView style={styles.globalContainer}>
@@ -36,10 +40,7 @@ export default function Settings() {
               <Text style={styles.themeText}>Mes parkings</Text>
             </View>
           </View>
-          <TouchableOpacity
-            style={styles.btn}
-            onPress={() => dispatch(logout())}
-          >
+          <TouchableOpacity style={styles.btn} onPress={() => handleLogout()}>
             <Text style={styles.btnText}>Déconnexion</Text>
           </TouchableOpacity>
         </View>

@@ -20,13 +20,12 @@ export default function Signup(props) {
 
   //   INPUT USESTATE
 
-  const [wrongEmail, setWrongEmail] = useState(false);
   const [emptyFields, setEmptyFields] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
 
   //   USER
   const user = useSelector((state) => state.user.value);
-  console.log(user);
+
   const [newUser, setNewUser] = useState({
     username: "",
     email: "",
@@ -59,15 +58,8 @@ export default function Signup(props) {
   //   FORMULAIRE
 
   const formSubmit = () => {
-    // CHECK EMAIL
-
-    if (!EMAIL_REGEX.test(newUser.email)) {
-      setWrongEmail(true);
-    } else {
-      setWrongEmail(false);
-    }
-
     // CHECK FIELDS EMPTY OR NOT
+
     const checkFields = Object.entries(newUser);
     const check = checkFields.forEach((field) => {
       if (field[1] === "" || field[1] === null) {
@@ -77,8 +69,8 @@ export default function Signup(props) {
       }
     });
 
-    // PUSH IN DB
-    if (!emptyFields && !wrongEmail) {
+    // PUSH IN DB IF MAIL & NOT EMPTY field
+    if (!emptyFields && EMAIL_REGEX.test(newUser.email)) {
       setShowPassword(false);
       axios
         .post("https://urbanparking-backend.vercel.app/users/signup", newUser)

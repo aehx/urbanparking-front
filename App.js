@@ -44,7 +44,7 @@ const Tab = createBottomTabNavigator();
 
 // TAB NAVIGATOR
 
-const TabNavigator = () => {
+const TabNavigator = (props) => {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({

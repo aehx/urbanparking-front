@@ -11,13 +11,21 @@ import Settings from "./settings";
 import Signin from "../profilscreens/Signin";
 import Signup from "../profilscreens/Signup";
 
-export default function Profilscreen({ navigation, route }) {
+export default function Profilscreen() {
   const user = useSelector((state) => state.user.value);
-  console.log(user);
   const [showSignin, setShowSignin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   if (user.token) {
-    return <Settings />;
+    return (
+      <Settings
+        changeSignup={(state) => {
+          setShowSignup(state);
+        }}
+        changeSignin={(state) => {
+          setShowSignin(state);
+        }}
+      />
+    );
   } else {
     return (
       <SafeAreaView style={styles.globalContainer}>
