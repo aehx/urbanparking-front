@@ -1,55 +1,87 @@
 import {
   StyleSheet,
-  Text,
   View,
-  TextInput,
-  ScrollView,
   TouchableOpacity,
+  Text,
+  TextInput,
+  Image,
 } from "react-native";
-import React, { useState } from "react";
-import Slider from "@react-native-community/slider";
-
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function Parkingscreen({ navigation }) {
-  const [showDistance, setShowDistance] = useState(false);
-  const [range, setRange] = useState(0);
-
   return (
-    <View style={styles.header}>
-      <Text style={styles.mainTitle}>Liste des Parkings</Text>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <View style={styles.icon}>
+          <FontAwesome
+            name="arrow-left"
+            size={30}
+            color="white"
+            onPress={() => {
+              navigation.navigate("Parkings");
+            }}
+          />
+        </View>
+        <Text style={styles.mainTitle}>"Liste des Parkings"</Text>
+      </View>
       <View style={styles.input}>
-        <TextInput type="text" placeholder="Indiquez un lieu" />
+        <TextInput type="text" placeholder="Recherchez par nom" />
         <FontAwesome name="sliders" size={25} color="#555" />
       </View>
-      <TouchableOpacity style={styles.sliderBtn} onPress={() => handleSubmit()}>
-        <Text style={styles.title}>Filtrer au plus proche</Text>
-      </TouchableOpacity>
-      <View style={styles.container}></View>
+
+      <View style={styles.parkingInfo}>
+        <Image
+          style={styles.image}
+          source={require("../assets/favicon.png")}
+        ></Image>
+        <View style={styles.text}>
+          <Text>Nom du Parking</Text>
+          <Text>Ville</Text>
+          <Text>Adresse</Text>
+          <Text>"nombre" de KM</Text>
+        </View>
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  header: {
+  // CONTAINER
+
+  container: {
     flex: 1,
-    backgroundColor: "#2E3740",
+    flexDirection: "column",
+    paddingTop: "15%",
     alignItems: "center",
-    justifyContent: "center",
-    alignContent: "space-between",
+    backgroundColor: "#2E3740",
+  },
+
+  // HEADER
+
+  header: {
+    flexDirection: "row",
+    height: "17%",
+    width: "100%",
+    paddingHorizontal: 40,
+    paddingVertical: 20,
+    marginHorizontal: "1%",
+    marginBottom: 5,
+    justifyContent: "space-evenly",
+  },
+
+  icon: {
+    width: 50,
+    height: 50,
   },
   mainTitle: {
+    display: "flex",
     color: "white",
     fontSize: 27,
-    paddingBottom: 150,
-    marginTop: 50,
     fontWeight: "bold",
   },
-  title: {
-    color: "white",
-    marginBottom: 20,
-    fontWeight: "bold",
-  },
+
+  // INPUT
+
   input: {
     backgroundColor: "white",
     width: "80%",
@@ -65,36 +97,31 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderColor: "#FC727B",
   },
-  container: {
+
+  // PARKING CONTAINER LIST
+
+  parkingInfo: {
     backgroundColor: "white",
-    width: "80%",
-    paddingTop: 50,
-    marginBottom: 200,
+    borderRadius: 5,
+    flexDirection: "row",
+    height: "20%",
+    width: "90%",
+    paddingHorizontal: 40,
+    paddingVertical: 20,
+    marginHorizontal: "1%",
+    marginBottom: 5,
+    justifyContent: "space-evenly",
   },
 
-  sliderBtn: {
-    paddingTop: 5,
-    paddingBottom: 5,
-    paddingLeft: 10,
-    paddingRight: 10,
-    backgroundColor: "#ddd",
-    borderColor: "black",
-    borderStyle: "solid",
-    borderRadius: 15,
+  image: {
+    margin: 15,
+  },
+  text: {
+    flex: 1,
+    flexDirection: "column",
+    margin: 10,
+    justifyContent: "space-evenly",
+    height: "auto",
+    width: "auto",
   },
 });
-
-/*        /* <ScrollView contentContainerStyle={styles.scrollView}>{}</ScrollView>
-        {showDistance} && (
-        <View style={styles.distanceFilter}>
-          <Text style={styles.distanceText}>
-            Distance : {Math.floor(range * 100)} km
-          </Text>
-          <View style={styles.sliderContainer}>
-            <Slider
-              onValueChange={(value) => setRange(value)}
-              minimumValue={0}
-              maximumValue={1}
-              style={styles.slider}
-            />
-          </View> */

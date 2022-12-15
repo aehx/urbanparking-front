@@ -1,8 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { addParking } from "../reducers/user";
-import { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 
 export default function Parkingfoundscreen({ navigation }) {
   return (
@@ -12,50 +9,109 @@ export default function Parkingfoundscreen({ navigation }) {
           <FontAwesome
             name="arrow-left"
             size={30}
+            color="white"
             onPress={() => {
-              navigation.navigate("Parkings");
+              navigation.navigate("Parkingscreen");
             }}
           />
         </View>
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Indiquez un lieu"
-            onChangeText={(value) => setParkings(value)}
-            value={parking}
-            style={styles.input}
-          />
-          <TouchableOpacity
-            onPress={() => handleSubmit()}
-            style={styles.button}
-            activeOpacity={0.8}
-          ></TouchableOpacity>
-        </View>
+        <Text style={styles.mainTitle}>"Nom du Parking"</Text>
       </View>
+      <View style={styles.input}>
+        <TouchableOpacity>
+          <Text style={styles.btnText}>Voir sur la Carte</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => handleSubmit()}
+          style={styles.button}
+          activeOpacity={0.8}
+        ></TouchableOpacity>
+      </View>
+
+      <View style={styles.parkingInfo}></View>
+
+      <Text style={styles.usersReview}>Avis des utilisateurs</Text>
+      <View style={styles.reviewInfo}></View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  // CONTAINER
+
   container: {
-    paddingTop: "13%",
     flex: 1,
+    flexDirection: "column",
+    paddingTop: "15%",
     alignItems: "center",
-    justifyContent: "flex-start",
+    backgroundColor: "#2E3740",
   },
 
   // HEADER
 
   header: {
     flexDirection: "row",
-    alignItems: "center",
-    height: "10%",
+    height: "17%",
     width: "100%",
+    paddingHorizontal: 40,
+    paddingVertical: 20,
+    marginHorizontal: "1%",
+    marginBottom: 5,
+    justifyContent: "space-evenly",
   },
+
   icon: {
+    width: 50,
+    height: 50,
+  },
+  mainTitle: {
+    display: "flex",
+    color: "white",
+    fontSize: 27,
+    fontWeight: "bold",
+  },
+
+  // INPUT
+  btnText: {
+    backgroundColor: "#FC727B",
+    paddingHorizontal: 100,
+    paddingVertical: 10,
+    marginBottom: 20,
+    borderRadius: 15,
+    width: "100%",
     alignItems: "center",
     justifyContent: "center",
-    width: "15%",
-    height: "100%",
-    paddingLeft: 20,
+    color: "white",
+    fontWeight: "bold",
+  },
+
+  // PARKING INFO (white board)
+
+  parkingInfo: {
+    marginTop: 20,
+    backgroundColor: "white",
+    height: "15%",
+    width: "80%",
+    padding: 3,
+    marginBottom: 200,
+    borderRadius: 5,
+  },
+
+  // USERS REVIEW (+ white board)
+
+  usersReview: {
+    marginTop: -100,
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  reviewInfo: {
+    marginTop: 20,
+    backgroundColor: "white",
+    height: "15%",
+    width: "80%",
+    padding: 10,
+    marginBottom: 200,
+    borderRadius: 5,
   },
 });
