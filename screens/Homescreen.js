@@ -58,7 +58,7 @@ export default function Homescreen({ navigation }) {
   // BUTTON "VOIR"
 
   const handleSubmit = () => {
-    navigation.navigate("Parkingscreen");
+    navigation.navigate("Profil");
   };
 
   return (
