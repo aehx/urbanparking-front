@@ -19,13 +19,14 @@ import Homescreen from "./screens/Homescreen";
 import { Provider } from "react-redux";
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import user from "./reducers/user";
+import parking from "./reducers/parking";
 
 // redux-persist imports
 import { persistStore, persistReducer } from "redux-persist";
 import { PersistGate } from "redux-persist/integration/react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const reducers = combineReducers({ user });
+const reducers = combineReducers({ user, parking });
 const persistConfig = {
   key: "urbanparking",
   storage: AsyncStorage,

@@ -37,6 +37,12 @@ export default function Signup(props) {
     postal: null,
   });
 
+  // CHECK IF USER SIGNUP
+
+  if (user.token) {
+    props.navigation.navigate("TabNavigator", { screen: "Profil" });
+  }
+
   const EMAIL_REGEX =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -56,7 +62,6 @@ export default function Signup(props) {
   };
 
   //   FORMULAIRE
-
   const formSubmit = () => {
     // CHECK FIELDS EMPTY OR NOT
 

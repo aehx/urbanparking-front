@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
+import { addParking, removeParking } from "../reducers/parking";
+import { useDispatch, useSelector } from "react-redux";
 import dot from "../assets/dot.png";
+import parkPin from "../assets/parking.png";
 import { getDistance } from "geolib";
 import {
   StyleSheet,
@@ -11,15 +14,18 @@ import {
   Image,
 } from "react-native";
 import axios from "axios";
-import Slider from "@react-native-community/slider";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
-import MapView, { Marker, Circle } from "react-native-maps";
+import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
 export default function Homescreen({ navigation }) {
+  //  REDUCER & dispatch
+
+  const dispatch = useDispatch();
+  const parkReducer = useSelector((state) => state.parking.value);
+
   // STATE LOCATION
-  const [showDistance, setShowDistance] = useState(false);
   const [currentPosition, setCurrentPosition] = useState(null);
   const [region, setRegion] = useState({
     latitude: 48.51,
@@ -30,20 +36,19 @@ export default function Homescreen({ navigation }) {
 
   // STATE POSITION & searchedplace
 
+  const [showSearch, setShowSearch] = useState(true);
   const [positionGranted, setPositionGranted] = useState(false);
   const [searchedPlace, setSearchedPlace] = useState(null);
 
-  // STATE DISTANCE
-
-  const [range, setRange] = useState(0);
-
-  // STATE SEARCH
+  // STATE SEARCH (input)
 
   const [search, setSearch] = useState(null);
 
   // STATE PARKINGS
-
+  const [distance, setDistance] = useState(15);
   const [parisParking, setParking] = useState([]);
+
+  // GET PARKING
 
   const parking = async () => {
     const parkingsData = await axios.get(
@@ -74,30 +79,69 @@ export default function Homescreen({ navigation }) {
     parking();
   }, []);
 
-  // DATA PARKINGS
+  // DATA FILTERED BY DISTANCE PARKINGS
 
-  const parkingsFound = parisParking.map((el, i) => {
-    console.log("**************", el.geometry);
-    return (
-      <Marker
-        key={i}
-        coordinate={{
-          longitude: el.geometry.coordinates[0],
-          latitude: el.geometry.coordinates[1],
-        }}
-      >
-        {/* <Image source={dot} style={styles.image} /> */}
-      </Marker>
-    );
-  });
-  // console.log("!!!!!!!!!!!!!!!!!!!", parisParking);
-  // POPUP DISTANCE
+  let parisparking;
 
-  const handleDistance = () => {
-    setShowDistance(!showDistance);
-    setRange(0);
+  const dispatchParkings = () => {
+    if (searchedPlace) {
+      parisparking = parisParking.map((el, i) => {
+        const distanceBetweenParkAndMe =
+          getDistance(
+            {
+              latitude: el.geometry.coordinates[1],
+              longitude: el.geometry.coordinates[0],
+            },
+            {
+              latitude: currentPosition.latitude,
+              longitude: currentPosition.longitude,
+            }
+          ) / 1000;
+
+        const parkingFound = {
+          name: el.fields.nom_parking,
+          freeplace: el.fields.counterfreeplaces,
+          horaire:
+            el.fields.horaires_d_acces_au_public_pour_les_usagers_non_abonnes,
+          distance: distanceBetweenParkAndMe,
+        };
+        dispatch(addParking(parkingFound));
+      });
+    }
   };
+  console.log(parkReducer);
 
+  // PARKING PIN ON MAP
+
+  let parkingPin;
+  if (searchedPlace) {
+    parkingPin = parisParking.map((el, i) => {
+      const distanceBetween =
+        getDistance(
+          {
+            latitude: el.geometry.coordinates[1],
+            longitude: el.geometry.coordinates[0],
+          },
+          {
+            latitude: searchedPlace.latitude,
+            longitude: searchedPlace.longitude,
+          }
+        ) / 1000;
+      return (
+        distanceBetween < 15 && (
+          <Marker
+            key={i}
+            coordinate={{
+              longitude: el.geometry.coordinates[0],
+              latitude: el.geometry.coordinates[1],
+            }}
+          >
+            <Image source={parkPin} style={styles.image} />
+          </Marker>
+        )
+      );
+    });
+  }
   // LAUNCH RESEARCH
 
   const handleSearch = () => {
@@ -116,7 +160,7 @@ export default function Homescreen({ navigation }) {
           latitudeDelta: 0.5,
           longitudeDelta: 0.5,
         });
-        setSearch(null);
+        setShowSearch(false);
         Keyboard.dismiss();
       });
   };
@@ -124,14 +168,15 @@ export default function Homescreen({ navigation }) {
   // BUTTON "VOIR"
 
   const handleSubmit = () => {
+    dispatchParkings();
     navigation.navigate("Profil");
   };
 
   // BUTTON RESEARCH INPUT
 
-  let test;
-  if (search) {
-    test = (
+  let searchButton;
+  if (search && showSearch) {
+    searchButton = (
       <TouchableOpacity
         style={styles.inputSearchBtn}
         onPress={() => {
@@ -143,13 +188,20 @@ export default function Homescreen({ navigation }) {
       </TouchableOpacity>
     );
   }
+
+  const handleSearchButton = () => {
+    setShowSearch(true);
+    setSearch(null);
+    setSearchedPlace(null);
+    dispatch(removeParking());
+  };
+
   return (
     <View style={styles.container}>
       {/* MAP */}
 
       <MapView
         onPress={() => Keyboard.dismiss()}
-        mapType="hybrid"
         style={StyleSheet.absoluteFillObject}
         showsUserLocation={positionGranted}
         initialRegion={currentPosition ? currentPosition : region}
@@ -165,19 +217,9 @@ export default function Homescreen({ navigation }) {
             >
               <Image source={dot} style={styles.image} />
             </Marker>
-            <Circle
-              center={{
-                latitude: searchedPlace.latitude,
-                longitude: searchedPlace.longitude,
-              }}
-              radius={Math.floor(range * 1000)}
-              strokeWidth={3}
-              strokeColor={"#fc727bb3"}
-              fillColor={"#2e37407b"}
-            />
           </>
         )}
-        {searchedPlace && parkingsFound}
+        {searchedPlace && parkingPin}
       </MapView>
 
       {/* INPUT CONTAINER  */}
@@ -191,45 +233,23 @@ export default function Homescreen({ navigation }) {
             value={search}
             onChangeText={(value) => setSearch(value)}
           />
-          <FontAwesome
-            name="sliders"
-            size={25}
-            color="#555"
-            style={styles.filterBtn}
-            onPress={() => {
-              handleDistance();
-            }}
-          />
+          {!showSearch && (
+            <FontAwesome
+              name="times"
+              size={25}
+              color="#555"
+              style={styles.filterBtn}
+              onPress={() => {
+                handleSearchButton();
+              }}
+            />
+          )}
         </View>
 
         {/* BUTTON SEARCH INPUT*/}
 
-        <View style={styles.inputSearchBtnContainer}>{test}</View>
+        <View style={styles.inputSearchBtnContainer}>{searchButton}</View>
       </View>
-
-      {/* POPUP DISTANCE */}
-
-      {showDistance && (
-        <View style={styles.distanceFilter}>
-          <Text style={styles.distanceText}>
-            Distance : {Math.floor(range * 20)} km
-          </Text>
-          <View style={styles.sliderContainer}>
-            <Slider
-              onValueChange={(value) => setRange(value)}
-              minimumValue={0}
-              maximumValue={1}
-              style={styles.slider}
-            />
-          </View>
-          <TouchableOpacity
-            style={styles.sliderBtn}
-            onPress={() => handleDistance()}
-          >
-            <Text style={styles.sliderBtnText}>Voir les résultats</Text>
-          </TouchableOpacity>
-        </View>
-      )}
 
       {/* BUTTON PARKING LIST  */}
 
@@ -362,6 +382,7 @@ const styles = StyleSheet.create({
     width: "4%",
   },
   // ICON MAP
+
   image: {
     width: 20,
     height: 20,
