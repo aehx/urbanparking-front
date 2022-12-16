@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { addParking, removeParking } from "../reducers/parking";
 import { useDispatch, useSelector } from "react-redux";
-import dot from "../assets/dot.png";
+import focus from "../assets/focus.png";
 import parkPin from "../assets/parking.png";
 import { getDistance } from "geolib";
 import {
@@ -86,6 +86,7 @@ export default function Homescreen({ navigation }) {
   const dispatchParkings = () => {
     if (searchedPlace) {
       parisparking = parisParking.map((el, i) => {
+        console.log(el.fields.counterfreeplaces);
         const distanceBetweenParkAndMe =
           getDistance(
             {
@@ -97,25 +98,34 @@ export default function Homescreen({ navigation }) {
               longitude: currentPosition.longitude,
             }
           ) / 1000;
-
         const parkingFound = {
+          id: el.recordid,
           name: el.fields.nom_parking,
           freeplace: el.fields.counterfreeplaces,
           horaire:
             el.fields.horaires_d_acces_au_public_pour_les_usagers_non_abonnes,
           distance: distanceBetweenParkAndMe,
+          latitude: el.geometry.coordinates[1],
+          longitude: el.geometry.coordinates[0],
         };
         dispatch(addParking(parkingFound));
       });
     }
   };
-  console.log(parkReducer);
 
   // PARKING PIN ON MAP
 
   let parkingPin;
+  let pinStyle;
   if (searchedPlace) {
     parkingPin = parisParking.map((el, i) => {
+      if (el.fields.counterfreeplaces > 40) {
+        pinStyle = { tintColor: "green" };
+      } else if (el.fields.counterfreeplaces > 0) {
+        pinStyle = { tintColor: "orange" };
+      } else {
+        pinStyle = { tintColor: "red" };
+      }
       const distanceBetween =
         getDistance(
           {
@@ -128,15 +138,16 @@ export default function Homescreen({ navigation }) {
           }
         ) / 1000;
       return (
-        distanceBetween < 15 && (
+        distanceBetween < 50 && (
           <Marker
             key={i}
             coordinate={{
               longitude: el.geometry.coordinates[0],
               latitude: el.geometry.coordinates[1],
             }}
+            title={String(el.fields.counterfreeplaces)}
           >
-            <Image source={parkPin} style={styles.image} />
+            <Image source={parkPin} style={[styles.image, pinStyle]} />
           </Marker>
         )
       );
@@ -157,8 +168,8 @@ export default function Homescreen({ navigation }) {
         setSearchedPlace({
           latitude: searchedPlaceData.geometry.coordinates[1],
           longitude: searchedPlaceData.geometry.coordinates[0],
-          latitudeDelta: 0.5,
-          longitudeDelta: 0.5,
+          latitudeDelta: 0.05,
+          longitudeDelta: 0.05,
         });
         setShowSearch(false);
         Keyboard.dismiss();
@@ -169,7 +180,7 @@ export default function Homescreen({ navigation }) {
 
   const handleSubmit = () => {
     dispatchParkings();
-    navigation.navigate("Profil");
+    navigation.navigate("ParkingListScreen");
   };
 
   // BUTTON RESEARCH INPUT
@@ -195,13 +206,15 @@ export default function Homescreen({ navigation }) {
     setSearchedPlace(null);
     dispatch(removeParking());
   };
-
   return (
     <View style={styles.container}>
       {/* MAP */}
 
       <MapView
-        onPress={() => Keyboard.dismiss()}
+        onPress={() => {
+          Keyboard.dismiss();
+        }}
+        animatedToRegion={{ region: region, duration: 3000 }}
         style={StyleSheet.absoluteFillObject}
         showsUserLocation={positionGranted}
         initialRegion={currentPosition ? currentPosition : region}
@@ -215,7 +228,10 @@ export default function Homescreen({ navigation }) {
                 longitude: searchedPlace.longitude,
               }}
             >
-              <Image source={dot} style={styles.image} />
+              <Image
+                source={focus}
+                style={{ tintColor: "#2E3740", width: 20, height: 20 }}
+              />
             </Marker>
           </>
         )}
@@ -384,7 +400,10 @@ const styles = StyleSheet.create({
   // ICON MAP
 
   image: {
-    width: 20,
-    height: 20,
+    width: 35,
+    height: 35,
+  },
+  imageParking: {
+    tintColor: "green",
   },
 });

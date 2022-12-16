@@ -5,6 +5,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
+
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../reducers/user";
@@ -13,8 +14,12 @@ export default function Settings(props) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
 
+  if (!user.token) {
+    props.navigation.navigate("TabNavigator", { screen: "Profil" });
+  }
+
   const handleLogout = () => {
-    dispatch(logout()), props.changeSignup(false), props.changeSignin(false);
+    dispatch(logout());
   };
 
   return (

@@ -38,7 +38,6 @@ export default function Signup(props) {
   });
 
   // CHECK IF USER SIGNUP
-
   if (user.token) {
     props.navigation.navigate("TabNavigator", { screen: "Profil" });
   }

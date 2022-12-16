@@ -1,5 +1,3 @@
-import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
@@ -12,8 +10,8 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 // COMPONENTS ---- ATTENTION MODIF HELENE FRONT
 
 import Profilscreen from "./screens/profilscreens/Profilscreen";
-// import Themescreen from "./screens/Themescreen";
-import Parkingscreen from "./screens/Parkingscreen";
+import ParkingListScreen from "./screens/ParkingListScreen";
+import Themescreen from "./screens/Themescreen";
 import Homescreen from "./screens/Homescreen";
 
 // redux imports
@@ -69,7 +67,7 @@ const TabNavigator = (props) => {
       })}
       initialRouteName="Parkings"
     >
-      <Tab.Screen name="Themes" component={Parkingscreen} />
+      <Tab.Screen name="Themes" component={Themescreen} />
       <Tab.Screen name="Parkings" component={Homescreen} />
       <Tab.Screen name="Profil" component={Profilscreen} />
     </Tab.Navigator>
@@ -82,8 +80,16 @@ export default function App() {
       <PersistGate persistor={persistor}>
         <SafeAreaProvider>
           <NavigationContainer>
-            <Stack.Navigator screenOptions={{ headerShown: false }}>
+            <Stack.Navigator
+              screenOptions={{ headerShown: false }}
+              initialRouteName="TabNavigator"
+            >
               <Stack.Screen name="TabNavigator" component={TabNavigator} />
+              <Stack.Screen
+                name="ParkingListScreen"
+                component={ParkingListScreen}
+              />
+              <Stack.Screen name="Homescreen" component={Homescreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

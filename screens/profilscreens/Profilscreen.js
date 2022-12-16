@@ -7,7 +7,7 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import Settings from "./settings";
+import Settings from "./Settings";
 import Signin from "../profilscreens/Signin";
 import Signup from "../profilscreens/Signup";
 

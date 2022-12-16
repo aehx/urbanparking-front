@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     left: 0,
-    paddingTop: "15%",
+    paddingTop: "10%",
     width: "100%",
     height: "100%",
     backgroundColor: "#2E3740",
