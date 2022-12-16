@@ -17,12 +17,10 @@ export default function Signin(props) {
   const users = useSelector((state) => state.user.value);
   const [user, setUser] = useState({ username: "", password: "" });
   const [securePassword, setSecurePassword] = useState(true);
+
   const handleSignin = () => {
     props.changeSignin(false);
   };
-  if (users.token) {
-    props.navigation.navigate("TabNavigator", { screen: "Profil" });
-  }
 
   const validateSignin = () => {
     axios

@@ -1,3 +1,4 @@
+import Favoritescreen from "./Updatescreen";
 import {
   StyleSheet,
   Text,
@@ -8,50 +9,55 @@ import {
 
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
 import { logout } from "../../reducers/user";
 
 export default function Settings(props) {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
-
-  if (!user.token) {
-    props.navigation.navigate("TabNavigator", { screen: "Profil" });
-  }
-
+  const [updateProfil, setUpdateProfil] = useState(false);
   const handleLogout = () => {
     dispatch(logout());
   };
-
-  return (
-    <SafeAreaView style={styles.globalContainer}>
-      <View style={styles.container}>
-        <Text style={styles.title}>
-          Bonjour <Text style={styles.userName}>{user.username}</Text>
-        </Text>
-        <View style={styles.themeContainer}>
-          <View style={styles.themeCard}>
-            <FontAwesome
-              name="pencil-square-o"
-              style={styles.cardIcon}
-              size={20}
-            />
-            <View style={styles.themeTextContainer}>
-              <Text style={styles.themeText}>Modifier mon profil</Text>
+  if (updateProfil) {
+    return (
+      <Favoritescreen changeUpdateScreen={(state) => setUpdateProfil(state)} />
+    );
+  } else {
+    return (
+      <SafeAreaView style={styles.globalContainer}>
+        <View style={styles.container}>
+          <Text style={styles.title}>
+            Bonjour <Text style={styles.userName}>{user.username}</Text>
+          </Text>
+          <View style={styles.themeContainer}>
+            <TouchableOpacity
+              style={styles.themeCard}
+              onPress={() => setUpdateProfil(true)}
+            >
+              <FontAwesome
+                name="pencil-square-o"
+                style={styles.cardIcon}
+                size={20}
+              />
+              <View style={styles.themeTextContainer}>
+                <Text style={styles.themeText}>Modifier mon profil</Text>
+              </View>
+            </TouchableOpacity>
+            <View style={styles.themeCard}>
+              <FontAwesome name="star-o" style={styles.cardIcon} size={20} />
+              <View style={styles.themeTextContainer}>
+                <Text style={styles.themeText}>Mes parkings</Text>
+              </View>
             </View>
+            <TouchableOpacity style={styles.btn} onPress={() => handleLogout()}>
+              <Text style={styles.btnText}>Déconnexion</Text>
+            </TouchableOpacity>
           </View>
-          <View style={styles.themeCard}>
-            <FontAwesome name="star-o" style={styles.cardIcon} size={20} />
-            <View style={styles.themeTextContainer}>
-              <Text style={styles.themeText}>Mes parkings</Text>
-            </View>
-          </View>
-          <TouchableOpacity style={styles.btn} onPress={() => handleLogout()}>
-            <Text style={styles.btnText}>Déconnexion</Text>
-          </TouchableOpacity>
         </View>
-      </View>
-    </SafeAreaView>
-  );
+      </SafeAreaView>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

@@ -13,6 +13,7 @@ import Profilscreen from "./screens/profilscreens/Profilscreen";
 import ParkingListScreen from "./screens/ParkingScreen/ParkingListScreen";
 import Themescreen from "./screens/Themescreen";
 import Homescreen from "./screens/ParkingScreen/Homescreen";
+import Updatescreen from "./screens/profilscreens/Updatescreen";
 
 // redux imports
 import { Provider } from "react-redux";
@@ -89,7 +90,6 @@ export default function App() {
                 name="ParkingListScreen"
                 component={ParkingListScreen}
               />
-              <Stack.Screen name="Homescreen" component={Homescreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>

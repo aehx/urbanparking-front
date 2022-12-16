@@ -1,138 +1,3 @@
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-
-export default function Favoritescreen({ navigation }) {
-  // DELETE PARKINGS FROM FAVORITES
-
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <View style={styles.icon}>
-          <FontAwesome
-            name="arrow-left"
-            size={30}
-            color="white"
-            onPress={() => {
-              navigation.navigate("Profilscreen");
-            }}
-          />
-        </View>
-        <Text style={styles.mainTitle}>Mes Favoris</Text>
-      </View>
-
-      <View style={styles.favoriteInfo}>
-        <View style={styles.trash}>
-          <FontAwesome
-            name="trash-o"
-            size={30}
-            color="#2E3740"
-            // onPress={() => {}} // DELETE THIS PARKING BY PRESSING THE TRASH ICON
-          />
-        </View>
-        <View style={styles.favoriteContainer}>
-          <Text style={styles.favoriteTitle}>Nom du Favoris</Text>
-          <Text style={styles.favoriteText}>Adresse du Favoris</Text>
-        </View>
-        <View style={styles.angleRight}>
-          <FontAwesome
-            name="angle-right"
-            size={30}
-            color="#2E3740"
-            // onPress={() => {navigation.navigate("");}} // GOING TO FAVORITE PARKING INFOS SCREEN BY PRESSING THE ANGLE-RIGHT ICON
-          />
-        </View>
-      </View>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  // CONTAINER
-
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    paddingTop: "15%",
-    alignItems: "center",
-    backgroundColor: "#2E3740",
-  },
-
-  // HEADER
-
-  header: {
-    flexDirection: "row",
-    height: "17%",
-    width: "100%",
-    paddingHorizontal: 40,
-    paddingVertical: 20,
-    marginHorizontal: "1%",
-    marginBottom: 5,
-    justifyContent: "space-evenly",
-  },
-
-  icon: {
-    width: 50,
-    height: 50,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-  },
-  mainTitle: {
-    width: 200,
-    height: 40,
-    textAlign: "center",
-    alignSelf: "center",
-    color: "white",
-    fontSize: 27,
-    fontWeight: "bold",
-  },
-
-  // FAVORITE INFO (white board)
-
-  favoriteInfo: {
-    flexDirection: "row",
-    marginTop: 20,
-    backgroundColor: "white",
-    height: "15%",
-    width: "90%",
-    padding: 3,
-    marginBottom: 200,
-    borderRadius: 5,
-    justifyContent: "space-between",
-  },
-
-  trash: {
-    backgroundColor: "white",
-    height: "100%",
-    width: "15%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  favoriteContainer: {
-    backgroundColor: "white",
-    height: "100%",
-    width: "70%",
-    justifyContent: "space-evenly",
-    alignItems: "center",
-  },
-  favoriteTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  favoriteText: {
-    fontSize: 12,
-    fontWeight: "bold",
-  },
-  angleRight: {
-    backgroundColor: "white",
-    height: "100%",
-    width: "15%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-});
-
-/* import React from "react";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {
   View,
@@ -145,69 +10,99 @@ import {
 
 import { useSelector, useDispatch } from "react-redux";
 
-// HELENE FRONT créer un "update" dans reducers ? ⬇️
-import { login } from "../../reducers/user";
-
 import { useState } from "react";
 import axios from "axios";
 
-export default function Updatescreen({ navigation }) {
+export default function Signup(props) {
   const dispatch = useDispatch();
+  const [step, setStep] = useState(0);
 
   //   INPUT USESTATE
 
-  const [emptyFields, setEmptyFields] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
+  const [invalidEmail, setInvalidEmail] = useState(false);
 
   //   USER
   const user = useSelector((state) => state.user.value);
 
-  //  NEWUSER/SETNEWUSER BEFORE ⬇️
-
-  const [newUserUpdate, setNewUserUpdate] = useState({
+  const [updateUser, setUpdateUser] = useState({
+    username: "",
+    email: "",
     firstname: "",
     lastname: "",
-    email: "",
-    password: "",
-    username: "",
+    city: "",
+    address: "",
+    postal: null,
   });
 
   const EMAIL_REGEX =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  // SAVE THE NEW INFORMATIONS WHICH HAVE BEEN UPDATED
+  const handleSignup = () => {
+    props.changeUpdateScreen(false);
+  };
 
-  const formSubmit = () => {
-    // CHECK FIELDS EMPTY OR NOT
+  const handleStepPlus = () => {
+    setStep(step + 1);
+  };
 
-    const checkFields = Object.entries(newUser);
-    const check = checkFields.forEach((field) => {
-      if (field[1] === "" || field[1] === null) {
-        setEmptyFields(true);
-      } else {
-        setEmptyFields(false);
+  const handleStepMoins = () => {
+    setStep(step - 1);
+  };
+
+  //   FORMULAIRE
+  const formUpdate = () => {
+    if (updateUser.email && !EMAIL_REGEX.test(updateUser.email)) {
+      setInvalidEmail(true);
+      return;
+    } else {
+      for (let value in updateUser) {
+        if (!updateUser[value] || updateUser[value] === "") {
+          delete updateUser[value];
+        }
       }
-    });
 
-    // PUSH IN DB IF MAIL & NOT EMPTY field ------- // NEWUSERUPDATE INSTEAD OF NEWUSER ⬇️
-    if (!emptyFields && EMAIL_REGEX.test(newUserUpdate.email)) {
-      setShowPassword(false);
       axios
-        .post(
-          "https://urbanparking-backend.vercel.app/users/signup",
-          newUserUpdate
+        .put(
+          `https://urbanparking-backend.vercel.app/users/update/${user.token}`,
+          updateUser
         )
-        .then((response) =>
-          dispatch(
-            // CHANGER LOGIN PAR "UPDATE" DANS REDUCER ?? ⬇️
-            login({
-              token: response.data.token,
-              username: response.data.username,
-            })
-          )
-        );
+        .then((response) => console.log(response.data));
     }
   };
+
+  //   SELECT FIELDS
+
+  let fields;
+  if (step === 0) {
+    fields = [styles.inputContainer, styles.inputContainer1];
+  } else if (step === 1) {
+    fields = [styles.inputContainer, styles.inputContainer2];
+  } else if (step === 2) {
+    fields = [styles.inputContainer, styles.inputContainer3];
+  }
+
+  //   InsideCircle style
+
+  let circle2Style;
+  let circle3Style;
+  let barInsideStyle;
+  if (step < 1) {
+    barInsideStyle = [styles.progressBarInside, { width: 0 }];
+    circle2Style = { display: "none" };
+    circle3Style = { display: "none" };
+  } else if (step === 1) {
+    barInsideStyle = [styles.progressBarInside, { width: "50%" }];
+    circle2Style = [
+      styles.progressBarCircleInside,
+      styles.circle2Inside,
+      { right: -6 },
+    ];
+  } else if (step === 2) {
+    barInsideStyle = [styles.progressBarInside, { width: "100%" }];
+    circle2Style = [styles.progressBarCircleInside, styles.circle2Inside];
+    circle3Style = [styles.progressBarCircleInside, styles.circle3Inside];
+  }
 
   //   PASSWORD SHOW/DON'T SHOW
 
@@ -218,189 +113,338 @@ export default function Updatescreen({ navigation }) {
     eye = "eye";
   }
 
-  // EVERY NEWUSER AND SETNEWUSER HAVE BEEN CHANGED FOR NEWUSERUPDATE AND SETNEWUSERUPDATE ⬇️
-
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.globalContainer}
+    >
       <View style={styles.header}>
+        {/* TITLE */}
+
         <View style={styles.icon}>
           <FontAwesome
             name="arrow-left"
             size={30}
-            color="white"
+            style={{ color: "white" }}
             onPress={() => {
-              navigation.navigate("Profilscreen");
+              handleSignup();
             }}
           />
         </View>
-        <Text style={styles.mainTitle}>Mes Informations</Text>
+        <Text style={styles.title}>Mise à jour</Text>
       </View>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <View style={styles.inputContainer}>
-          <View>
-            <TextInput
-              placeholder="Prénom"
-              textContentType={"name"}
-              style={styles.input}
-              value={newUserUpdate.firstname}
-              onChangeText={(value) =>
-                setNewUserUpdate({ ...newUserUpdate, firstname: value })
-              }
-            />
-          </View>
-          <View>
-            <TextInput
-              placeholder="Nom"
-              textContentType={"familyName"}
-              style={styles.input}
-              value={newUserUpdate.lastname}
-              onChangeText={(value) =>
-                setNewUserUpdate({ ...newUserUpdate, lastname: value })
-              }
-            />
-          </View>
-          <View>
-            <TextInput
-              placeholder="E-mail"
-              textContentType={"emailAddress"}
-              keyboardType="email-address"
-              style={styles.input}
-              value={newUserUpdate.email}
-              onChangeText={(value) =>
-                setNewUserUpdate({ ...newUserUpdate, email: value })
-              }
-            />
-          </View>
-          <View>
-            <TextInput
-              placeholder="Mot de passe"
-              secureTextEntry={showPassword}
-              textContentType={"password"}
-              style={styles.input}
-              value={newUserUpdate.password}
-              onChangeText={(value) =>
-                setNewUserUpdate({ ...newUserUpdate, password: value })
-              }
-            />
-            <FontAwesome
-              name={eye}
-              size={25}
-              style={styles.eye}
-              color={"#FC727B"}
-              onPress={() => {
-                setShowPassword(!showPassword);
-              }}
-            />
-          </View>
-          <View>
-            <TextInput
-              placeholder="Nom d'utilisateur"
-              style={styles.input}
-              value={newUserUpdate.username}
-              onChangeText={(value) =>
-                setNewUserUpdate({ ...newUserUpdate, username: value })
-              }
-            />
+
+      {/* PROGRESS BAR  */}
+
+      <View style={styles.progressContainer}>
+        <View style={styles.progressBarEmpty}>
+          <View style={[styles.progressBarCircle, styles.circle1]}></View>
+          <View style={[styles.progressBarCircle, styles.circle2]}></View>
+          <View style={[styles.progressBarCircle, styles.circle3]}></View>
+
+          {/* BAR Inside  */}
+
+          <View style={barInsideStyle}>
+            <View
+              style={[styles.progressBarCircleInside, styles.circle1Inside]}
+            ></View>
+            <View style={circle2Style}></View>
+            <View style={circle3Style}></View>
           </View>
         </View>
-      </KeyboardAvoidingView>
-      <View style={styles.footer}>
-        <TouchableOpacity>
-          <Text style={styles.btnText}>Enregistrer</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => formSubmit()}
-          style={styles.button}
-          activeOpacity={0.8}
-        ></TouchableOpacity>
       </View>
-    </View>
+
+      {/* INPUT CONTAINER */}
+
+      <View style={fields}>
+        {/* STEP 1 */}
+
+        <View style={styles.step}>
+          <TextInput
+            placeholder="Nom d'utilisateur"
+            style={styles.input}
+            value={updateUser.username}
+            onChangeText={(value) =>
+              setUpdateUser({ ...updateUser, username: value })
+            }
+          />
+          <TextInput
+            placeholder="E-mail"
+            textContentType={"emailAddress"}
+            keyboardType="email-address"
+            style={styles.input}
+            value={updateUser.email}
+            onChangeText={(value) =>
+              setUpdateUser({ ...updateUser, email: value })
+            }
+          />
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => handleStepPlus()}
+            >
+              <Text style={styles.btnText}>suivant</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* STEP 2 */}
+
+        <View style={styles.step}>
+          <TextInput
+            placeholder="Prénom"
+            textContentType={"name"}
+            style={styles.input}
+            value={updateUser.firstname}
+            onChangeText={(value) =>
+              setUpdateUser({ ...updateUser, firstname: value })
+            }
+          />
+          <TextInput
+            placeholder="Nom"
+            textContentType={"familyName"}
+            style={styles.input}
+            value={updateUser.lastname}
+            onChangeText={(value) =>
+              setUpdateUser({ ...updateUser, lastname: value })
+            }
+          />
+          <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
+            <TouchableOpacity
+              style={[styles.btn, styles.btnMiddle]}
+              onPress={() => handleStepMoins()}
+            >
+              <Text style={styles.btnText}>Precedent</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[styles.btn, styles.btnMiddle]}
+              onPress={() => handleStepPlus()}
+            >
+              <Text style={styles.btnText}>suivant</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* STEP 3 */}
+
+        <View style={styles.step}>
+          <TextInput
+            placeholder="Ville"
+            style={styles.input}
+            value={updateUser.city}
+            onChangeText={(value) =>
+              setUpdateUser({ ...updateUser, city: value })
+            }
+          />
+          <TextInput
+            placeholder="Adresse"
+            style={styles.input}
+            value={updateUser.address}
+            onChangeText={(value) =>
+              setUpdateUser({ ...updateUser, address: value })
+            }
+          />
+          <TextInput
+            placeholder="Code postal"
+            textContentType={"postalCode"}
+            keyboardType="phone-pad"
+            style={styles.input}
+            value={updateUser.postal}
+            onChangeText={(value) =>
+              setUpdateUser({ ...updateUser, postal: value })
+            }
+          />
+
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => handleStepMoins()}
+            >
+              <Text style={styles.btnText}>Precedent</Text>
+            </TouchableOpacity>
+            {invalidEmail && <Text>email invalid</Text>}
+            <TouchableOpacity style={styles.btn} onPress={() => formUpdate()}>
+              <Text style={styles.btnText}>valider le formulaire</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  // CONTAINER
-
-  container: {
+  globalContainer: {
     position: "absolute",
     bottom: 0,
     left: 0,
-    paddingTop: "8%",
+    paddingTop: "15%",
     width: "100%",
     height: "100%",
     backgroundColor: "#2E3740",
     alignItems: "center",
   },
 
-  // HEADER
+  //   TITLE
 
   header: {
     flexDirection: "row",
-    height: "18%",
+    alignItems: "center",
+    height: "10%",
     width: "100%",
-    paddingHorizontal: 40,
-    paddingVertical: 20,
-    justifyContent: "space-evenly",
-    backgroundColor: "#2E3740",
   },
   icon: {
-    width: 50,
-    height: 50,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "15%",
+    height: "100%",
+    paddingLeft: 20,
   },
-  mainTitle: {
-    display: "flex",
-    color: "white",
-    fontSize: 27,
+  title: {
+    flex: 1,
+    fontSize: 30,
     fontWeight: "bold",
+    textAlign: "center",
+    paddingRight: "15%",
+    color: "#FFF",
   },
 
+  //   PROGRESS BAR
+
+  progressContainer: {
+    width: "100%",
+    height: "10%",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  progressBarEmpty: {
+    borderWidth: 1.5,
+    borderColor: "#333",
+    height: 10,
+    width: "80%",
+    backgroundColor: "white",
+    alignItems: "center",
+  },
+  progressBarInside: {
+    position: "absolute",
+    top: 1,
+    left: 0,
+    alignItems: "center",
+    backgroundColor: "#FC727B",
+    height: 4,
+    transition: "all 2s ease-in-out",
+  },
+
+  //   PROGRESS CIRCLE
+
+  progressBarCircle: {
+    position: "absolute",
+    borderRadius: "50%",
+    width: 20,
+    height: 20,
+    backgroundColor: "white",
+    borderWidth: 2,
+    borderColor: "#333",
+  },
+  circle1: {
+    top: -7,
+    left: -10,
+  },
+  circle2: {
+    top: -7,
+  },
+  circle3: {
+    top: -7,
+    right: -10,
+  },
+
+  //   PROGRESS Inside
+
+  progressBarCircleInside: {
+    position: "absolute",
+    borderRadius: "50%",
+    width: 12,
+    height: 12,
+    backgroundColor: "#FC727B",
+  },
+  circle1Inside: {
+    top: "-100%",
+    left: -6,
+  },
+  circle2Inside: {
+    top: "-100%",
+  },
+  circle3Inside: {
+    top: "-100%",
+    right: -6,
+  },
   //   INPUT CONTAINER
 
   inputContainer: {
+    flex: 1,
     width: "100%",
-    flexDirection: "column",
+    flexDirection: "row",
+    alignItems: "center",
     backgroundColor: "#2E3740",
-    padding: 5,
+    backgroundColor: "white",
+  },
+  inputContainer1: {
+    justifyContent: "flex-start",
+  },
+  inputContainer2: {
+    justifyContent: "center",
+  },
+  inputContainer3: {
+    justifyContent: "flex-end",
   },
 
+  //   STEPS (InputContainer child)
+
+  step: {
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#2E3740",
+  },
   input: {
     borderWidth: 2,
     borderColor: "#FC727B",
     backgroundColor: "#eee",
-    width: 250,
-    fontSize: 16,
-    padding: 8,
+    width: "70%",
+    fontSize: 18,
+    padding: 10,
     marginBottom: "7%",
     borderRadius: 15,
-    justifyContent: "space-evenly",
   },
 
-  eye: {
-    position: "absolute",
-    top: 12,
-    right: "10%",
+  //   BUTTON
+  btnContainer: {
+    width: "100%",
+    alignItems: "center",
   },
-
-  // FOOTER
-
-  footer: {
-    display: "flex",
-    paddingHorizontal: 20,
-    paddingVertical: 50,
-    backgroundColor: "#2E3740",
-    width: "auto",
-  },
-
-  btnText: {
+  btn: {
     backgroundColor: "#FC727B",
-    paddingHorizontal: 100,
-    paddingVertical: 10,
     borderRadius: 15,
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
+    paddingTop: 10,
+    paddingBottom: 10,
+    paddingRight: 20,
+    paddingLeft: 20,
+    width: "70%",
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 30,
+  },
+
+  //  STEP 2  || BUTTON
+
+  btnContainerMiddle: {
+    flexDirection: "row",
+    justifyContent: "center",
+  },
+  btnMiddle: {
+    width: "40%",
+    margin: 10,
+    marginTop: "15%",
   },
 });
-*/
