@@ -10,9 +10,9 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 // COMPONENTS ---- ATTENTION MODIF HELENE FRONT
 
 import Profilscreen from "./screens/profilscreens/Profilscreen";
-import ParkingListScreen from "./screens/ParkingListScreen";
+import ParkingListScreen from "./screens/ParkingScreen/ParkingListScreen";
 import Themescreen from "./screens/Themescreen";
-import Homescreen from "./screens/Homescreen";
+import Homescreen from "./screens/ParkingScreen/Homescreen";
 
 // redux imports
 import { Provider } from "react-redux";

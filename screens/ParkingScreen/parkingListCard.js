@@ -15,9 +15,10 @@ export default function ParkingListCard(props) {
   };
   return (
     <TouchableOpacity style={styles.container} onPress={() => handleclick()}>
+      <View style={[styles.pinFreeplaces, pinColor]}></View>
       <View style={styles.imageContainer}>
         <Image
-          source={require("../assets/parkingPicture.jpg")}
+          source={require("../../assets/parkingPicture.jpg")}
           style={styles.image}
         />
       </View>
@@ -29,7 +30,6 @@ export default function ParkingListCard(props) {
         </View>
         <Text style={{ fontWeight: "bold" }}>{props.name}</Text>
         <View style={styles.infosContainer}>
-          <View style={[styles.pinFreeplaces, pinColor]}></View>
           <View style={styles.horaire}>
             <Text style={{ fontWeight: "bold" }}>
               {" "}
@@ -101,10 +101,10 @@ const styles = StyleSheet.create({
   },
   pinFreeplaces: {
     position: "absolute",
-    right: 0,
+    top: "50%",
+    right: "5%",
     height: 15,
     width: 15,
     borderRadius: "50%",
-    backgroundColor: "red",
   },
 });
