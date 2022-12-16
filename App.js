@@ -9,11 +9,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// COMPONENTS ---- ATTENTION MODIF HELENE FRONT
+// COMPONENTS
 
 import Profilscreen from "./screens/profilscreens/Profilscreen";
-// import Themescreen from "./screens/Themescreen";
-import Parkingscreen from "./screens/Parkingscreen";
+import Themescreen from "./screens/Themescreen";
 import Homescreen from "./screens/Homescreen";
 
 // redux imports
@@ -68,7 +67,7 @@ const TabNavigator = (props) => {
       })}
       initialRouteName="Parkings"
     >
-      <Tab.Screen name="Themes" component={Parkingscreen} />
+      <Tab.Screen name="Themes" component={Themescreen} />
       <Tab.Screen name="Parkings" component={Homescreen} />
       <Tab.Screen name="Profil" component={Profilscreen} />
     </Tab.Navigator>
