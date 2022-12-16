@@ -7,7 +7,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-// COMPONENTS ---- ATTENTION MODIF HELENE FRONT
+// COMPONENTS
 
 import Profilscreen from "./screens/profilscreens/Profilscreen";
 import ParkingListScreen from "./screens/ParkingListScreen";
