@@ -9,7 +9,7 @@ export default function ParkingSelected(props) {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
-  console.log(props);
+
   return (
     <View
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -113,25 +113,15 @@ const styles = StyleSheet.create({
     marginTop: "5%",
     flex: 1,
     width: "100%",
-    justifyContent: "space-between",
     alignItems: "center",
-    paddingBottom: "10%",
   },
   map: {
     height: "40%",
     width: "90%",
     borderRadius: 15,
     borderWidth: 4,
+    marginBottom: 30,
     borderColor: "#FC727B",
-  },
-  textContainer: {
-    width: "90%",
-  },
-  text: {
-    marginTop: 30,
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "white",
   },
   btn: {
     flexDirection: "row",
@@ -145,5 +135,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 30,
+  },
+  textContainer: {
+    width: "90%",
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "white",
   },
 });

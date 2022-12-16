@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { addParking, removeParking } from "../reducers/parking";
+import { addParking, removeParking } from "../../reducers/parking";
 import { useDispatch, useSelector } from "react-redux";
-import focus from "../assets/focus.png";
-import parkPin from "../assets/parking.png";
+import focus from "../../assets/focus.png";
+import parkPin from "../../assets/parking.png";
 import { getDistance } from "geolib";
 import {
   StyleSheet,
@@ -86,7 +86,6 @@ export default function Homescreen({ navigation }) {
   const dispatchParkings = () => {
     if (searchedPlace) {
       parisparking = parisParking.map((el, i) => {
-        console.log(el.fields.counterfreeplaces);
         const distanceBetweenParkAndMe =
           getDistance(
             {
@@ -270,7 +269,9 @@ export default function Homescreen({ navigation }) {
       {/* BUTTON PARKING LIST  */}
 
       <TouchableOpacity style={styles.btn} onPress={() => handleSubmit()}>
-        <Text>Voir</Text>
+        <Text style={{ fontWeight: "bold", color: "#2E3740" }}>
+          Liste des parkings
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -386,12 +387,13 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: "3%",
     right: "5%",
-    width: "20%",
     height: "4%",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
-    backgroundColor: "#ddd",
+    paddingLeft: 10,
+    paddingRight: 10,
+    backgroundColor: "#FC727B",
   },
   searchIcon: {
     height: "100%",
