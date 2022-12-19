@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { addParking, removeParking } from "../../reducers/parking";
 import { useDispatch, useSelector } from "react-redux";
-import focus from "../../assets/focus.png";
-import parkPin from "../../assets/parking.png";
+import parkPin from "../../assets/placeholder.png";
 import { getDistance } from "geolib";
 import {
   StyleSheet,
@@ -12,6 +11,7 @@ import {
   TextInput,
   Keyboard,
   Image,
+  KeyboardAvoidingView,
 } from "react-native";
 import axios from "axios";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -20,10 +20,9 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
 export default function Homescreen({ navigation }) {
-  //  REDUCER & dispatch
+  //  dispatch
 
   const dispatch = useDispatch();
-  const parkReducer = useSelector((state) => state.parking.value);
 
   // STATE LOCATION
   const [currentPosition, setCurrentPosition] = useState(null);
@@ -45,7 +44,7 @@ export default function Homescreen({ navigation }) {
   const [search, setSearch] = useState(null);
 
   // STATE PARKINGS
-  const [distance, setDistance] = useState(15);
+
   const [parisParking, setParking] = useState([]);
 
   // GET PARKING
@@ -79,10 +78,9 @@ export default function Homescreen({ navigation }) {
     parking();
   }, []);
 
-  // DATA FILTERED BY DISTANCE PARKINGS
+  // PARKINGS FILTERED BY DISTANCE
 
   let parisparking;
-
   const dispatchParkings = () => {
     if (searchedPlace) {
       parisparking = parisParking.map((el, i) => {
@@ -97,6 +95,19 @@ export default function Homescreen({ navigation }) {
               longitude: currentPosition.longitude,
             }
           ) / 1000;
+
+        const distanceBetween =
+          getDistance(
+            {
+              latitude: el.geometry.coordinates[1],
+              longitude: el.geometry.coordinates[0],
+            },
+            {
+              latitude: searchedPlace.latitude,
+              longitude: searchedPlace.longitude,
+            }
+          ) / 1000;
+
         const parkingFound = {
           id: el.recordid,
           name: el.fields.nom_parking,
@@ -107,7 +118,9 @@ export default function Homescreen({ navigation }) {
           latitude: el.geometry.coordinates[1],
           longitude: el.geometry.coordinates[0],
         };
-        dispatch(addParking(parkingFound));
+        {
+          distanceBetween < 60 && dispatch(addParking(parkingFound));
+        }
       });
     }
   };
@@ -137,7 +150,7 @@ export default function Homescreen({ navigation }) {
           }
         ) / 1000;
       return (
-        distanceBetween < 50 && (
+        distanceBetween < 60 && (
           <Marker
             key={i}
             coordinate={{
@@ -152,6 +165,7 @@ export default function Homescreen({ navigation }) {
       );
     });
   }
+
   // LAUNCH RESEARCH
 
   const handleSearch = () => {
@@ -199,6 +213,8 @@ export default function Homescreen({ navigation }) {
     );
   }
 
+  // PRESS ON "TIMES" ICON
+
   const handleSearchButton = () => {
     setShowSearch(true);
     setSearch(null);
@@ -206,7 +222,10 @@ export default function Homescreen({ navigation }) {
     dispatch(removeParking());
   };
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "" : null}
+      style={styles.container}
+    >
       {/* MAP */}
 
       <MapView
@@ -219,21 +238,6 @@ export default function Homescreen({ navigation }) {
         initialRegion={currentPosition ? currentPosition : region}
         region={searchedPlace ? searchedPlace : currentPosition}
       >
-        {searchedPlace && (
-          <>
-            <Marker
-              coordinate={{
-                latitude: searchedPlace.latitude,
-                longitude: searchedPlace.longitude,
-              }}
-            >
-              <Image
-                source={focus}
-                style={{ tintColor: "#2E3740", width: 20, height: 20 }}
-              />
-            </Marker>
-          </>
-        )}
         {searchedPlace && parkingPin}
       </MapView>
 
@@ -273,7 +277,7 @@ export default function Homescreen({ navigation }) {
           Liste des parkings
         </Text>
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

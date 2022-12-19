@@ -2,7 +2,7 @@ import { StyleSheet, View, TouchableOpacity, Text, Image } from "react-native";
 
 // CHILD OF PARKLISTSCREEN
 
-export default function ParkingListCard(props) {
+export default function FavParkCard(props) {
   // STYLE PIN PARKING
 
   let pinColor;
@@ -45,11 +45,6 @@ export default function ParkingListCard(props) {
       {/* PARKING INFOS */}
 
       <View style={styles.parkingsContainer}>
-        <View style={styles.distance}>
-          <Text style={{ fontWeight: "bold", color: "#2E3740" }}>
-            {props.distance.toFixed(0)} km
-          </Text>
-        </View>
         <Text style={{ fontWeight: "bold" }}>{props.name}</Text>
         <View style={styles.infosContainer}>
           <View style={styles.horaire}>
@@ -104,20 +99,6 @@ const styles = StyleSheet.create({
 
   // PARKING INFO
 
-  distance: {
-    zIndex: 1,
-    borderRadius: 10,
-    borderColor: "#2E3740",
-    borderWidth: 2,
-    justifyContent: "center",
-    alignItems: "center",
-    position: "absolute",
-    top: -20,
-    right: 0,
-    width: "33%",
-    height: 27,
-    backgroundColor: "#FC727B",
-  },
   infosContainer: {
     justifyContent: "space-between",
   },

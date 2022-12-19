@@ -1,4 +1,10 @@
-import Favoritescreen from "./Updatescreen";
+// COMPONENT IMPORT
+
+import UpdateProfil from "./Updatescreen";
+import FavParks from "./FavParks";
+
+// STYLE
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {
   StyleSheet,
   Text,
@@ -7,22 +13,35 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../reducers/user";
 
-export default function Settings(props) {
+// PARENT OF UpdateProfil/FAVPARKS
+
+export default function Settings() {
+  // REDUCER & DISPATCH
+
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+
+  // STATE
+
   const [updateProfil, setUpdateProfil] = useState(false);
+  const [favorisScreen, setFavorisScreen] = useState(false);
+
+  // FUNCTION
+
   const handleLogout = () => {
     dispatch(logout());
   };
+
   if (updateProfil) {
     return (
-      <Favoritescreen changeUpdateScreen={(state) => setUpdateProfil(state)} />
+      <UpdateProfil changeUpdateScreen={(state) => setUpdateProfil(state)} />
     );
+  } else if (favorisScreen) {
+    return <FavParks changeFavScreen={(state) => setFavorisScreen(state)} />;
   } else {
     return (
       <SafeAreaView style={styles.globalContainer}>
@@ -30,9 +49,12 @@ export default function Settings(props) {
           <Text style={styles.title}>
             Bonjour <Text style={styles.userName}>{user.username}</Text>
           </Text>
-          <View style={styles.themeContainer}>
+
+          {/* UPDATE PROFIL */}
+
+          <View style={styles.btnContainer}>
             <TouchableOpacity
-              style={styles.themeCard}
+              style={styles.btn}
               onPress={() => setUpdateProfil(true)}
             >
               <FontAwesome
@@ -40,18 +62,27 @@ export default function Settings(props) {
                 style={styles.cardIcon}
                 size={20}
               />
-              <View style={styles.themeTextContainer}>
-                <Text style={styles.themeText}>Modifier mon profil</Text>
+              <View style={styles.btnText}>
+                <Text style={styles.text}>Modifier mon profil</Text>
               </View>
             </TouchableOpacity>
-            <View style={styles.themeCard}>
+
+            {/* FAVORITE */}
+
+            <TouchableOpacity
+              style={styles.btn}
+              onPress={() => setFavorisScreen(true)}
+            >
               <FontAwesome name="star-o" style={styles.cardIcon} size={20} />
-              <View style={styles.themeTextContainer}>
-                <Text style={styles.themeText}>Mes parkings</Text>
+              <View style={styles.btnText}>
+                <Text style={styles.text}>Mes parkings</Text>
               </View>
-            </View>
-            <TouchableOpacity style={styles.btn} onPress={() => handleLogout()}>
-              <Text style={styles.btnText}>Déconnexion</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btnLogout}
+              onPress={() => handleLogout()}
+            >
+              <Text style={styles.logoutText}>Déconnexion</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -73,6 +104,9 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
+
+  // HEADER
+
   title: {
     color: "#FFF",
     fontSize: 30,
@@ -80,13 +114,19 @@ const styles = StyleSheet.create({
   userName: {
     color: "#FC727B",
   },
-  themeContainer: {
+
+  // BTN CONTAINER
+
+  btnContainer: {
     flex: 1,
     alignItems: "center",
     paddingTop: "25%",
     width: "100%",
   },
-  themeCard: {
+
+  // BTN
+
+  btn: {
     borderRadius: 15,
     width: "90%",
     height: "15%",
@@ -103,18 +143,21 @@ const styles = StyleSheet.create({
   cardIcon: {
     color: "#FC727B",
   },
-  themeTextContainer: {
+
+  // TEXT
+
+  btnText: {
     flex: 1,
     paddingLeft: "15%",
     height: "100%",
     justifyContent: "center",
     fontSize: 19,
   },
-  themeText: {
+  text: {
     fontSize: 18,
     color: "#2E3740",
   },
-  btn: {
+  btnLogout: {
     position: "absolute",
     bottom: "4%",
     right: "5%",
@@ -125,7 +168,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     backgroundColor: "#FC727B",
   },
-  btnText: {
+  logoutText: {
     fontSize: 18,
   },
 });

@@ -1,4 +1,5 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { login } from "../../reducers/user";
 import {
   View,
   Text,
@@ -13,17 +14,25 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState } from "react";
 import axios from "axios";
 
-export default function Signup(props) {
+// CHILD OF SETTINGS
+
+export default function UpdateProfil(props) {
+  // DISPATCH & REDUCER
+
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
+
+  // STATE
+  //  STEP
+
   const [step, setStep] = useState(0);
 
-  //   INPUT USESTATE
+  //   INPUT
 
   const [showPassword, setShowPassword] = useState(true);
   const [invalidEmail, setInvalidEmail] = useState(false);
 
-  //   USER
-  const user = useSelector((state) => state.user.value);
+  // USER
 
   const [updateUser, setUpdateUser] = useState({
     username: "",
@@ -35,12 +44,18 @@ export default function Signup(props) {
     postal: null,
   });
 
+  // FOR EMAIL TESTING
+
   const EMAIL_REGEX =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  const handleSignup = () => {
+  // INVERSE DATA FLOW
+
+  const handleUpdate = () => {
     props.changeUpdateScreen(false);
   };
+
+  // NEXT & PREVIOUS STEP
 
   const handleStepPlus = () => {
     setStep(step + 1);
@@ -50,24 +65,33 @@ export default function Signup(props) {
     setStep(step - 1);
   };
 
-  //   FORMULAIRE
+  //   FORM
+
   const formUpdate = () => {
     if (updateUser.email && !EMAIL_REGEX.test(updateUser.email)) {
       setInvalidEmail(true);
       return;
     } else {
+      setInvalidEmail(false);
       for (let value in updateUser) {
         if (!updateUser[value] || updateUser[value] === "") {
           delete updateUser[value];
         }
       }
-
       axios
         .put(
           `https://urbanparking-backend.vercel.app/users/update/${user.token}`,
           updateUser
         )
-        .then((response) => console.log(response.data));
+        .then((response) =>
+          dispatch(
+            login({
+              username: response.data.username,
+              token: response.data.token,
+            })
+          )
+        );
+      props.changeUpdateScreen(false);
     }
   };
 
@@ -127,7 +151,7 @@ export default function Signup(props) {
             size={30}
             style={{ color: "white" }}
             onPress={() => {
-              handleSignup();
+              handleUpdate();
             }}
           />
         </View>
@@ -256,13 +280,15 @@ export default function Signup(props) {
           />
 
           <View style={styles.btnContainer}>
+            {invalidEmail && (
+              <Text style={styles.mailError}>email invalide</Text>
+            )}
             <TouchableOpacity
               style={styles.btn}
               onPress={() => handleStepMoins()}
             >
               <Text style={styles.btnText}>Precedent</Text>
             </TouchableOpacity>
-            {invalidEmail && <Text>email invalid</Text>}
             <TouchableOpacity style={styles.btn} onPress={() => formUpdate()}>
               <Text style={styles.btnText}>valider le formulaire</Text>
             </TouchableOpacity>
@@ -434,6 +460,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 30,
+  },
+  mailError: {
+    fontSize: 18,
+    color: "#990000",
+    fontWeight: "bold",
   },
 
   //  STEP 2  || BUTTON

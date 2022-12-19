@@ -12,15 +12,26 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { login } from "../../reducers/user";
 
+// CHILD OF PROFILSCREEN
+
 export default function Signin(props) {
+  // DISPATCH & REDUCER
+
   const dispatch = useDispatch();
   const users = useSelector((state) => state.user.value);
+
+  // STATE
+
   const [user, setUser] = useState({ username: "", password: "" });
   const [securePassword, setSecurePassword] = useState(true);
+
+  // INVERSE DATA FLOW
 
   const handleSignin = () => {
     props.changeSignin(false);
   };
+
+  // FORM
 
   const validateSignin = () => {
     axios
@@ -35,6 +46,8 @@ export default function Signin(props) {
       });
   };
 
+  // EYE STYLE
+
   let eye;
   if (!securePassword) {
     eye = "eye-slash";
@@ -46,6 +59,8 @@ export default function Signin(props) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.globalContainer}
     >
+      {/* HEADER */}
+
       <View style={styles.header}>
         <View style={styles.icon}>
           <FontAwesome
@@ -57,6 +72,9 @@ export default function Signin(props) {
         </View>
         <Text style={styles.title}>Connexion</Text>
       </View>
+
+      {/* FIELD FOR CONNECTION */}
+
       <View style={styles.inputContainer}>
         <TextInput
           placeholder="Nom d'utilisateur"
@@ -103,7 +121,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 
-  //   TITLE
+  //   HEADER
 
   header: {
     flexDirection: "row",
@@ -126,6 +144,9 @@ const styles = StyleSheet.create({
     paddingRight: "15%",
     color: "#FFF",
   },
+
+  // FIELDS
+
   inputContainer: {
     flex: 1,
     width: "100%",

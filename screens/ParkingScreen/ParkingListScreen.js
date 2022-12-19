@@ -1,5 +1,6 @@
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import ParkingListCard from "./parkingListCard";
 import ParkingSelected from "./ParkingSelected";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {
   View,
   Text,
@@ -9,13 +10,22 @@ import {
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useState } from "react";
-import ParkingListCard from "./parkingListCard";
+
+// PARENT OF PARKINGSELECTED/ PARKINGLISTCARD
+
 export default function Parkingscreen({ navigation }) {
+  // REDUCER
+
   const parkReducer = useSelector((state) => state.parking.value.parkingList);
   const [parkingClicked, setParkingClicked] = useState(null);
+
+  // STATE
+
   const [showClickedParking, setShowClickedParking] = useState(false);
   const [filteredByDispo, setFilteredByDispo] = useState(false);
   const [filteredByPlaces, setFilteredByPlaces] = useState(false);
+
+  // FILTER TITLE
 
   let filterTitle;
   if (filteredByDispo) {
@@ -27,6 +37,9 @@ export default function Parkingscreen({ navigation }) {
   if (!filteredByPlaces && !filteredByDispo) {
     filterTitle = "Aucun";
   }
+
+  // PARKING
+
   const parking = parkReducer.map((el, i) => {
     return (
       <ParkingListCard
@@ -37,6 +50,8 @@ export default function Parkingscreen({ navigation }) {
       />
     );
   });
+
+  // PARKING BY PLACES
 
   const parkingFilteredByPlace = [...parkReducer]
     .sort((a, b) => {
@@ -52,6 +67,8 @@ export default function Parkingscreen({ navigation }) {
         />
       );
     });
+
+  // PARKING DISPO
 
   const parkingFilteredByDispo = parkReducer
     .filter((el, i) => {
@@ -76,6 +93,8 @@ export default function Parkingscreen({ navigation }) {
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={styles.globalContainer}
     >
+      {/* POP UP OF THIS PARKING */}
+
       {showClickedParking && (
         <View style={styles.popupContainer}>
           <ParkingSelected
@@ -84,6 +103,9 @@ export default function Parkingscreen({ navigation }) {
           />
         </View>
       )}
+
+      {/* HEADER */}
+
       <View style={styles.header}>
         <View style={styles.icon}>
           <FontAwesome
@@ -108,6 +130,9 @@ export default function Parkingscreen({ navigation }) {
       >
         Filtre : {filterTitle}
       </Text>
+
+      {/* BUTTON */}
+
       <View style={styles.filterBtnContainer}>
         <TouchableOpacity
           style={styles.btn}
@@ -128,6 +153,9 @@ export default function Parkingscreen({ navigation }) {
           <Text style={styles.btnText}>Dispo</Text>
         </TouchableOpacity>
       </View>
+
+      {/* PARKING LIST CONTAINER */}
+
       <View style={styles.ParkingsContainer}>
         <ScrollView
           style={{
@@ -137,6 +165,8 @@ export default function Parkingscreen({ navigation }) {
             paddingTop: 30,
           }}
         >
+          {/* THE DISPLAY DEPENDS ON THE STATE */}
+
           {!filteredByDispo && !filteredByPlaces && parking}
           {filteredByDispo && parkingFilteredByDispo}
           {filteredByPlaces && parkingFilteredByPlace}
@@ -187,6 +217,8 @@ const styles = StyleSheet.create({
     color: "#FFF",
   },
 
+  // PARKING LIST CONTAINER
+
   ParkingsContainer: {
     width: "90%",
     height: "80%",
@@ -194,6 +226,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "white",
   },
+
+  // BTN CONTAINER
+
   filterBtnContainer: {
     flexDirection: "row",
     marginBottom: 10,

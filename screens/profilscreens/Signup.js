@@ -14,8 +14,15 @@ import { login } from "../../reducers/user";
 import { useState } from "react";
 import axios from "axios";
 
+// CHILD OF PROFILSCREEN
+
 export default function Signup(props) {
+  // DISPATCH & REDUCER
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.value);
+
+  // STEP USESTATE
+
   const [step, setStep] = useState(0);
 
   //   INPUT USESTATE
@@ -23,8 +30,7 @@ export default function Signup(props) {
   const [emptyFields, setEmptyFields] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
 
-  //   USER
-  const user = useSelector((state) => state.user.value);
+  //   USER USESTATE
 
   const [newUser, setNewUser] = useState({
     username: "",
@@ -37,17 +43,20 @@ export default function Signup(props) {
     postal: null,
   });
 
+  // EMAIL TESTING
+
   const EMAIL_REGEX =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  // INVERSE DATA FLOW
 
   const handleSignup = () => {
     props.changeSignup(false);
   };
 
+  // NEXT/PREVIOUS STEP
+
   const handleStepPlus = () => {
-    if (step === 2) {
-      return;
-    }
     setStep(step + 1);
   };
 
@@ -55,7 +64,8 @@ export default function Signup(props) {
     setStep(step - 1);
   };
 
-  //   FORMULAIRE
+  //   FORM
+
   const formSubmit = () => {
     // CHECK FIELDS EMPTY OR NOT
 
@@ -69,6 +79,7 @@ export default function Signup(props) {
     });
 
     // PUSH IN DB IF MAIL & NOT EMPTY field
+
     if (!emptyFields && EMAIL_REGEX.test(newUser.email)) {
       setShowPassword(false);
       axios
@@ -156,6 +167,7 @@ export default function Signup(props) {
           <View style={[styles.progressBarCircle, styles.circle3]}></View>
 
           {/* BAR Inside  */}
+
           <View style={barInsideStyle}>
             <View
               style={[styles.progressBarCircleInside, styles.circle1Inside]}
@@ -338,6 +350,7 @@ const styles = StyleSheet.create({
     height: "10%",
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 20,
   },
   progressBarEmpty: {
     borderWidth: 1.5,
@@ -450,6 +463,7 @@ const styles = StyleSheet.create({
   },
 
   //   BUTTON
+
   btnContainer: {
     width: "100%",
     alignItems: "center",
@@ -465,6 +479,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 30,
+  },
+  btnText: {
+    fontWeight: "bold",
   },
 
   //  STEP 2  || BUTTON

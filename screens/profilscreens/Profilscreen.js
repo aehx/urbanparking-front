@@ -7,14 +7,22 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import Settings from "./Settings";
+import Settings from "./settings";
 import Signin from "../profilscreens/Signin";
 import Signup from "../profilscreens/Signup";
 
+// PARENT OF SIGNIN/SIGNUP/SETTING
+
 export default function Profilscreen() {
+  // REDUCER
   const user = useSelector((state) => state.user.value);
+
+  // STATE
   const [showSignin, setShowSignin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+
+  // REDIRECT DEPENDS OF USER ALREADY CONNECTED OR NOT
+
   if (user.token) {
     return (
       <Settings
@@ -33,6 +41,8 @@ export default function Profilscreen() {
           <Text style={styles.title}>Bienvenue sur</Text>
           <Text style={styles.title}>Urban Parkings</Text>
           <View style={styles.btnContainer}>
+            {/* INVERSE DATA FLOW */}
+
             <TouchableOpacity
               style={styles.btn}
               onPress={() => setShowSignup(true)}

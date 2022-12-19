@@ -1,8 +1,25 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
-import { useState } from "react";
-import MapView, { Marker, Circle } from "react-native-maps";
+import axios from "axios";
+import { favorisPark } from "../../reducers/user";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  Linking,
+} from "react-native";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import MapView, { Marker } from "react-native-maps";
 export default function ParkingSelected(props) {
+  // REDUCER & DISPATCH
+
+  const dispatch = useDispatch();
+  const userFav = useSelector((state) => state.user.value.favorisPark);
+  const user = useSelector((state) => state.user.value);
+
+  // STATE
+
   const [parkingLocation, setParkingLocation] = useState({
     latitude: props.latitude,
     longitude: props.longitude,
@@ -10,11 +27,57 @@ export default function ParkingSelected(props) {
     longitudeDelta: 0.05,
   });
 
+  // STAR ICON & COLOR
+
+  let starColor;
+  let starIcon;
+
+  if (userFav.includes(props.id)) {
+    starColor = { color: "yellow" };
+    starIcon = "star";
+  } else {
+    starIcon = "star-o";
+    starColor = { color: "white" };
+  }
+
+  // COMPONENT INIT
+
+  useEffect(() => {
+    axios
+      .get(
+        `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`
+      )
+      .then((response) => {
+        if (response.data.favoris.length > 0) {
+          dispatch(favorisPark(response.data.favoris));
+        }
+      });
+  }, []);
+
+  // MODIFY IN DB
+
+  const addToFavoris = async () => {
+    await axios.put(
+      `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`,
+      { parkId: props.id }
+    );
+    dispatch(favorisPark(props.id));
+  };
+
+  // MAP REDIRECTION
+
+  const scheme = Platform.select({ ios: "maps:0,0?q=", android: "geo:0,0?q=" });
+  const latLng = `${parkingLocation.latitude},${parkingLocation.longitude}`;
+  const label = `${props.name}`;
+  const url = Platform.select({
+    ios: `${scheme}${label}@${latLng}`,
+    android: `${scheme}${latLng}(${label})`,
+  });
+
   return (
-    <View
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.globalContainer}
-    >
+    <View style={styles.globalContainer}>
+      {/* HEADER */}
+
       <View
         style={[
           styles.header,
@@ -34,18 +97,21 @@ export default function ParkingSelected(props) {
           }}
         />
         <FontAwesome
-          name="star-o"
+          name={starIcon}
           size={30}
-          style={{ color: "white" }}
+          style={starColor}
           onPress={() => {
-            props.changeState(false);
+            addToFavoris();
           }}
         />
       </View>
       <View style={styles.header}>
         <Text style={styles.title}>{props.name}</Text>
       </View>
-      <View style={styles.inputContainer}>
+
+      {/* MAP */}
+
+      <View style={styles.mapContainer}>
         <MapView region={parkingLocation} style={styles.map}>
           <Marker
             coordinate={{
@@ -55,11 +121,20 @@ export default function ParkingSelected(props) {
             title={props.name}
           ></Marker>
         </MapView>
-        <TouchableOpacity style={styles.btn}>
+
+        {/* REDIRECT GOOGLE MAP */}
+
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => Linking.openURL(url)}
+        >
           <FontAwesome name="car" size={20} />
           <Text>Y aller</Text>
           <FontAwesome name="car" size={20} />
         </TouchableOpacity>
+
+        {/* PARK INFOS */}
+
         <View style={styles.textContainer}>
           <View>
             <Text style={styles.text}>
@@ -109,7 +184,10 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#FFF",
   },
-  inputContainer: {
+
+  // MAP
+
+  mapContainer: {
     marginTop: "5%",
     flex: 1,
     width: "100%",
@@ -123,6 +201,9 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     borderColor: "#FC727B",
   },
+
+  // BTN REDIRECT GOOGLE MAP
+
   btn: {
     flexDirection: "row",
     backgroundColor: "#FC727B",
