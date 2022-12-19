@@ -1,4 +1,5 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import ReviewScreen from "../ParkingScreen/ReviewScreen";
 import axios from "axios";
 import { favorisPark } from "../../reducers/user";
 import {
@@ -26,6 +27,7 @@ export default function ParkingSelected(props) {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
+  const [showComs, setShowComs] = useState(false);
 
   // STAR ICON & COLOR
 
@@ -77,7 +79,6 @@ export default function ParkingSelected(props) {
   return (
     <View style={styles.globalContainer}>
       {/* HEADER */}
-
       <View
         style={[
           styles.header,
@@ -128,9 +129,9 @@ export default function ParkingSelected(props) {
           style={styles.btn}
           onPress={() => Linking.openURL(url)}
         >
-          <FontAwesome name="car" size={20} />
+          <FontAwesome name="car" size={20} style={{ color: "#2E3740" }} />
           <Text>Y aller</Text>
-          <FontAwesome name="car" size={20} />
+          <FontAwesome name="car" size={20} style={{ color: "#2E3740" }} />
         </TouchableOpacity>
 
         {/* PARK INFOS */}
@@ -145,7 +146,22 @@ export default function ParkingSelected(props) {
             <Text style={styles.text}>{props.horaire}</Text>
           </View>
         </View>
+        <TouchableOpacity
+          style={[styles.btn]}
+          onPress={() => setShowComs(true)}
+        >
+          <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
+          <Text>Avis</Text>
+          <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
+        </TouchableOpacity>
       </View>
+
+      {showComs && (
+        <ReviewScreen
+          toggleComPage={(state) => setShowComs(state)}
+          id={props.id}
+        />
+      )}
     </View>
   );
 }
@@ -218,11 +234,15 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   textContainer: {
+    justifyContent: "center",
+    alignItems: "center",
     width: "90%",
+    marginBottom: 30,
   },
   text: {
     fontSize: 20,
     fontWeight: "bold",
     color: "white",
+    marginTop: 10,
   },
 });

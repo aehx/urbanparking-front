@@ -36,10 +36,7 @@ export default function FavParkCard(props) {
       {/* PICTURE */}
 
       <View style={styles.imageContainer}>
-        <Image
-          source={require("../../assets/parkingPicture.jpg")}
-          style={styles.image}
-        />
+        <Image source={require("../../assets/park.png")} style={styles.image} />
       </View>
 
       {/* PARKING INFOS */}

@@ -37,8 +37,8 @@ export default function ParkingListCard(props) {
 
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../assets/parkingPicture.jpg")}
-          style={styles.image}
+          source={require("../../assets/park.png")}
+          style={[styles.image, { tintColor: "#2E3740" }]}
         />
       </View>
 
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    resizeMode: "cover",
+    resizeMode: "contain",
     borderRadius: 10,
   },
 
