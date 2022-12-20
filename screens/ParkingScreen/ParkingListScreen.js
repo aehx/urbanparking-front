@@ -162,7 +162,7 @@ export default function Parkingscreen({ navigation }) {
             width: "100%",
             height: "100%",
             backgroundColor: "#2E3740",
-            paddingTop: 30,
+            paddingTop: 20, // PREVIOUS paddingtop 30
           }}
         >
           {/* THE DISPLAY DEPENDS ON THE STATE */}
@@ -202,7 +202,6 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   icon: {
-    alignItems: "center",
     justifyContent: "center",
     width: "15%",
     height: "100%",
@@ -213,7 +212,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
-    paddingRight: "15%",
+    paddingRight: "10%",
     color: "#FFF",
   },
 
@@ -221,8 +220,8 @@ const styles = StyleSheet.create({
 
   ParkingsContainer: {
     width: "90%",
-    height: "80%",
-    justifycontent: "center",
+    height: "75%", // PREVIOUS 80%
+    justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
   },
@@ -232,6 +231,8 @@ const styles = StyleSheet.create({
   filterBtnContainer: {
     flexDirection: "row",
     marginBottom: 10,
+    alignItems: "center",
+    justifyContent: "center",
   },
   btn: {
     marginRight: 10,

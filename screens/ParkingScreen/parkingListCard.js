@@ -1,4 +1,11 @@
-import { StyleSheet, View, TouchableOpacity, Text, Image } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  Text,
+  Image,
+  Platform, // NEW IMPORT
+} from "react-native";
 
 // CHILD OF PARKLISTSCREEN
 
@@ -85,8 +92,15 @@ const styles = StyleSheet.create({
   },
   parkingsContainer: {
     flex: 1,
-    height: "100%",
-    paddingTop: 10,
+    flexDirection: "column", // NEW
+    //height: "100%", // PREVIOUS VALUE
+    paddingTop: 5, // PREVIOUS 10
+    height: Platform.OS === "android" ? 80 : null,
+    marginTop: Platform.OS === "android" ? 24 : null,
+    /*...Platform.select({
+      ios: { backgroundColor: "#f00" },
+      android: { backgroundColor: "yellow" },
+    }),*/
   },
 
   // PICTURE
@@ -119,13 +133,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#FC727B",
   },
   infosContainer: {
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
   },
   horaire: {
-    marginTop: 10,
+    // marginTop: 10, // PREVIOUS VERSION
+    marginTop: 1,
   },
   freeplace: {
-    marginTop: 10,
+    // marginTop: 10, // PERVIOUS VERSION
   },
   pinFreeplaces: {
     position: "absolute",
@@ -133,6 +148,6 @@ const styles = StyleSheet.create({
     right: "5%",
     height: 15,
     width: 15,
-    borderRadius: "50%",
+    borderRadius: 50,
   },
 });
