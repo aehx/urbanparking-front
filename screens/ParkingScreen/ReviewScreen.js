@@ -15,9 +15,11 @@ import { useEffect, useState } from "react";
 
 export default function ComParkScreen(props) {
   const [reviewData, setReviewData] = useState(null);
+  const [count, setCount] = useState(0);
   const [showPostReview, setShowPostReview] = useState(false);
 
   useEffect(() => {
+    console.log("render");
     axios
       .get(`https://urbanparking-backend.vercel.app/review/all/${props.id}`)
       .then((response) => {
@@ -25,7 +27,7 @@ export default function ComParkScreen(props) {
           setReviewData(response.data.review);
         }
       });
-  }, []);
+  }, [showPostReview, count]);
 
   let reviews;
   if (reviewData !== null) {
@@ -67,6 +69,14 @@ export default function ComParkScreen(props) {
           />
         </View>
         <Text style={styles.title}>Avis</Text>
+        <View style={styles.icon}>
+          <FontAwesome
+            name="refresh"
+            size={30}
+            style={{ color: "white" }}
+            onPress={() => setCount(count + 1)}
+          />
+        </View>
       </View>
       <View style={styles.ParkingsContainer}>
         <ScrollView style={styles.ScrollView}>{reviews}</ScrollView>
@@ -109,18 +119,16 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "15%",
     height: "100%",
-    paddingLeft: 20,
   },
   title: {
     flex: 1,
     fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
-    paddingRight: "15%",
     color: "#FFF",
   },
   ParkingsContainer: {
-    width: "90%",
+    width: "100%",
     height: "80%",
     justifycontent: "center",
     alignItems: "center",
@@ -131,6 +139,7 @@ const styles = StyleSheet.create({
     height: "100%",
     marginBottom: 10,
     paddingTop: 30,
+    paddingHorizontal: 20,
   },
   btn: {
     flexDirection: "row",

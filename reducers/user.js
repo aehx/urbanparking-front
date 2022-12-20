@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  value: { token: null, username: null, favorisPark: [] },
+  value: { token: null, username: null, favorisPark: [], theme: false },
 };
 
 export const userSlice = createSlice({
@@ -17,6 +17,7 @@ export const userSlice = createSlice({
       state.value.token = null;
       state.value.username = null;
       state.value.firstname = null;
+      state.value.favorisPark = [];
     },
     favorisPark: (state, action) => {
       const isFav = state.value.favorisPark.includes(action.payload);
@@ -29,8 +30,11 @@ export const userSlice = createSlice({
         state.value.favorisPark.push(action.payload);
       }
     },
+    changeTheme: (state, action) => {
+      state.value.theme = action.payload;
+    },
   },
 });
 
-export const { login, logout, favorisPark } = userSlice.actions;
+export const { login, logout, favorisPark, changeTheme } = userSlice.actions;
 export default userSlice.reducer;

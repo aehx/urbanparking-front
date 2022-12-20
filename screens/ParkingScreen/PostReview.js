@@ -106,12 +106,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#2E3740",
   },
-  ScrollView: {
-    width: "100%",
-    height: "100%",
-    marginBottom: 10,
-    paddingTop: 30,
-  },
   btn: {
     flexDirection: "row",
     backgroundColor: "#FC727B",

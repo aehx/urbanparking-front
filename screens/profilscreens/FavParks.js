@@ -18,7 +18,7 @@ export default function FavPark(props) {
   const userFav = useSelector((state) => state.user.value.favorisPark);
 
   // STATE
-
+  const [count, setCount] = useState(0);
   const [userFavoris, setUserFavoris] = useState([]);
   const [parkingClicked, setParkingClicked] = useState(null);
   const [showClickedParking, setShowClickedParking] = useState(false);
@@ -47,7 +47,7 @@ export default function FavPark(props) {
 
   useEffect(() => {
     parking();
-  }, []);
+  }, [count]);
 
   const handleFav = () => {
     props.changeFavScreen(false);
@@ -94,6 +94,14 @@ export default function FavPark(props) {
           />
         </View>
         <Text style={styles.title}>Mes parkings</Text>
+        <View style={styles.icon}>
+          <FontAwesome
+            name="refresh"
+            size={30}
+            style={{ color: "white" }}
+            onPress={() => setCount(count + 1)}
+          />
+        </View>
       </View>
       <View style={styles.ParkingsContainer}>
         <ScrollView
@@ -141,14 +149,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     width: "15%",
     height: "100%",
-    paddingLeft: 20,
   },
   title: {
     flex: 1,
     fontSize: 30,
     fontWeight: "bold",
     textAlign: "center",
-    paddingRight: "15%",
     color: "#FFF",
   },
 

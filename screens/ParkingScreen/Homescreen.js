@@ -122,6 +122,8 @@ export default function Homescreen({ navigation }) {
           distanceBetween < 60 && dispatch(addParking(parkingFound));
         }
       });
+    } else {
+      dispatch(removeParking());
     }
   };
 
@@ -157,7 +159,7 @@ export default function Homescreen({ navigation }) {
               longitude: el.geometry.coordinates[0],
               latitude: el.geometry.coordinates[1],
             }}
-            title={String(el.fields.counterfreeplaces)}
+            title={String(el.fields.nom_parking)}
           >
             <Image source={parkPin} style={[styles.image, pinStyle]} />
           </Marker>
