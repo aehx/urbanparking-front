@@ -34,7 +34,7 @@ export default function ParkingSelected(props) {
   let starColor;
   let starIcon;
 
-  if (userFav.includes(props.id)) {
+  if (userFav && userFav.includes(props.id)) {
     starColor = { color: "yellow" };
     starIcon = "star";
   } else {

@@ -12,6 +12,7 @@ import {
   Keyboard,
   Image,
   KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import axios from "axios";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -225,7 +226,7 @@ export default function Homescreen({ navigation }) {
   };
   return (
     <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "" : null}
+      // behavior={Platform.OS === "ios" ? "" : null} ----- ANCIENNE PLATFORME
       style={styles.container}
     >
       {/* MAP */}
@@ -287,6 +288,9 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     flex: 1,
+    //height: "%",
+    height: Platform.OS === "android" ? 76 : null,
+    marginTop: Platform.OS === "android" ? 24 : null,
   },
 
   // INPUT
@@ -393,7 +397,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: "3%",
     right: "5%",
-    height: "4%",
+    height: 24, // CHANGEMENT
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
