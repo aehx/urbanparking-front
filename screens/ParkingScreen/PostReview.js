@@ -15,11 +15,25 @@ import { useSelector } from "react-redux";
 
 export default function ComParkScreen(props) {
   const user = useSelector((state) => state.user.value);
+  const theme = useSelector((state) => state.user.value.theme);
   const [reviewContent, setReviewContent] = useState("");
 
   const showPostReview = () => {
     props.togglePostReview(false);
   };
+
+  // THEME
+
+  let text;
+  let bgCard;
+  let border;
+  let bgBtn;
+  if (theme) {
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+    border = { borderColor: "#87BBDD", borderWidth: 3 };
+  }
 
   const postReview = () => {
     axios
@@ -33,28 +47,31 @@ export default function ComParkScreen(props) {
   };
 
   return (
-    <Animated.View entering={SlideInDown} style={styles.container}>
-      <View style={styles.header}>
+    <Animated.View entering={SlideInDown} style={[styles.container]}>
+      <View style={[styles.header, bgCard]}>
         <View style={styles.icon}>
           <FontAwesome
             name="arrow-left"
             size={30}
-            style={{ color: "white" }}
+            style={[{ color: "white" }, text]}
             onPress={() => showPostReview()}
           />
         </View>
-        <Text style={styles.title}>Votre avis</Text>
+        <Text style={[styles.title, text]}>Votre avis</Text>
       </View>
-      <View style={styles.ParkingsContainer}>
+      <View style={[styles.ParkingsContainer, bgCard]}>
         <TextInput
           placeholder="Votre avis..."
           multiline={true}
           numberOfLines={4}
           onChangeText={(e) => setReviewContent(e)}
           value={reviewContent}
-          style={styles.reviewInput}
+          style={[styles.reviewInput, border]}
         />
-        <TouchableOpacity style={[styles.btn]} onPress={() => postReview()}>
+        <TouchableOpacity
+          style={[styles.btn, bgBtn]}
+          onPress={() => postReview()}
+        >
           <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
           <Text style={{ fontWeight: "bold", color: "#2E3740" }}>Envoyer</Text>
           <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />

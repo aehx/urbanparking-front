@@ -1,5 +1,6 @@
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useSelector } from "react-redux";
 
 // NAVIGATION
 
@@ -46,6 +47,16 @@ const Tab = createBottomTabNavigator();
 // TAB NAVIGATOR
 
 const TabNavigator = (props) => {
+  const theme = useSelector((state) => state.user.value.theme);
+
+  // THEME
+
+  let icon;
+  if (theme) {
+    icon = "#87BBDD";
+  } else {
+    icon = "#FC727B";
+  }
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -62,7 +73,7 @@ const TabNavigator = (props) => {
 
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
-        tabBarActiveTintColor: "#FC727B",
+        tabBarActiveTintColor: icon,
         tabBarInactiveTintColor: "#2E3740",
         headerShown: false,
       })}

@@ -24,11 +24,29 @@ export default function Settings() {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+  const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
 
   const [updateProfil, setUpdateProfil] = useState(false);
   const [favorisScreen, setFavorisScreen] = useState(false);
+
+  // THEME
+
+  let text;
+  let bgCard;
+  let border;
+  let icon;
+  let userText;
+  let bgBtn;
+  if (theme) {
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+    userText = { color: "#87BBDD" };
+    icon = { color: "#87BBDD" };
+    border = { borderColor: "#87BBDD" };
+  }
 
   // FUNCTION
 
@@ -44,22 +62,23 @@ export default function Settings() {
     return <FavParks changeFavScreen={(state) => setFavorisScreen(state)} />;
   } else {
     return (
-      <SafeAreaView style={styles.globalContainer}>
-        <View style={styles.container}>
-          <Text style={styles.title}>
-            Bonjour <Text style={styles.userName}>{user.username}</Text>
+      <SafeAreaView style={[styles.globalContainer]}>
+        <View style={[styles.container, bgCard]}>
+          <Text style={[styles.title, text]}>
+            Bonjour{" "}
+            <Text style={[styles.userName, userText]}>{user.username}</Text>
           </Text>
 
           {/* UPDATE PROFIL */}
 
           <View style={styles.btnContainer}>
             <TouchableOpacity
-              style={styles.btn}
+              style={[styles.btn, border]}
               onPress={() => setUpdateProfil(true)}
             >
               <FontAwesome
                 name="pencil-square-o"
-                style={styles.cardIcon}
+                style={[styles.cardIcon, icon]}
                 size={20}
               />
               <View style={styles.btnText}>
@@ -70,16 +89,20 @@ export default function Settings() {
             {/* FAVORITE */}
 
             <TouchableOpacity
-              style={styles.btn}
+              style={[styles.btn, border]}
               onPress={() => setFavorisScreen(true)}
             >
-              <FontAwesome name="star-o" style={styles.cardIcon} size={20} />
+              <FontAwesome
+                name="star-o"
+                style={[styles.cardIcon, icon]}
+                size={20}
+              />
               <View style={styles.btnText}>
                 <Text style={styles.text}>Mes parkings</Text>
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.btnLogout}
+              style={[styles.btnLogout, bgBtn]}
               onPress={() => handleLogout()}
             >
               <Text style={styles.logoutText}>Déconnexion</Text>
@@ -94,7 +117,7 @@ export default function Settings() {
 const styles = StyleSheet.create({
   globalContainer: {
     flex: 1,
-    backgroundColor: "#333",
+    backgroundColor: "#2E3740",
   },
   container: {
     flex: 1,

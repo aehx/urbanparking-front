@@ -7,6 +7,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useState } from "react";
@@ -17,10 +18,11 @@ export default function Parkingscreen({ navigation }) {
   // REDUCER
 
   const parkReducer = useSelector((state) => state.parking.value.parkingList);
-  const [parkingClicked, setParkingClicked] = useState(null);
+  const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
 
+  const [parkingClicked, setParkingClicked] = useState(null);
   const [showClickedParking, setShowClickedParking] = useState(false);
   const [filteredByDispo, setFilteredByDispo] = useState(false);
   const [filteredByPlaces, setFilteredByPlaces] = useState(false);
@@ -36,6 +38,17 @@ export default function Parkingscreen({ navigation }) {
   }
   if (!filteredByPlaces && !filteredByDispo) {
     filterTitle = "Aucun";
+  }
+
+  // THEME
+
+  let text;
+  let bgCard;
+  let bgBtn;
+  if (theme) {
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
   }
 
   // PARKING
@@ -89,102 +102,111 @@ export default function Parkingscreen({ navigation }) {
     });
 
   return (
-    <View
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.globalContainer}
-    >
-      {/* POP UP OF THIS PARKING */}
+    <SafeAreaView style={[styles.globalContainer]}>
+      <View style={[styles.container, bgCard]}>
+        {/* POP UP OF THIS PARKING */}
 
-      {showClickedParking && (
-        <View style={styles.popupContainer}>
-          <ParkingSelected
-            {...parkingClicked}
-            changeState={(state) => setShowClickedParking(state)}
-          />
+        {showClickedParking && (
+          <View style={styles.popupContainer}>
+            <ParkingSelected
+              {...parkingClicked}
+              changeState={(state) => setShowClickedParking(state)}
+            />
+          </View>
+        )}
+
+        {/* HEADER */}
+
+        <View style={styles.header}>
+          <View style={styles.icon}>
+            <FontAwesome
+              name="arrow-left"
+              size={30}
+              style={[{ color: "white" }, text]}
+              onPress={() =>
+                navigation.navigate("TabNavigator", { screen: "Homescreen" })
+              }
+            />
+          </View>
+          <Text style={[styles.title, text]}>Liste de parkings</Text>
         </View>
-      )}
+        <Text
+          style={[
+            styles.title,
+            {
+              fontSize: 20,
+              paddingRight: 0,
+            },
+            text,
+          ]}
+        >
+          Filtre : {filterTitle}
+        </Text>
 
-      {/* HEADER */}
+        {/* BUTTON */}
 
-      <View style={styles.header}>
-        <View style={styles.icon}>
-          <FontAwesome
-            name="arrow-left"
-            size={30}
-            style={{ color: "white" }}
-            onPress={() =>
-              navigation.navigate("TabNavigator", { screen: "Homescreen" })
-            }
-          />
+        <View style={styles.filterBtnContainer}>
+          <TouchableOpacity
+            style={[styles.btn, bgBtn]}
+            onPress={() => {
+              setFilteredByPlaces(!filteredByPlaces);
+              setFilteredByDispo(false);
+            }}
+          >
+            <Text style={styles.btnText}>Proche</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.btn, bgBtn]}
+            onPress={() => {
+              setFilteredByDispo(!filteredByDispo);
+              setFilteredByPlaces(false);
+            }}
+          >
+            <Text style={styles.btnText}>Dispo</Text>
+          </TouchableOpacity>
         </View>
-        <Text style={styles.title}>Liste de parkings</Text>
+
+        {/* PARKING LIST CONTAINER */}
+
+        <View style={styles.ParkingsContainer}>
+          <ScrollView
+            style={[
+              {
+                width: "100%",
+                height: "100%",
+                backgroundColor: "#2E3740",
+                paddingTop: 20,
+              },
+              bgCard,
+            ]}
+          >
+            {/* THE DISPLAY DEPENDS ON THE STATE */}
+
+            {!filteredByDispo && !filteredByPlaces && parking}
+            {filteredByDispo && parkingFilteredByDispo}
+            {filteredByPlaces && parkingFilteredByPlace}
+          </ScrollView>
+        </View>
       </View>
-      <Text
-        style={[
-          styles.title,
-          {
-            fontSize: 20,
-            paddingRight: 0,
-          },
-        ]}
-      >
-        Filtre : {filterTitle}
-      </Text>
-
-      {/* BUTTON */}
-
-      <View style={styles.filterBtnContainer}>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            setFilteredByPlaces(!filteredByPlaces);
-            setFilteredByDispo(false);
-          }}
-        >
-          <Text style={styles.btnText}>Proche</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            setFilteredByDispo(!filteredByDispo);
-            setFilteredByPlaces(false);
-          }}
-        >
-          <Text style={styles.btnText}>Dispo</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* PARKING LIST CONTAINER */}
-
-      <View style={styles.ParkingsContainer}>
-        <ScrollView
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: "#2E3740",
-            paddingTop: 30,
-          }}
-        >
-          {/* THE DISPLAY DEPENDS ON THE STATE */}
-
-          {!filteredByDispo && !filteredByPlaces && parking}
-          {filteredByDispo && parkingFilteredByDispo}
-          {filteredByPlaces && parkingFilteredByPlace}
-        </ScrollView>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   globalContainer: {
     position: "absolute",
-    bottom: 0,
+    bottom: "-10%",
     left: 0,
-    paddingTop: "20%",
     width: "100%",
-    height: "100%",
+    height: "110%",
     backgroundColor: "#2E3740",
+    alignItems: "center",
+  },
+  container: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "#2E3740",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   popupContainer: {

@@ -9,6 +9,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
+  SafeAreaView,
 } from "react-native";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
@@ -16,6 +17,7 @@ import { useEffect, useState } from "react";
 export default function FavPark(props) {
   // REDUCER
   const userFav = useSelector((state) => state.user.value.favorisPark);
+  const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
   const [count, setCount] = useState(0);
@@ -23,6 +25,18 @@ export default function FavPark(props) {
   const [parkingClicked, setParkingClicked] = useState(null);
   const [showClickedParking, setShowClickedParking] = useState(false);
 
+  // THEME
+
+  let text;
+  let bgCard;
+  let icon;
+  if (theme) {
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    icon = { color: "#87BBDD" };
+  }
+
+  console.log(userFav);
   // FUNCTION
 
   // GET USER FAVPARK
@@ -36,6 +50,7 @@ export default function FavPark(props) {
         let favPark = [];
         const fav = response.data.records.forEach((el) => {
           if (userFav.includes(el.recordid)) {
+            console.log("_______----------------_______", el);
             favPark.push(el);
           }
         });
@@ -72,62 +87,74 @@ export default function FavPark(props) {
   });
 
   return (
-    <View
+    <SafeAreaView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.globalContainer}
+      style={[styles.globalContainer]}
     >
-      {showClickedParking && (
-        <View style={styles.popupContainer}>
-          <ParkingSelected
-            {...parkingClicked}
-            changeState={(state) => setShowClickedParking(state)}
-          />
+      <View style={[styles.container, bgCard]}>
+        {showClickedParking && (
+          <View style={[styles.popupContainer]}>
+            <ParkingSelected
+              {...parkingClicked}
+              changeState={(state) => setShowClickedParking(state)}
+            />
+          </View>
+        )}
+        <View style={styles.header}>
+          <View style={styles.icon}>
+            <FontAwesome
+              name="arrow-left"
+              size={30}
+              style={[{ color: "white" }, text]}
+              onPress={() => handleFav()}
+            />
+          </View>
+          <Text style={[styles.title, text]}>Mes parkings</Text>
+          <View style={styles.icon}>
+            <FontAwesome
+              name="refresh"
+              size={25}
+              style={[{ color: "white" }, text]}
+              onPress={() => setCount(count + 1)}
+            />
+          </View>
         </View>
-      )}
-      <View style={styles.header}>
-        <View style={styles.icon}>
-          <FontAwesome
-            name="arrow-left"
-            size={30}
-            style={{ color: "white" }}
-            onPress={() => handleFav()}
-          />
-        </View>
-        <Text style={styles.title}>Mes parkings</Text>
-        <View style={styles.icon}>
-          <FontAwesome
-            name="refresh"
-            size={30}
-            style={{ color: "white" }}
-            onPress={() => setCount(count + 1)}
-          />
+        <View style={styles.ParkingsContainer}>
+          <ScrollView
+            style={[
+              {
+                width: "100%",
+                height: "100%",
+                backgroundColor: "#2E3740",
+                paddingTop: 30,
+              },
+              bgCard,
+            ]}
+          >
+            {test}
+          </ScrollView>
         </View>
       </View>
-      <View style={styles.ParkingsContainer}>
-        <ScrollView
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: "#2E3740",
-            paddingTop: 30,
-          }}
-        >
-          {test}
-        </ScrollView>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   globalContainer: {
     position: "absolute",
-    bottom: 0,
     left: 0,
     paddingTop: "20%",
     width: "100%",
     height: "100%",
     backgroundColor: "#2E3740",
+    alignItems: "center",
+  },
+  container: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "#2E3740",
+    paddingTop: "10%",
+    justifyContent: "flex-start",
     alignItems: "center",
   },
   popupContainer: {
