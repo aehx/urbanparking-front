@@ -3,7 +3,16 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 
 export default function ComParkCard(props) {
+  const x = new Date(props.date);
+
   const theme = useSelector((state) => state.user.value.theme);
+  //  Date
+
+  const day = x.getDate();
+  const month = x.getMonth();
+  const monthformat = month < 10 ? "0" + month : month;
+  const year = x.getFullYear();
+  const newDate = `${day}/${monthformat}/${year}`;
 
   // THEME
 
@@ -21,7 +30,7 @@ export default function ComParkCard(props) {
           </Text>
         </View>
 
-        <Text style={styles.cardUserInfo}>{props.date}</Text>
+        <Text style={styles.cardUserInfo}>{newDate}</Text>
       </View>
       <View style={styles.cardBorderContainer}>
         <View style={styles.cardBorder}></View>

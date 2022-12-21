@@ -1,4 +1,5 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Animated, { SlideInDown, SlideInUp } from "react-native-reanimated";
 import axios from "axios";
 import { useState } from "react";
 import {
@@ -73,60 +74,65 @@ export default function Signin(props) {
     eye = "eye";
   }
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
+    <Animated.View
       style={[styles.globalContainer, bgCard]}
+      entering={SlideInDown}
     >
-      {/* HEADER */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={[styles.globalContainer, bgCard]}
+      >
+        {/* HEADER */}
 
-      <View style={styles.header}>
-        <View style={[styles.icon]}>
-          <FontAwesome
-            name="arrow-left"
-            size={30}
-            style={[{ color: "white" }, text]}
-            onPress={() => handleSignin()}
-          />
+        <View style={styles.header}>
+          <View style={[styles.icon]}>
+            <FontAwesome
+              name="arrow-left"
+              size={30}
+              style={[{ color: "white" }, text]}
+              onPress={() => handleSignin()}
+            />
+          </View>
+          <Text style={[styles.title, text]}>Connexion</Text>
         </View>
-        <Text style={[styles.title, text]}>Connexion</Text>
-      </View>
 
-      {/* FIELD FOR CONNECTION */}
+        {/* FIELD FOR CONNECTION */}
 
-      <View style={[styles.inputContainer, bgCard]}>
-        <TextInput
-          placeholder="Nom d'utilisateur"
-          type="text"
-          style={[styles.input, bg, border]}
-          onChangeText={(value) => setUser({ ...user, username: value })}
-        />
-        <View style={styles.password}>
+        <View style={[styles.inputContainer, bgCard]}>
           <TextInput
-            placeholder="Mot de passe"
-            secureTextEntry={securePassword}
-            textContentType={"password"}
+            placeholder="Nom d'utilisateur"
+            type="text"
             style={[styles.input, bg, border]}
-            onChangeText={(value) => setUser({ ...user, password: value })}
+            onChangeText={(value) => setUser({ ...user, username: value })}
           />
-          <FontAwesome
-            name={eye}
-            size={25}
-            style={styles.eye}
-            onPress={() => {
-              setSecurePassword(!securePassword);
-            }}
-          />
+          <View style={styles.password}>
+            <TextInput
+              placeholder="Mot de passe"
+              secureTextEntry={securePassword}
+              textContentType={"password"}
+              style={[styles.input, bg, border]}
+              onChangeText={(value) => setUser({ ...user, password: value })}
+            />
+            <FontAwesome
+              name={eye}
+              size={25}
+              style={styles.eye}
+              onPress={() => {
+                setSecurePassword(!securePassword);
+              }}
+            />
+          </View>
+          <View style={styles.btnContainer}>
+            <TouchableOpacity
+              style={[styles.btn, bgBtn]}
+              onPress={() => validateSignin()}
+            >
+              <Text style={styles.btnText}>Valider</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={styles.btnContainer}>
-          <TouchableOpacity
-            style={[styles.btn, bgBtn]}
-            onPress={() => validateSignin()}
-          >
-            <Text style={styles.btnText}>Valider</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </Animated.View>
   );
 }
 

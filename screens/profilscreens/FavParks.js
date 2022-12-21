@@ -1,4 +1,5 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Animated, { SlideInDown } from "react-native-reanimated";
 import ParkingSelected from "../ParkingScreen/ParkingSelected";
 import FavParkCard from "../ParkingScreen/favParkCard";
 import axios from "axios";
@@ -87,55 +88,54 @@ export default function FavPark(props) {
   });
 
   return (
-    <SafeAreaView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[styles.globalContainer]}
-    >
-      <View style={[styles.container, bgCard]}>
-        {showClickedParking && (
-          <View style={[styles.popupContainer]}>
-            <ParkingSelected
-              {...parkingClicked}
-              changeState={(state) => setShowClickedParking(state)}
-            />
+    <Animated.View entering={SlideInDown} style={[styles.globalContainer]}>
+      <SafeAreaView style={[styles.globalContainer]}>
+        <View style={[styles.container, bgCard]}>
+          {showClickedParking && (
+            <View style={[styles.popupContainer]}>
+              <ParkingSelected
+                {...parkingClicked}
+                changeState={(state) => setShowClickedParking(state)}
+              />
+            </View>
+          )}
+          <View style={styles.header}>
+            <View style={styles.icon}>
+              <FontAwesome
+                name="arrow-left"
+                size={30}
+                style={[{ color: "white" }, text]}
+                onPress={() => handleFav()}
+              />
+            </View>
+            <Text style={[styles.title, text]}>Mes parkings</Text>
+            <View style={styles.icon}>
+              <FontAwesome
+                name="refresh"
+                size={25}
+                style={[{ color: "white" }, text]}
+                onPress={() => setCount(count + 1)}
+              />
+            </View>
           </View>
-        )}
-        <View style={styles.header}>
-          <View style={styles.icon}>
-            <FontAwesome
-              name="arrow-left"
-              size={30}
-              style={[{ color: "white" }, text]}
-              onPress={() => handleFav()}
-            />
-          </View>
-          <Text style={[styles.title, text]}>Mes parkings</Text>
-          <View style={styles.icon}>
-            <FontAwesome
-              name="refresh"
-              size={25}
-              style={[{ color: "white" }, text]}
-              onPress={() => setCount(count + 1)}
-            />
+          <View style={styles.ParkingsContainer}>
+            <ScrollView
+              style={[
+                {
+                  width: "100%",
+                  height: "100%",
+                  backgroundColor: "#2E3740",
+                  paddingTop: 30,
+                },
+                bgCard,
+              ]}
+            >
+              {test}
+            </ScrollView>
           </View>
         </View>
-        <View style={styles.ParkingsContainer}>
-          <ScrollView
-            style={[
-              {
-                width: "100%",
-                height: "100%",
-                backgroundColor: "#2E3740",
-                paddingTop: 30,
-              },
-              bgCard,
-            ]}
-          >
-            {test}
-          </ScrollView>
-        </View>
-      </View>
-    </SafeAreaView>
+      </SafeAreaView>
+    </Animated.View>
   );
 }
 
