@@ -1,16 +1,5 @@
-<<<<<<< HEAD
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Text,
-  Image,
-  Platform, // NEW IMPORT
-} from "react-native";
-=======
 import { StyleSheet, View, TouchableOpacity, Text, Image } from "react-native";
 import { useSelector } from "react-redux";
->>>>>>> 85cfaee702bb3184fca1176ca3464e66b7831054
 
 // CHILD OF PARKLISTSCREEN
 

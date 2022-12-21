@@ -188,64 +188,7 @@ export default function Parkingscreen({ navigation }) {
           </ScrollView>
         </View>
       </View>
-<<<<<<< HEAD
-      <Text
-        style={[
-          styles.title,
-          {
-            fontSize: 20,
-            paddingRight: 0,
-          },
-        ]}
-      >
-        Filtre : {filterTitle}
-      </Text>
-
-      {/* BUTTON */}
-
-      <View style={styles.filterBtnContainer}>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            setFilteredByPlaces(!filteredByPlaces);
-            setFilteredByDispo(false);
-          }}
-        >
-          <Text style={styles.btnText}>Proche</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.btn}
-          onPress={() => {
-            setFilteredByDispo(!filteredByDispo);
-            setFilteredByPlaces(false);
-          }}
-        >
-          <Text style={styles.btnText}>Dispo</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* PARKING LIST CONTAINER */}
-
-      <View style={styles.ParkingsContainer}>
-        <ScrollView
-          style={{
-            width: "100%",
-            height: "100%",
-            backgroundColor: "#2E3740",
-            paddingTop: 20, // PREVIOUS paddingtop 30
-          }}
-        >
-          {/* THE DISPLAY DEPENDS ON THE STATE */}
-
-          {!filteredByDispo && !filteredByPlaces && parking}
-          {filteredByDispo && parkingFilteredByDispo}
-          {filteredByPlaces && parkingFilteredByPlace}
-        </ScrollView>
-      </View>
-    </View>
-=======
     </SafeAreaView>
->>>>>>> 85cfaee702bb3184fca1176ca3464e66b7831054
   );
 }
 
