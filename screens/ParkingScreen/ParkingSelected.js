@@ -16,6 +16,7 @@ export default function ParkingSelected(props) {
   // REDUCER & DISPATCH
 
   const dispatch = useDispatch();
+  const theme = useSelector((state) => state.user.value.theme);
   const userFav = useSelector((state) => state.user.value.favorisPark);
   const user = useSelector((state) => state.user.value);
 
@@ -42,6 +43,19 @@ export default function ParkingSelected(props) {
     starColor = { color: "white" };
   }
 
+  // THEME
+
+  let text;
+  let bgCard;
+  let border;
+  let bgBtn;
+  if (theme) {
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+    border = { borderColor: "#87BBDD" };
+  }
+
   // COMPONENT INIT
 
   useEffect(() => {
@@ -50,6 +64,7 @@ export default function ParkingSelected(props) {
         `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`
       )
       .then((response) => {
+        console.log(response.data);
         if (response.data.favoris.length > 0) {
           dispatch(favorisPark(response.data.favoris));
         }
@@ -77,7 +92,7 @@ export default function ParkingSelected(props) {
   });
 
   return (
-    <View style={styles.globalContainer}>
+    <View style={[styles.globalContainer, bgCard]}>
       {/* HEADER */}
       <View
         style={[
@@ -92,7 +107,7 @@ export default function ParkingSelected(props) {
         <FontAwesome
           name="arrow-left"
           size={30}
-          style={{ color: "white" }}
+          style={[{ color: "white" }, text]}
           onPress={() => {
             props.changeState(false);
           }}
@@ -100,20 +115,20 @@ export default function ParkingSelected(props) {
         <FontAwesome
           name={starIcon}
           size={30}
-          style={starColor}
+          style={(starColor, text)}
           onPress={() => {
             addToFavoris();
           }}
         />
       </View>
       <View style={styles.header}>
-        <Text style={styles.title}>{props.name}</Text>
+        <Text style={[styles.title, text]}>{props.name}</Text>
       </View>
 
       {/* MAP */}
 
       <View style={styles.mapContainer}>
-        <MapView region={parkingLocation} style={styles.map}>
+        <MapView region={parkingLocation} style={[styles.map, border]}>
           <Marker
             coordinate={{
               latitude: parkingLocation.latitude,
@@ -126,7 +141,7 @@ export default function ParkingSelected(props) {
         {/* REDIRECT GOOGLE MAP */}
 
         <TouchableOpacity
-          style={styles.btn}
+          style={[styles.btn, bgBtn]}
           onPress={() => Linking.openURL(url)}
         >
           <FontAwesome name="car" size={20} style={{ color: "#2E3740" }} />
@@ -138,16 +153,16 @@ export default function ParkingSelected(props) {
 
         <View style={styles.textContainer}>
           <View>
-            <Text style={styles.text}>
+            <Text style={[styles.text, text]}>
               places disponibles : {props.freeplace}
             </Text>
           </View>
           <View>
-            <Text style={styles.text}>{props.horaire}</Text>
+            <Text style={[styles.text, text]}>{props.horaire}</Text>
           </View>
         </View>
         <TouchableOpacity
-          style={[styles.btn]}
+          style={[styles.btn, bgBtn]}
           onPress={() => setShowComs(true)}
         >
           <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />

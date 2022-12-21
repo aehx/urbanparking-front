@@ -19,11 +19,29 @@ export default function Signin(props) {
 
   const dispatch = useDispatch();
   const users = useSelector((state) => state.user.value);
+  const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
 
   const [user, setUser] = useState({ username: "", password: "" });
   const [securePassword, setSecurePassword] = useState(true);
+
+  // THEME
+
+  let bg;
+  let text;
+  let bgCard;
+  let border;
+  let icon;
+  let bgBtn;
+  if (theme) {
+    bg = { backgroundColor: "#FFF" };
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+    icon = { color: "#87BBDD" };
+    border = { borderColor: "#87BBDD" };
+  }
 
   // INVERSE DATA FLOW
 
@@ -57,29 +75,29 @@ export default function Signin(props) {
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.globalContainer}
+      style={[styles.globalContainer, bgCard]}
     >
       {/* HEADER */}
 
       <View style={styles.header}>
-        <View style={styles.icon}>
+        <View style={[styles.icon]}>
           <FontAwesome
             name="arrow-left"
             size={30}
-            style={{ color: "white" }}
+            style={[{ color: "white" }, text]}
             onPress={() => handleSignin()}
           />
         </View>
-        <Text style={styles.title}>Connexion</Text>
+        <Text style={[styles.title, text]}>Connexion</Text>
       </View>
 
       {/* FIELD FOR CONNECTION */}
 
-      <View style={styles.inputContainer}>
+      <View style={[styles.inputContainer, bgCard]}>
         <TextInput
           placeholder="Nom d'utilisateur"
           type="text"
-          style={styles.input}
+          style={[styles.input, bg, border]}
           onChangeText={(value) => setUser({ ...user, username: value })}
         />
         <View style={styles.password}>
@@ -87,7 +105,7 @@ export default function Signin(props) {
             placeholder="Mot de passe"
             secureTextEntry={securePassword}
             textContentType={"password"}
-            style={styles.input}
+            style={[styles.input, bg, border]}
             onChangeText={(value) => setUser({ ...user, password: value })}
           />
           <FontAwesome
@@ -100,7 +118,10 @@ export default function Signin(props) {
           />
         </View>
         <View style={styles.btnContainer}>
-          <TouchableOpacity style={styles.btn} onPress={() => validateSignin()}>
+          <TouchableOpacity
+            style={[styles.btn, bgBtn]}
+            onPress={() => validateSignin()}
+          >
             <Text style={styles.btnText}>Valider</Text>
           </TouchableOpacity>
         </View>
@@ -192,5 +213,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     marginBottom: 30,
+  },
+  btnText: {
+    fontWeight: "bold",
   },
 });

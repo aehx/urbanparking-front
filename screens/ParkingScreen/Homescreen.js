@@ -24,6 +24,7 @@ export default function Homescreen({ navigation }) {
   //  dispatch
 
   const dispatch = useDispatch();
+  const theme = useSelector((state) => state.user.value.theme);
 
   // STATE LOCATION
   const [currentPosition, setCurrentPosition] = useState(null);
@@ -47,6 +48,15 @@ export default function Homescreen({ navigation }) {
   // STATE PARKINGS
 
   const [parisParking, setParking] = useState([]);
+
+  // THEME
+
+  let text;
+  let bgBtn;
+  if (theme) {
+    text = { color: "#333" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+  }
 
   // GET PARKING
 
@@ -81,10 +91,10 @@ export default function Homescreen({ navigation }) {
 
   // PARKINGS FILTERED BY DISTANCE
 
-  let parisparking;
+  let parkingResults;
   const dispatchParkings = () => {
     if (searchedPlace) {
-      parisparking = parisParking.map((el, i) => {
+      parkingResults = parisParking.map((el, i) => {
         const distanceBetweenParkAndMe =
           getDistance(
             {
@@ -123,8 +133,6 @@ export default function Homescreen({ navigation }) {
           distanceBetween < 60 && dispatch(addParking(parkingFound));
         }
       });
-    } else {
-      dispatch(removeParking());
     }
   };
 
@@ -205,7 +213,7 @@ export default function Homescreen({ navigation }) {
   if (search && showSearch) {
     searchButton = (
       <TouchableOpacity
-        style={styles.inputSearchBtn}
+        style={[styles.inputSearchBtn, bgBtn]}
         onPress={() => {
           handleSearch();
         }}
@@ -275,7 +283,10 @@ export default function Homescreen({ navigation }) {
 
       {/* BUTTON PARKING LIST  */}
 
-      <TouchableOpacity style={styles.btn} onPress={() => handleSubmit()}>
+      <TouchableOpacity
+        style={[styles.btn, bgBtn]}
+        onPress={() => handleSubmit()}
+      >
         <Text style={{ fontWeight: "bold", color: "#2E3740" }}>
           Liste des parkings
         </Text>

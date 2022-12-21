@@ -16,10 +16,22 @@ import Signup from "../profilscreens/Signup";
 export default function Profilscreen() {
   // REDUCER
   const user = useSelector((state) => state.user.value);
+  const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
   const [showSignin, setShowSignin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
+
+  // THEME
+
+  let text;
+  let bgCard;
+  let bgBtn;
+  if (theme) {
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+  }
 
   // REDIRECT DEPENDS OF USER ALREADY CONNECTED OR NOT
 
@@ -36,22 +48,24 @@ export default function Profilscreen() {
     );
   } else {
     return (
-      <SafeAreaView style={styles.globalContainer}>
-        <View style={styles.container}>
-          <Text style={styles.title}>Bienvenue sur</Text>
-          <Text style={styles.title}>Urban Parkings</Text>
+      <SafeAreaView style={[styles.globalContainer]}>
+        <View style={[styles.container, bgCard]}>
+          <Text style={[styles.title, text]}>Bienvenue sur</Text>
+          <Text style={[styles.title, text]}>Urban Parkings</Text>
           <View style={styles.btnContainer}>
             {/* INVERSE DATA FLOW */}
 
             <TouchableOpacity
-              style={styles.btn}
+              style={[styles.btn, bgBtn]}
               onPress={() => setShowSignup(true)}
             >
               <Text style={styles.btnText}>Inscription</Text>
             </TouchableOpacity>
-            <Text style={styles.text}>Déjà inscrit ? Connectez-vous !</Text>
+            <Text style={[styles.text, text]}>
+              Déjà inscrit ? Connectez-vous !
+            </Text>
             <TouchableOpacity
-              style={styles.btn}
+              style={[styles.btn, bgBtn]}
               onPress={() => setShowSignin(true)}
             >
               <Text style={styles.btnText}>Connexion</Text>

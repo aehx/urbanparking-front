@@ -1,8 +1,18 @@
 import { StyleSheet, View, TouchableOpacity, Text, Image } from "react-native";
+import { useSelector } from "react-redux";
 
 // CHILD OF PARKLISTSCREEN
 
 export default function FavParkCard(props) {
+  const theme = useSelector((state) => state.user.value.theme);
+
+  // THEME
+
+  let border;
+  if (theme) {
+    border = { borderColor: "#87BBDD" };
+  }
+
   // STYLE PIN PARKING
 
   let pinColor;
@@ -24,7 +34,7 @@ export default function FavParkCard(props) {
   return (
     //  CARD
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, border]}
       onPress={() => {
         handleclick();
       }}

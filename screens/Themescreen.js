@@ -1,40 +1,79 @@
-import { View, Text, StyleSheet, KeyboardAvoidingView } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useDispatch, useSelector } from "react-redux";
+import { changeTheme } from "../reducers/user";
 
 export default function Themescreen() {
+  const dispatch = useDispatch();
+  const theme = useSelector((state) => state.user.value.theme);
+
+  // THEME
+
+  let text;
+  let bgCard;
+  let border;
+  let icon;
+  if (theme) {
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    icon = { color: "#87BBDD" };
+    border = { borderColor: "#87BBDD" };
+  }
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.globalContainer}
-    >
-      <View style={styles.header}>
-        <Text style={styles.title}>Thèmes</Text>
-      </View>
-      <View style={styles.themeContainer}>
-        <View style={styles.themeCard}>
-          <FontAwesome name="sun-o" style={styles.cardIcon} size={20} />
-          <View style={styles.themeTextContainer}>
-            <Text style={styles.themeText}>Clair</Text>
-          </View>
+    <SafeAreaView style={[styles.globalContainer]}>
+      <View style={[styles.container, bgCard]}>
+        <View style={styles.header}>
+          <Text style={[styles.title, text]}>Thèmes</Text>
         </View>
-        <View style={styles.themeCard}>
-          <FontAwesome name="moon-o" style={styles.cardIcon} size={20} />
-          <View style={styles.themeTextContainer}>
-            <Text style={styles.themeText}>Sombre</Text>
-          </View>
+        <View style={styles.themeContainer}>
+          <TouchableOpacity
+            style={[styles.themeCard, border]}
+            onPress={() => dispatch(changeTheme(true))}
+          >
+            <FontAwesome
+              name="sun-o"
+              style={[styles.cardIcon, icon]}
+              size={20}
+            />
+            <View style={styles.themeTextContainer}>
+              <Text style={[styles.themeText, text]}>Clair</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.themeCard, border]}
+            onPress={() => dispatch(changeTheme(false))}
+          >
+            <FontAwesome
+              name="moon-o"
+              style={[styles.cardIcon, icon]}
+              size={20}
+            />
+            <View style={styles.themeTextContainer}>
+              <Text style={[styles.themeText, text]}>Sombre</Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </View>
-    </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   globalContainer: {
-    paddingTop: "27%",
-    width: "100%",
-    height: "100%",
+    flex: 1,
     backgroundColor: "#2E3740",
-    alignItems: "center",
+  },
+  container: {
+    flex: 1,
+    width: "100%",
+    backgroundColor: "#2E3740",
+    paddingTop: "20%",
   },
 
   //   TITLE
@@ -42,7 +81,6 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     alignItems: "center",
-    height: "10%",
     width: "100%",
   },
   title: {

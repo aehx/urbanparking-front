@@ -12,14 +12,26 @@ import {
 } from "react-native";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function ComParkScreen(props) {
+  const theme = useSelector((state) => state.user.value.theme);
   const [reviewData, setReviewData] = useState(null);
   const [count, setCount] = useState(0);
   const [showPostReview, setShowPostReview] = useState(false);
 
+  // THEMES
+
+  let text;
+  let bgCard;
+  let bgBtn;
+  if (theme) {
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+  }
+
   useEffect(() => {
-    console.log("render");
     axios
       .get(`https://urbanparking-backend.vercel.app/review/all/${props.id}`)
       .then((response) => {
@@ -30,12 +42,9 @@ export default function ComParkScreen(props) {
   }, [showPostReview, count]);
 
   let reviews;
+
   if (reviewData !== null) {
     reviews = reviewData.map((el, i) => {
-      // console.log("______---______-_-_-------_______----", el);
-      // console.log("______---______-_-_-------_______----", el.author.username);
-      // console.log("______---______-_-_-------_______----", el.content);
-      // console.log("______---______-_-_-------_______----", el.creation_Date);
       return (
         <ComParkCard
           name={el.author.username}
@@ -59,29 +68,29 @@ export default function ComParkScreen(props) {
           id={props.id}
         />
       )}
-      <View style={styles.header}>
+      <View style={[styles.header, bgCard]}>
         <View style={styles.icon}>
           <FontAwesome
             name="arrow-left"
             size={30}
-            style={{ color: "white" }}
+            style={[{ color: "white" }, text]}
             onPress={() => showComPage()}
           />
         </View>
-        <Text style={styles.title}>Avis</Text>
+        <Text style={[styles.title, text]}>Avis</Text>
         <View style={styles.icon}>
           <FontAwesome
             name="refresh"
-            size={30}
-            style={{ color: "white" }}
+            size={25}
+            style={[{ color: "white" }, text]}
             onPress={() => setCount(count + 1)}
           />
         </View>
       </View>
-      <View style={styles.ParkingsContainer}>
+      <View style={[styles.ParkingsContainer, bgCard]}>
         <ScrollView style={styles.ScrollView}>{reviews}</ScrollView>
         <TouchableOpacity
-          style={[styles.btn]}
+          style={[styles.btn, bgBtn]}
           onPress={() => setShowPostReview(true)}
         >
           <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
@@ -103,7 +112,7 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     width: "100%",
-    height: "100%",
+    height: "105%",
   },
   //   HEADER
 
@@ -153,5 +162,6 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginTop: 30,
+    marginBottom: "15%",
   },
 });

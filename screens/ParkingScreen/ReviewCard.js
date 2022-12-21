@@ -1,9 +1,18 @@
 import { StyleSheet, Text, View } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useSelector } from "react-redux";
 
 export default function ComParkCard(props) {
+  const theme = useSelector((state) => state.user.value.theme);
+
+  // THEME
+
+  let border;
+  if (theme) {
+    border = { borderColor: "#87BBDD" };
+  }
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, border]}>
       <View style={styles.cardHeader}>
         <View style={{ flexDirection: "row" }}>
           <FontAwesome name="user" size={20} style={{ marginRight: 10 }} />

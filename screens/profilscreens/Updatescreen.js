@@ -7,6 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   TouchableOpacity,
+  SafeAreaView,
 } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -21,6 +22,7 @@ export default function UpdateProfil(props) {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+  const theme = useSelector((state) => state.user.value);
 
   // STATE
   //  STEP
@@ -48,6 +50,21 @@ export default function UpdateProfil(props) {
 
   const EMAIL_REGEX =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+  // THEME
+
+  let bg;
+  let text;
+  let bgCard;
+  let border;
+  let bgBtn;
+  if (theme) {
+    bg = { backgroundColor: "#FFF" };
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+    border = { borderColor: "#87BBDD" };
+  }
 
   // INVERSE DATA FLOW
 
@@ -116,14 +133,14 @@ export default function UpdateProfil(props) {
     circle2Style = { display: "none" };
     circle3Style = { display: "none" };
   } else if (step === 1) {
-    barInsideStyle = [styles.progressBarInside, { width: "50%" }];
+    barInsideStyle = [styles.progressBarInside, { width: "50%" }, bgBtn];
     circle2Style = [
       styles.progressBarCircleInside,
       styles.circle2Inside,
       { right: -6 },
     ];
   } else if (step === 2) {
-    barInsideStyle = [styles.progressBarInside, { width: "100%" }];
+    barInsideStyle = [styles.progressBarInside, { width: "100%" }, bgBtn];
     circle2Style = [styles.progressBarCircleInside, styles.circle2Inside];
     circle3Style = [styles.progressBarCircleInside, styles.circle3Inside];
   }
@@ -138,164 +155,173 @@ export default function UpdateProfil(props) {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.globalContainer}
-    >
-      <View style={styles.header}>
-        {/* TITLE */}
+    <SafeAreaView style={[styles.globalContainer]}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={[styles.globalContainer, bgCard]}
+      >
+        <View style={styles.header}>
+          {/* TITLE */}
 
-        <View style={styles.icon}>
-          <FontAwesome
-            name="arrow-left"
-            size={30}
-            style={{ color: "white" }}
-            onPress={() => {
-              handleUpdate();
-            }}
-          />
-        </View>
-        <Text style={styles.title}>Mise à jour</Text>
-      </View>
-
-      {/* PROGRESS BAR  */}
-
-      <View style={styles.progressContainer}>
-        <View style={styles.progressBarEmpty}>
-          <View style={[styles.progressBarCircle, styles.circle1]}></View>
-          <View style={[styles.progressBarCircle, styles.circle2]}></View>
-          <View style={[styles.progressBarCircle, styles.circle3]}></View>
-
-          {/* BAR Inside  */}
-
-          <View style={barInsideStyle}>
-            <View
-              style={[styles.progressBarCircleInside, styles.circle1Inside]}
-            ></View>
-            <View style={circle2Style}></View>
-            <View style={circle3Style}></View>
+          <View style={styles.icon}>
+            <FontAwesome
+              name="arrow-left"
+              size={30}
+              style={[{ color: "white" }, text]}
+              onPress={() => {
+                handleUpdate();
+              }}
+            />
           </View>
+          <Text style={[styles.title, text]}>Mise à jour</Text>
         </View>
-      </View>
 
-      {/* INPUT CONTAINER */}
+        {/* PROGRESS BAR  */}
 
-      <View style={fields}>
-        {/* STEP 1 */}
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBarEmpty}>
+            <View style={[styles.progressBarCircle, styles.circle1]}></View>
+            <View style={[styles.progressBarCircle, styles.circle2]}></View>
+            <View style={[styles.progressBarCircle, styles.circle3]}></View>
 
-        <View style={styles.step}>
-          <TextInput
-            placeholder="Nom d'utilisateur"
-            style={styles.input}
-            value={updateUser.username}
-            onChangeText={(value) =>
-              setUpdateUser({ ...updateUser, username: value })
-            }
-          />
-          <TextInput
-            placeholder="E-mail"
-            textContentType={"emailAddress"}
-            keyboardType="email-address"
-            style={styles.input}
-            value={updateUser.email}
-            onChangeText={(value) =>
-              setUpdateUser({ ...updateUser, email: value })
-            }
-          />
-          <View style={styles.btnContainer}>
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() => handleStepPlus()}
-            >
-              <Text style={styles.btnText}>suivant</Text>
-            </TouchableOpacity>
+            {/* BAR Inside  */}
+
+            <View style={barInsideStyle}>
+              <View
+                style={[
+                  styles.progressBarCircleInside,
+                  styles.circle1Inside,
+                  bgBtn,
+                ]}
+              ></View>
+              <View style={[circle2Style, bgBtn]}></View>
+              <View style={[circle3Style, bgBtn]}></View>
+            </View>
           </View>
         </View>
 
-        {/* STEP 2 */}
+        {/* INPUT CONTAINER */}
 
-        <View style={styles.step}>
-          <TextInput
-            placeholder="Prénom"
-            textContentType={"name"}
-            style={styles.input}
-            value={updateUser.firstname}
-            onChangeText={(value) =>
-              setUpdateUser({ ...updateUser, firstname: value })
-            }
-          />
-          <TextInput
-            placeholder="Nom"
-            textContentType={"familyName"}
-            style={styles.input}
-            value={updateUser.lastname}
-            onChangeText={(value) =>
-              setUpdateUser({ ...updateUser, lastname: value })
-            }
-          />
-          <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
-            <TouchableOpacity
-              style={[styles.btn, styles.btnMiddle]}
-              onPress={() => handleStepMoins()}
-            >
-              <Text style={styles.btnText}>Precedent</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.btn, styles.btnMiddle]}
-              onPress={() => handleStepPlus()}
-            >
-              <Text style={styles.btnText}>suivant</Text>
-            </TouchableOpacity>
+        <View style={fields}>
+          {/* STEP 1 */}
+
+          <View style={[styles.step, bgCard]}>
+            <TextInput
+              placeholder="Nom d'utilisateur"
+              style={[styles.input, border, bg]}
+              value={updateUser.username}
+              onChangeText={(value) =>
+                setUpdateUser({ ...updateUser, username: value })
+              }
+            />
+            <TextInput
+              placeholder="E-mail"
+              textContentType={"emailAddress"}
+              keyboardType="email-address"
+              style={[styles.input, border, bg]}
+              value={updateUser.email}
+              onChangeText={(value) =>
+                setUpdateUser({ ...updateUser, email: value })
+              }
+            />
+            <View style={styles.btnContainer}>
+              <TouchableOpacity
+                style={[styles.btn, bgBtn]}
+                onPress={() => handleStepPlus()}
+              >
+                <Text style={styles.btnText}>suivant</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* STEP 2 */}
+
+          <View style={[styles.step, bgCard]}>
+            <TextInput
+              placeholder="Prénom"
+              textContentType={"name"}
+              style={[styles.input, border, bg]}
+              value={updateUser.firstname}
+              onChangeText={(value) =>
+                setUpdateUser({ ...updateUser, firstname: value })
+              }
+            />
+            <TextInput
+              placeholder="Nom"
+              textContentType={"familyName"}
+              style={[styles.input, border, bg]}
+              value={updateUser.lastname}
+              onChangeText={(value) =>
+                setUpdateUser({ ...updateUser, lastname: value })
+              }
+            />
+            <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
+              <TouchableOpacity
+                style={[styles.btn, styles.btnMiddle, bgBtn]}
+                onPress={() => handleStepMoins()}
+              >
+                <Text style={styles.btnText}>Precedent</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn, styles.btnMiddle, bgBtn]}
+                onPress={() => handleStepPlus()}
+              >
+                <Text style={styles.btnText}>suivant</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* STEP 3 */}
+
+          <View style={[styles.step, bgCard]}>
+            <TextInput
+              placeholder="Ville"
+              style={[styles.input, border, bg]}
+              value={updateUser.city}
+              onChangeText={(value) =>
+                setUpdateUser({ ...updateUser, city: value })
+              }
+            />
+            <TextInput
+              placeholder="Adresse"
+              style={[styles.input, border, bg]}
+              value={updateUser.address}
+              onChangeText={(value) =>
+                setUpdateUser({ ...updateUser, address: value })
+              }
+            />
+            <TextInput
+              placeholder="Code postal"
+              textContentType={"postalCode"}
+              keyboardType="phone-pad"
+              style={[styles.input, border, bg]}
+              value={updateUser.postal}
+              onChangeText={(value) =>
+                setUpdateUser({ ...updateUser, postal: value })
+              }
+            />
+
+            <View style={styles.btnContainer}>
+              {invalidEmail && (
+                <Text style={styles.mailError}>email invalide</Text>
+              )}
+              <TouchableOpacity
+                style={[styles.btn, bgBtn]}
+                onPress={() => handleStepMoins()}
+              >
+                <Text style={styles.btnText}>Precedent</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn, bgBtn]}
+                onPress={() => formUpdate()}
+              >
+                <Text style={styles.btnText}>valider le formulaire</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-
-        {/* STEP 3 */}
-
-        <View style={styles.step}>
-          <TextInput
-            placeholder="Ville"
-            style={styles.input}
-            value={updateUser.city}
-            onChangeText={(value) =>
-              setUpdateUser({ ...updateUser, city: value })
-            }
-          />
-          <TextInput
-            placeholder="Adresse"
-            style={styles.input}
-            value={updateUser.address}
-            onChangeText={(value) =>
-              setUpdateUser({ ...updateUser, address: value })
-            }
-          />
-          <TextInput
-            placeholder="Code postal"
-            textContentType={"postalCode"}
-            keyboardType="phone-pad"
-            style={styles.input}
-            value={updateUser.postal}
-            onChangeText={(value) =>
-              setUpdateUser({ ...updateUser, postal: value })
-            }
-          />
-
-          <View style={styles.btnContainer}>
-            {invalidEmail && (
-              <Text style={styles.mailError}>email invalide</Text>
-            )}
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() => handleStepMoins()}
-            >
-              <Text style={styles.btnText}>Precedent</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btn} onPress={() => formUpdate()}>
-              <Text style={styles.btnText}>valider le formulaire</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 }
 
@@ -423,7 +449,6 @@ const styles = StyleSheet.create({
   inputContainer3: {
     justifyContent: "flex-end",
   },
-
   //   STEPS (InputContainer child)
 
   step: {
@@ -442,6 +467,10 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: "7%",
     borderRadius: 15,
+  },
+  btnText: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
 
   //   BUTTON

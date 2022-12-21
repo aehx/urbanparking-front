@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import {
   StyleSheet,
   View,
@@ -6,10 +7,16 @@ import {
   Image,
   Platform, // NEW IMPORT
 } from "react-native";
+=======
+import { StyleSheet, View, TouchableOpacity, Text, Image } from "react-native";
+import { useSelector } from "react-redux";
+>>>>>>> 85cfaee702bb3184fca1176ca3464e66b7831054
 
 // CHILD OF PARKLISTSCREEN
 
 export default function ParkingListCard(props) {
+  const theme = useSelector((state) => state.user.value.theme);
+
   // STYLE PIN PARKING
 
   let pinColor;
@@ -19,6 +26,15 @@ export default function ParkingListCard(props) {
     pinColor = { backgroundColor: "orange" };
   } else {
     pinColor = { backgroundColor: "red" };
+  }
+
+  // THEME
+
+  let border;
+  let bgBtn;
+  if (theme) {
+    bgBtn = { backgroundColor: "#87BBDD" };
+    border = { borderColor: "#87BBDD" };
   }
 
   // INVERSE DATA FLOW DISPLAY/DON'T DISPLAY COMPONENT
@@ -31,7 +47,7 @@ export default function ParkingListCard(props) {
   return (
     //  CARD
     <TouchableOpacity
-      style={styles.container}
+      style={[styles.container, border]}
       onPress={() => {
         handleclick();
       }}
@@ -52,7 +68,7 @@ export default function ParkingListCard(props) {
       {/* PARKING INFOS */}
 
       <View style={styles.parkingsContainer}>
-        <View style={styles.distance}>
+        <View style={[styles.distance, bgBtn]}>
           <Text style={{ fontWeight: "bold", color: "#2E3740" }}>
             {props.distance.toFixed(0)} km
           </Text>
