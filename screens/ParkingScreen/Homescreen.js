@@ -65,7 +65,6 @@ export default function Homescreen({ navigation }) {
       "https://data.opendatasoft.com/api/records/1.0/search/?dataset=places-disponibles-parkings-saemes@saemes"
     );
     setParking(parkingsData.data.records);
-    console.log("render");
   };
 
   // COMPONENT INIT
