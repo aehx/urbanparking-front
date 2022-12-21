@@ -30,11 +30,15 @@ export const userSlice = createSlice({
         state.value.favorisPark.push(action.payload);
       }
     },
+    addFavorite: (state, action) => {
+      state.value.favorisPark = action.payload;
+    },
     changeTheme: (state, action) => {
       state.value.theme = action.payload;
     },
   },
 });
 
-export const { login, logout, favorisPark, changeTheme } = userSlice.actions;
+export const { login, logout, favorisPark, addFavorite, changeTheme } =
+  userSlice.actions;
 export default userSlice.reducer;

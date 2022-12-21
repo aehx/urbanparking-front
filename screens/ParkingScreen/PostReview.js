@@ -7,7 +7,6 @@ import {
   Text,
   TextInput,
   View,
-  Keyboard,
 } from "react-native";
 import axios from "axios";
 import { useState } from "react";
@@ -63,7 +62,7 @@ export default function ComParkScreen(props) {
         <TextInput
           placeholder="Votre avis..."
           multiline={true}
-          numberOfLines={4}
+          numberOfLines={10}
           onChangeText={(e) => setReviewContent(e)}
           value={reviewContent}
           style={[styles.reviewInput, border]}

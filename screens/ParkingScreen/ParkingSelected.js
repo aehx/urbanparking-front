@@ -1,7 +1,7 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import ReviewScreen from "../ParkingScreen/ReviewScreen";
 import axios from "axios";
-import { favorisPark } from "../../reducers/user";
+import { favorisPark, addFavorite } from "../../reducers/user";
 import {
   View,
   Text,
@@ -50,6 +50,7 @@ export default function ParkingSelected(props) {
   let border;
   let bgBtn;
   if (theme) {
+    starColor = { color: "#333" };
     text = { color: "#333" };
     bgCard = { backgroundColor: "#DAE9F2" };
     bgBtn = { backgroundColor: "#87BBDD" };
@@ -64,9 +65,9 @@ export default function ParkingSelected(props) {
         `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`
       )
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data.favoris === []);
         if (response.data.favoris.length > 0) {
-          dispatch(favorisPark(response.data.favoris));
+          dispatch(addFavorite(response.data.favoris));
         }
       });
   }, []);
@@ -80,7 +81,7 @@ export default function ParkingSelected(props) {
     );
     dispatch(favorisPark(props.id));
   };
-
+  console.log(userFav);
   // MAP REDIRECTION
 
   const scheme = Platform.select({ ios: "maps:0,0?q=", android: "geo:0,0?q=" });
@@ -115,7 +116,7 @@ export default function ParkingSelected(props) {
         <FontAwesome
           name={starIcon}
           size={30}
-          style={(starColor, text)}
+          style={starColor}
           onPress={() => {
             addToFavoris();
           }}

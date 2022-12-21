@@ -1,4 +1,5 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Animated, { SlideInDown } from "react-native-reanimated";
 import {
   View,
   Text,
@@ -20,6 +21,7 @@ export default function Signup(props) {
   // DISPATCH & REDUCER
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
+  const theme = useSelector((state) => state.user.value.theme);
 
   // STEP USESTATE
 
@@ -94,6 +96,22 @@ export default function Signup(props) {
         );
     }
   };
+  // THEME
+
+  let bg;
+  let text;
+  let bgCard;
+  let border;
+  let icon;
+  let bgBtn;
+  if (theme) {
+    bg = { backgroundColor: "#FFF" };
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+    icon = { color: "#87BBDD" };
+    border = { borderColor: "#87BBDD" };
+  }
 
   //   SELECT FIELDS
 
@@ -116,14 +134,14 @@ export default function Signup(props) {
     circle2Style = { display: "none" };
     circle3Style = { display: "none" };
   } else if (step === 1) {
-    barInsideStyle = [styles.progressBarInside, { width: "50%" }];
+    barInsideStyle = [styles.progressBarInside, { width: "50%" }, bgBtn];
     circle2Style = [
       styles.progressBarCircleInside,
       styles.circle2Inside,
       { right: -6 },
     ];
   } else if (step === 2) {
-    barInsideStyle = [styles.progressBarInside, { width: "100%" }];
+    barInsideStyle = [styles.progressBarInside, { width: "100%" }, bgBtn];
     circle2Style = [styles.progressBarCircleInside, styles.circle2Inside];
     circle3Style = [styles.progressBarCircleInside, styles.circle3Inside];
   }
@@ -138,172 +156,188 @@ export default function Signup(props) {
   }
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={styles.globalContainer}
+    <Animated.View
+      style={[styles.globalContainer, bgCard]}
+      entering={SlideInDown}
     >
-      <View style={styles.header}>
-        {/* TITLE */}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={[styles.globalContainer, bgCard]}
+      >
+        <View style={styles.header}>
+          {/* TITLE */}
 
-        <View style={styles.icon}>
-          <FontAwesome
-            name="arrow-left"
-            size={30}
-            style={{ color: "white" }}
-            onPress={() => {
-              handleSignup();
-            }}
-          />
-        </View>
-        <Text style={styles.title}>Inscription</Text>
-      </View>
-
-      {/* PROGRESS BAR  */}
-
-      <View style={styles.progressContainer}>
-        <View style={styles.progressBarEmpty}>
-          <View style={[styles.progressBarCircle, styles.circle1]}></View>
-          <View style={[styles.progressBarCircle, styles.circle2]}></View>
-          <View style={[styles.progressBarCircle, styles.circle3]}></View>
-
-          {/* BAR Inside  */}
-
-          <View style={barInsideStyle}>
-            <View
-              style={[styles.progressBarCircleInside, styles.circle1Inside]}
-            ></View>
-            <View style={circle2Style}></View>
-            <View style={circle3Style}></View>
-          </View>
-        </View>
-      </View>
-
-      {/* INPUT CONTAINER */}
-
-      <View style={fields}>
-        {/* STEP 1 */}
-
-        <View style={styles.step}>
-          <TextInput
-            placeholder="Nom d'utilisateur"
-            style={styles.input}
-            value={newUser.username}
-            onChangeText={(value) =>
-              setNewUser({ ...newUser, username: value })
-            }
-          />
-          <TextInput
-            placeholder="E-mail"
-            textContentType={"emailAddress"}
-            keyboardType="email-address"
-            style={styles.input}
-            value={newUser.email}
-            onChangeText={(value) => setNewUser({ ...newUser, email: value })}
-          />
-          <View style={styles.password}>
-            <TextInput
-              placeholder="Mot de passe"
-              secureTextEntry={showPassword}
-              textContentType={"password"}
-              style={styles.input}
-              value={newUser.password}
-              onChangeText={(value) =>
-                setNewUser({ ...newUser, password: value })
-              }
-            />
+          <View style={styles.icon}>
             <FontAwesome
-              name={eye}
-              size={25}
-              style={styles.eye}
+              name="arrow-left"
+              size={30}
+              style={[{ color: "white" }, text]}
               onPress={() => {
-                setShowPassword(!showPassword);
+                handleSignup();
               }}
             />
           </View>
-          <View style={styles.btnContainer}>
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() => handleStepPlus()}
-            >
-              <Text style={styles.btnText}>suivant</Text>
-            </TouchableOpacity>
+          <Text style={[styles.title, text]}>Inscription</Text>
+        </View>
+
+        {/* PROGRESS BAR  */}
+
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBarEmpty}>
+            <View style={[styles.progressBarCircle, styles.circle1]}></View>
+            <View style={[styles.progressBarCircle, styles.circle2]}></View>
+            <View style={[styles.progressBarCircle, styles.circle3]}></View>
+
+            {/* BAR Inside  */}
+
+            <View style={barInsideStyle}>
+              <View
+                style={[
+                  styles.progressBarCircleInside,
+                  styles.circle1Inside,
+                  bgBtn,
+                ]}
+              ></View>
+              <View style={[circle2Style, bgBtn]}></View>
+              <View style={[circle3Style, bgBtn]}></View>
+            </View>
           </View>
         </View>
 
-        {/* STEP 2 */}
+        {/* INPUT CONTAINER */}
 
-        <View style={styles.step}>
-          <TextInput
-            placeholder="Prénom"
-            textContentType={"name"}
-            style={styles.input}
-            value={newUser.firstname}
-            onChangeText={(value) =>
-              setNewUser({ ...newUser, firstname: value })
-            }
-          />
-          <TextInput
-            placeholder="Nom"
-            textContentType={"familyName"}
-            style={styles.input}
-            value={newUser.lastname}
-            onChangeText={(value) =>
-              setNewUser({ ...newUser, lastname: value })
-            }
-          />
-          <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
-            <TouchableOpacity
-              style={[styles.btn, styles.btnMiddle]}
-              onPress={() => handleStepMoins()}
-            >
-              <Text style={styles.btnText}>Precedent</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={[styles.btn, styles.btnMiddle]}
-              onPress={() => handleStepPlus()}
-            >
-              <Text style={styles.btnText}>suivant</Text>
-            </TouchableOpacity>
+        <View style={fields}>
+          {/* STEP 1 */}
+
+          <View style={[styles.step, bgCard]}>
+            <TextInput
+              placeholder="Nom d'utilisateur"
+              style={[styles.input, border]}
+              value={newUser.username}
+              onChangeText={(value) =>
+                setNewUser({ ...newUser, username: value })
+              }
+            />
+            <TextInput
+              placeholder="E-mail"
+              textContentType={"emailAddress"}
+              keyboardType="email-address"
+              style={[styles.input, border]}
+              value={newUser.email}
+              onChangeText={(value) => setNewUser({ ...newUser, email: value })}
+            />
+            <View style={styles.password}>
+              <TextInput
+                placeholder="Mot de passe"
+                secureTextEntry={showPassword}
+                textContentType={"password"}
+                style={[styles.input, border]}
+                value={newUser.password}
+                onChangeText={(value) =>
+                  setNewUser({ ...newUser, password: value })
+                }
+              />
+              <FontAwesome
+                name={eye}
+                size={25}
+                style={styles.eye}
+                onPress={() => {
+                  setShowPassword(!showPassword);
+                }}
+              />
+            </View>
+            <View style={styles.btnContainer}>
+              <TouchableOpacity
+                style={[styles.btn, bgBtn]}
+                onPress={() => handleStepPlus()}
+              >
+                <Text style={styles.btnText}>suivant</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* STEP 2 */}
+
+          <View style={[styles.step, bgCard]}>
+            <TextInput
+              placeholder="Prénom"
+              textContentType={"name"}
+              style={[styles.input, border]}
+              value={newUser.firstname}
+              onChangeText={(value) =>
+                setNewUser({ ...newUser, firstname: value })
+              }
+            />
+            <TextInput
+              placeholder="Nom"
+              textContentType={"familyName"}
+              style={[styles.input, border]}
+              value={newUser.lastname}
+              onChangeText={(value) =>
+                setNewUser({ ...newUser, lastname: value })
+              }
+            />
+            <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
+              <TouchableOpacity
+                style={[styles.btn, styles.btnMiddle, bgBtn]}
+                onPress={() => handleStepMoins()}
+              >
+                <Text style={styles.btnText}>Precedent</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn, styles.btnMiddle, bgBtn]}
+                onPress={() => handleStepPlus()}
+              >
+                <Text style={styles.btnText}>suivant</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
+          {/* STEP 3 */}
+
+          <View style={[styles.step, bgCard]}>
+            <TextInput
+              placeholder="Ville"
+              style={[styles.input, border]}
+              value={newUser.city}
+              onChangeText={(value) => setNewUser({ ...newUser, city: value })}
+            />
+            <TextInput
+              placeholder="Adresse"
+              style={[styles.input, border]}
+              value={newUser.address}
+              onChangeText={(value) =>
+                setNewUser({ ...newUser, address: value })
+              }
+            />
+            <TextInput
+              placeholder="Code postal"
+              textContentType={"postalCode"}
+              keyboardType="phone-pad"
+              style={[styles.input, border]}
+              value={newUser.postal}
+              onChangeText={(value) =>
+                setNewUser({ ...newUser, postal: value })
+              }
+            />
+            <View style={styles.btnContainer}>
+              <TouchableOpacity
+                style={[styles.btn, bgBtn]}
+                onPress={() => handleStepMoins()}
+              >
+                <Text style={styles.btnText}>Precedent</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.btn, bgBtn]}
+                onPress={() => formSubmit()}
+              >
+                <Text style={styles.btnText}>valider le formulaire</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-
-        {/* STEP 3 */}
-
-        <View style={styles.step}>
-          <TextInput
-            placeholder="Ville"
-            style={styles.input}
-            value={newUser.city}
-            onChangeText={(value) => setNewUser({ ...newUser, city: value })}
-          />
-          <TextInput
-            placeholder="Adresse"
-            style={styles.input}
-            value={newUser.address}
-            onChangeText={(value) => setNewUser({ ...newUser, address: value })}
-          />
-          <TextInput
-            placeholder="Code postal"
-            textContentType={"postalCode"}
-            keyboardType="phone-pad"
-            style={styles.input}
-            value={newUser.postal}
-            onChangeText={(value) => setNewUser({ ...newUser, postal: value })}
-          />
-          <View style={styles.btnContainer}>
-            <TouchableOpacity
-              style={styles.btn}
-              onPress={() => handleStepMoins()}
-            >
-              <Text style={styles.btnText}>Precedent</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.btn} onPress={() => formSubmit()}>
-              <Text style={styles.btnText}>valider le formulaire</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </Animated.View>
   );
 }
 
@@ -312,7 +346,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 0,
     left: 0,
-    paddingTop: "15%",
+    paddingTop: "10%",
     width: "100%",
     height: "100%",
     backgroundColor: "#2E3740",
