@@ -105,7 +105,6 @@ export default function Signup(props) {
   let icon;
   let bgBtn;
   if (theme) {
-    bg = { backgroundColor: "#FFF" };
     text = { color: "#333" };
     bgCard = { backgroundColor: "#DAE9F2" };
     bgBtn = { backgroundColor: "#87BBDD" };

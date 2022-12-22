@@ -2,6 +2,7 @@
 
 import UpdateProfil from "./Updatescreen";
 import FavParks from "./FavParks";
+import axios from "axios";
 
 // STYLE
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -13,9 +14,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout } from "../../reducers/user";
+import { logout, addFavorite } from "../../reducers/user";
 
 // PARENT OF UpdateProfil/FAVPARKS
 
@@ -48,6 +49,17 @@ export default function Settings() {
     border = { borderColor: "#87BBDD" };
   }
 
+  useEffect(() => {
+    axios
+      .get(
+        `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`
+      )
+      .then((response) => {
+        if (response.data.favoris.length > 0) {
+          dispatch(addFavorite(response.data.favoris));
+        }
+      });
+  }, []);
   // FUNCTION
 
   const handleLogout = () => {

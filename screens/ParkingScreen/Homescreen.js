@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import ParkingSelected from "../ParkingScreen/ParkingSelected";
 import { addParking, removeParking } from "../../reducers/parking";
 import { useDispatch, useSelector } from "react-redux";
 import parkPin from "../../assets/placeholder.png";
@@ -12,7 +13,8 @@ import {
   Keyboard,
   Image,
   KeyboardAvoidingView,
-  Platform,
+  Linking,
+  SafeAreaView,
 } from "react-native";
 import axios from "axios";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
@@ -39,23 +41,31 @@ export default function Homescreen({ navigation }) {
 
   const [showSearch, setShowSearch] = useState(true);
   const [positionGranted, setPositionGranted] = useState(false);
+  const [showSelected, setShowSelected] = useState(false);
   const [searchedPlace, setSearchedPlace] = useState(null);
 
   // STATE SEARCH (input)
-
   const [search, setSearch] = useState(null);
 
   // STATE PARKINGS
-
+  const [parkingClicked, setParkingClicked] = useState(null);
   const [parisParking, setParking] = useState([]);
 
   // THEME
 
   let text;
+  let bg;
+  let bgCard;
+  let border;
   let bgBtn;
+  let icon;
   if (theme) {
     text = { color: "#333" };
     bgBtn = { backgroundColor: "#87BBDD" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    border = { borderColor: "#87BBDD" };
+    bg = { borderColor: "#fff" };
+    icon = { tintColor: "#87BBDD" };
   }
 
   // GET PARKING
@@ -64,7 +74,16 @@ export default function Homescreen({ navigation }) {
     const parkingsData = await axios.get(
       "https://data.opendatasoft.com/api/records/1.0/search/?dataset=places-disponibles-parkings-saemes@saemes"
     );
-    setParking(parkingsData.data.records);
+    const orleans = await axios.get(
+      "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilite-places-disponibles-parkings-en-temps-reel@orleansmetropole"
+    );
+    const filteredParis = parkingsData.data.records.filter(
+      (el) => el.geometry !== undefined
+    );
+    const filteredOrleans = orleans.data.records.filter(
+      (el) => el.geometry !== undefined
+    );
+    setParking([...filteredOrleans, ...filteredParis]);
   };
 
   // COMPONENT INIT
@@ -86,7 +105,6 @@ export default function Homescreen({ navigation }) {
         setCurrentPosition(region);
       }
     })();
-    parking();
   }, []);
 
   // PARKINGS FILTERED BY DISTANCE
@@ -106,7 +124,6 @@ export default function Homescreen({ navigation }) {
               longitude: currentPosition.longitude,
             }
           ) / 1000;
-
         const distanceBetween =
           getDistance(
             {
@@ -118,13 +135,13 @@ export default function Homescreen({ navigation }) {
               longitude: searchedPlace.longitude,
             }
           ) / 1000;
-
         const parkingFound = {
           id: el.recordid,
-          name: el.fields.nom_parking,
-          freeplace: el.fields.counterfreeplaces,
+          name: el.fields.nom_parking || el.fields.name,
+          freeplace: el.fields.counterfreeplaces || el.fields.dispo,
           horaire:
-            el.fields.horaires_d_acces_au_public_pour_les_usagers_non_abonnes,
+            el.fields.horaires_d_acces_au_public_pour_les_usagers_non_abonnes ||
+            "24h/24, 7j/7",
           distance: distanceBetweenParkAndMe,
           latitude: el.geometry.coordinates[1],
           longitude: el.geometry.coordinates[0],
@@ -142,9 +159,9 @@ export default function Homescreen({ navigation }) {
   let pinStyle;
   if (searchedPlace) {
     parkingPin = parisParking.map((el, i) => {
-      if (el.fields.counterfreeplaces > 40) {
+      if (el.fields.counterfreeplaces > 40 || el.fields.dispo > 40) {
         pinStyle = { tintColor: "green" };
-      } else if (el.fields.counterfreeplaces > 0) {
+      } else if (el.fields.counterfreeplaces > 0 || el.fields.dispo > 0) {
         pinStyle = { tintColor: "orange" };
       } else {
         pinStyle = { tintColor: "red" };
@@ -161,6 +178,7 @@ export default function Homescreen({ navigation }) {
           }
         ) / 1000;
       return (
+        searchedPlace &&
         distanceBetween < 60 && (
           <Marker
             key={i}
@@ -168,7 +186,15 @@ export default function Homescreen({ navigation }) {
               longitude: el.geometry.coordinates[0],
               latitude: el.geometry.coordinates[1],
             }}
-            title={String(el.fields.nom_parking)}
+            onPress={() => {
+              setSearchedPlace({
+                latitude: el.geometry.coordinates[1],
+                longitude: el.geometry.coordinates[0],
+                latitudeDelta: 0.05,
+                longitudeDelta: 0.05,
+              }),
+                setParkingClicked(el);
+            }}
           >
             <Image source={parkPin} style={[styles.image, pinStyle]} />
           </Marker>
@@ -177,6 +203,86 @@ export default function Homescreen({ navigation }) {
     });
   }
 
+  // POPUP PARKING
+
+  console.log(parkingClicked);
+  let popupParkingClicked;
+  if (parkingClicked) {
+    // MAP REDIRECTION
+    const scheme = Platform.select({
+      ios: "maps:0,0?q=",
+      android: "geo:0,0?q=",
+    });
+    const latLng = `${searchedPlace.latitude},${searchedPlace.longitude}`;
+    const label = `${
+      parkingClicked.fields.nom_parking || parkingClicked.fields.name
+    }`;
+    const url = Platform.select({
+      ios: `${scheme}${label}@${latLng}`,
+      android: `${scheme}${latLng}(${label})`,
+    });
+
+    // PIN STYLE
+
+    if (
+      parkingClicked.fields.counterfreeplaces > 40 ||
+      parkingClicked.fields.dispo > 40
+    ) {
+      pinStyle = { backgroundColor: "green" };
+    } else if (
+      parkingClicked.fields.counterfreeplaces > 0 ||
+      parkingClicked.fields.dispo > 0
+    ) {
+      pinStyle = { backgroundColor: "orange" };
+    } else {
+      pinStyle = { backgroundColor: "red" };
+    }
+
+    // JSX
+
+    popupParkingClicked = (
+      <View style={[styles.popupParking, bgCard, border]}>
+        <View style={styles.imagePopUpContainer}>
+          <Image
+            source={require("../../assets/park.png")}
+            style={[styles.imagePopup, icon]}
+            onPress={() => {
+              setShowSelected(true);
+            }}
+          />
+        </View>
+        <View
+          style={{
+            padding: 10,
+            width: "70%",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <Text style={[styles.popupText, text]}>
+            {parkingClicked.fields.nom_parking || parkingClicked.fields.name}
+          </Text>
+          <TouchableOpacity
+            style={[styles.btnVoir, bgCard, border]}
+            onPress={() => setShowSelected(true)}
+          >
+            <Text style={[styles.popupText, text]}>voir</Text>
+          </TouchableOpacity>
+          <Text style={[styles.popupText, text]}>
+            places : {parkingClicked.fields.counterfreeplaces}
+            {parkingClicked.fields.dispo}
+          </Text>
+        </View>
+        <View style={[styles.pinFreeplaces, pinStyle]}></View>
+        <TouchableOpacity
+          style={[styles.btnGo, bgCard, border]}
+          onPress={() => Linking.openURL(url)}
+        >
+          <Text style={[styles.popupText, text]}>Go</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
   // LAUNCH RESEARCH
 
   const handleSearch = () => {
@@ -216,6 +322,7 @@ export default function Homescreen({ navigation }) {
         style={[styles.inputSearchBtn, bgBtn]}
         onPress={() => {
           handleSearch();
+          parking();
         }}
       >
         <FontAwesome name="search" size={20} color="#444" />
@@ -231,12 +338,10 @@ export default function Homescreen({ navigation }) {
     setSearch(null);
     setSearchedPlace(null);
     dispatch(removeParking());
+    setParkingClicked(null);
   };
   return (
-    <KeyboardAvoidingView
-      // behavior={Platform.OS === "ios" ? "" : null} ----- ANCIENNE PLATFORME
-      style={styles.container}
-    >
+    <KeyboardAvoidingView style={styles.container}>
       {/* MAP */}
 
       <MapView
@@ -281,6 +386,39 @@ export default function Homescreen({ navigation }) {
         <View style={styles.inputSearchBtnContainer}>{searchButton}</View>
       </View>
 
+      {/* POPUP PARKING */}
+
+      {parkingClicked && popupParkingClicked}
+      {showSelected && (
+        <SafeAreaView
+          style={[
+            styles.container,
+            {
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              backgroundColor: "#2E3740",
+              zIndex: 1,
+            },
+          ]}
+        >
+          <ParkingSelected
+            freeplace={
+              parkingClicked.fields.counterfreeplaces ||
+              parkingClicked.fields.dispo
+            }
+            name={
+              parkingClicked.fields.nom_parking || parkingClicked.fields.name
+            }
+            latitude={parkingClicked.geometry.coordinates[1]}
+            longitude={parkingClicked.geometry.coordinates[0]}
+            id={parkingClicked.recordid}
+            changeState={(state) => setShowSelected(state)}
+          />
+        </SafeAreaView>
+      )}
       {/* BUTTON PARKING LIST  */}
 
       <TouchableOpacity
@@ -299,9 +437,6 @@ const styles = StyleSheet.create({
   container: {
     alignItems: "center",
     flex: 1,
-    //height: "%",
-    height: Platform.OS === "android" ? 76 : null,
-    marginTop: Platform.OS === "android" ? 24 : null,
   },
 
   // INPUT
@@ -408,7 +543,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: "3%",
     right: "5%",
-    height: 24, // CHANGEMENT
+    height: "4%",
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 15,
@@ -428,5 +563,67 @@ const styles = StyleSheet.create({
   },
   imageParking: {
     tintColor: "green",
+  },
+
+  // POPUP
+
+  popupParking: {
+    flexDirection: "row",
+    padding: 10,
+    width: "90%",
+    height: "20%",
+    borderRadius: 15,
+    position: "absolute",
+    bottom: "10%",
+    left: "5%",
+    borderColor: "#FC727B",
+    borderWidth: 3,
+    backgroundColor: "#2E3740",
+  },
+  popupText: {
+    color: "white",
+    fontSize: 17,
+    fontWeight: "bold",
+  },
+  imagePopUpContainer: {
+    width: "30%",
+    marginRight: 5,
+  },
+  imagePopup: {
+    width: "100%",
+    height: "100%",
+    resizeMode: "contain",
+    borderRadius: 10,
+    tintColor: "#FC727B",
+  },
+  pinFreeplaces: {
+    position: "absolute",
+    top: "40%",
+    right: "5%",
+    height: 15,
+    width: 15,
+    borderRadius: 50,
+  },
+  btnGo: {
+    position: "absolute",
+    bottom: 10,
+    right: 10,
+    borderRadius: "50%",
+    padding: 10,
+    borderColor: "#FC727B",
+    borderWidth: 3,
+    backgroundColor: "#2E3740",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  btnVoir: {
+    borderRadius: "50%",
+    padding: 5,
+    width: "40%",
+    borderColor: "#FC727B",
+    borderWidth: 3,
+    backgroundColor: "#2E3740",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });

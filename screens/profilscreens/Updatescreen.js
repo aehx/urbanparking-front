@@ -22,7 +22,7 @@ export default function UpdateProfil(props) {
 
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
-  const theme = useSelector((state) => state.user.value);
+  const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
   //  STEP
@@ -50,21 +50,6 @@ export default function UpdateProfil(props) {
 
   const EMAIL_REGEX =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-  // THEME
-
-  let bg;
-  let text;
-  let bgCard;
-  let border;
-  let bgBtn;
-  if (theme) {
-    bg = { backgroundColor: "#FFF" };
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-    border = { borderColor: "#87BBDD" };
-  }
 
   // INVERSE DATA FLOW
 
@@ -111,6 +96,21 @@ export default function UpdateProfil(props) {
       props.changeUpdateScreen(false);
     }
   };
+
+  // THEME
+
+  let bg;
+  let text;
+  let bgCard;
+  let border;
+  let bgBtn;
+  if (theme) {
+    bg = { backgroundColor: "#FFF" };
+    text = { color: "#333" };
+    bgCard = { backgroundColor: "#DAE9F2" };
+    bgBtn = { backgroundColor: "#87BBDD" };
+    border = { borderColor: "#87BBDD" };
+  }
 
   //   SELECT FIELDS
 

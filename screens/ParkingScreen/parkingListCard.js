@@ -9,9 +9,9 @@ export default function ParkingListCard(props) {
   // STYLE PIN PARKING
 
   let pinColor;
-  if (props.freeplace > 40) {
+  if (props.freeplace > 40 || props.dispo) {
     pinColor = { backgroundColor: "green" };
-  } else if (props.freeplace > 0) {
+  } else if (props.freeplace > 0 || props.dispo) {
     pinColor = { backgroundColor: "orange" };
   } else {
     pinColor = { backgroundColor: "red" };
@@ -20,10 +20,12 @@ export default function ParkingListCard(props) {
   // THEME
 
   let border;
+  let borderLight;
   let bgBtn;
   if (theme) {
     bgBtn = { backgroundColor: "#87BBDD" };
     border = { borderColor: "#87BBDD" };
+    borderLight = { borderColor: "#DAE9F2" };
   }
 
   // INVERSE DATA FLOW DISPLAY/DON'T DISPLAY COMPONENT
@@ -41,6 +43,11 @@ export default function ParkingListCard(props) {
         handleclick();
       }}
     >
+      <View style={[styles.distance, bgBtn, borderLight]}>
+        <Text style={{ fontWeight: "bold", color: "#2E3740" }}>
+          {props.distance.toFixed(0)} km
+        </Text>
+      </View>
       {/* PIN */}
 
       <View style={[styles.pinFreeplaces, pinColor]}></View>
@@ -57,17 +64,13 @@ export default function ParkingListCard(props) {
       {/* PARKING INFOS */}
 
       <View style={styles.parkingsContainer}>
-        <View style={[styles.distance, bgBtn]}>
-          <Text style={{ fontWeight: "bold", color: "#2E3740" }}>
-            {props.distance.toFixed(0)} km
-          </Text>
-        </View>
         <Text style={{ fontWeight: "bold" }}>{props.name}</Text>
         <View style={styles.infosContainer}>
           <View style={styles.horaire}>
             <Text style={{ fontWeight: "bold" }}>
               {" "}
               places : {props.freeplace}
+              {props.dispo}
             </Text>
           </View>
           <View style={styles.freeplace}>
@@ -97,15 +100,10 @@ const styles = StyleSheet.create({
   },
   parkingsContainer: {
     flex: 1,
-    flexDirection: "column", // NEW
-    //height: "100%", // PREVIOUS VALUE
-    paddingTop: 5, // PREVIOUS 10
+    height: "100%",
+    paddingTop: 10,
     height: Platform.OS === "android" ? 80 : null,
     marginTop: Platform.OS === "android" ? 24 : null,
-    /*...Platform.select({
-      ios: { backgroundColor: "#f00" },
-      android: { backgroundColor: "yellow" },
-    }),*/
   },
 
   // PICTURE
@@ -131,21 +129,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     position: "absolute",
-    top: -20,
-    right: 0,
-    width: "33%",
-    height: 27,
+    top: "-15%",
+    right: 10,
+    width: "30%",
+    height: 30,
     backgroundColor: "#FC727B",
   },
   infosContainer: {
     justifyContent: "flex-start",
   },
   horaire: {
-    // marginTop: 10, // PREVIOUS VERSION
+    marginTop: 10,
     marginTop: 1,
   },
   freeplace: {
-    // marginTop: 10, // PERVIOUS VERSION
+    marginTop: 10,
   },
   pinFreeplaces: {
     position: "absolute",

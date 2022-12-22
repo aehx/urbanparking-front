@@ -58,6 +58,7 @@ export default function FavParkCard(props) {
             <Text style={{ fontWeight: "bold" }}>
               {" "}
               places : {props.freeplace}
+              {props.dispo}
             </Text>
           </View>
           <View style={styles.freeplace}>
