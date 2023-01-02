@@ -1,25 +1,13 @@
 import { StyleSheet, Text, View } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
+import { stringify } from "../../../utils/DateTimeUtils";
 
-export default function ComParkCard(props) {
-  const x = new Date(props.date);
-
+export default function ReviewCard(props) {
+  const date = stringify(new Date(props.date));
   const theme = useSelector((state) => state.user.value.theme);
-  //  Date
+  const border = theme && { borderColor: "#87BBDD" };
 
-  const day = x.getDate();
-  const month = x.getMonth();
-  const monthformat = month < 10 ? "0" + (month + 1) : month + 1;
-  const year = x.getFullYear();
-  const newDate = `${day}/${monthformat}/${year}`;
-
-  // THEME
-
-  let border;
-  if (theme) {
-    border = { borderColor: "#87BBDD" };
-  }
   return (
     <View style={[styles.container, border]}>
       <View style={styles.cardHeader}>
@@ -30,7 +18,7 @@ export default function ComParkCard(props) {
           </Text>
         </View>
 
-        <Text style={styles.cardUserInfo}>{newDate}</Text>
+        <Text style={styles.cardUserInfo}>{date}</Text>
       </View>
       <View style={styles.cardBorderContainer}>
         <View style={styles.cardBorder}></View>

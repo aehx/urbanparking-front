@@ -13,9 +13,7 @@ import {
 import { useSelector, useDispatch } from "react-redux";
 import { login } from "../../reducers/user";
 
-// CHILD OF PROFILSCREEN
-
-export default function Signin(props) {
+export default function SignInScreen(props) {
   // DISPATCH & REDUCER
 
   const dispatch = useDispatch();

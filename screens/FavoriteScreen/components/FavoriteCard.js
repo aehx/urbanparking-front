@@ -1,9 +1,7 @@
 import { StyleSheet, View, TouchableOpacity, Text, Image } from "react-native";
 import { useSelector } from "react-redux";
 
-// CHILD OF PARKLISTSCREEN
-
-export default function FavParkCard(props) {
+export default function FavoriteCard(props) {
   const theme = useSelector((state) => state.user.value.theme);
 
   // THEME
@@ -40,7 +38,10 @@ export default function FavParkCard(props) {
       {/* PICTURE */}
 
       <View style={styles.imageContainer}>
-        <Image source={require("../../assets/park.png")} style={styles.image} />
+        <Image
+          source={require("../../../assets/park.png")}
+          style={styles.image}
+        />
       </View>
 
       {/* PARKING INFOS */}

@@ -7,13 +7,11 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import Settings from "./settings";
-import Signin from "../profilscreens/Signin";
-import Signup from "../profilscreens/Signup";
+import SettingsScreen from "../SettingsScreen/SettingsScreen";
+import SignInScreen from "../SignInScreen/SignInScreen";
+import SignUpScreen from "../SignUpScreen/SignUpScreen";
 
-// PARENT OF SIGNIN/SIGNUP/SETTING
-
-export default function Profilscreen() {
+export default function ViewProfileScreen() {
   // REDUCER
   const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
@@ -37,7 +35,7 @@ export default function Profilscreen() {
 
   if (user.token) {
     return (
-      <Settings
+      <SettingsScreen
         changeSignup={(state) => {
           setShowSignup(state);
         }}
@@ -73,10 +71,10 @@ export default function Profilscreen() {
           </View>
         </View>
         {showSignin && (
-          <Signin changeSignin={(state) => setShowSignin(state)} />
+          <SignInScreen changeSignin={(state) => setShowSignin(state)} />
         )}
         {showSignup && (
-          <Signup changeSignup={(state) => setShowSignup(state)} />
+          <SignUpScreen changeSignup={(state) => setShowSignup(state)} />
         )}
       </SafeAreaView>
     );

@@ -1,5 +1,5 @@
-import ParkingListCard from "./parkingListCard";
-import ParkingSelected from "./ParkingSelected";
+import ParkingCard from "./components/ParkingCard";
+import ParkingSelected from "../../components/parking/ParkingSelected";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {
   View,
@@ -12,9 +12,7 @@ import {
 import { useSelector } from "react-redux";
 import { useState } from "react";
 
-// PARENT OF PARKINGSELECTED/ PARKINGLISTCARD
-
-export default function Parkingscreen({ navigation }) {
+export default function ParkingListScreen({ navigation }) {
   // REDUCER
 
   const { parkingList } = useSelector((state) => state.parking.value);
@@ -55,7 +53,7 @@ export default function Parkingscreen({ navigation }) {
 
   const parking = parkingList.map((el, i) => {
     return (
-      <ParkingListCard
+      <ParkingCard
         {...el}
         key={i}
         displayCard={(state) => setParkingClicked(state)}
@@ -72,7 +70,7 @@ export default function Parkingscreen({ navigation }) {
     })
     .map((el, i) => {
       return (
-        <ParkingListCard
+        <ParkingCard
           {...el}
           key={i}
           displayCard={(state) => setParkingClicked(state)}
@@ -92,7 +90,7 @@ export default function Parkingscreen({ navigation }) {
     })
     .map((el, i) => {
       return (
-        <ParkingListCard
+        <ParkingCard
           {...el}
           key={i}
           displayCard={(state) => setParkingClicked(state)}
@@ -124,7 +122,7 @@ export default function Parkingscreen({ navigation }) {
               size={30}
               style={[{ color: "white" }, text]}
               onPress={() =>
-                navigation.navigate("TabNavigator", { screen: "Homescreen" })
+                navigation.navigate("TabNavigator", { screen: "HomeScreen" })
               }
             />
           </View>

@@ -1,9 +1,7 @@
 import { StyleSheet, View, TouchableOpacity, Text, Image } from "react-native";
 import { useSelector } from "react-redux";
 
-// CHILD OF PARKLISTSCREEN
-
-export default function ParkingListCard(props) {
+export default function ParkingCard(props) {
   const theme = useSelector((state) => state.user.value.theme);
 
   // THEME
@@ -50,7 +48,7 @@ export default function ParkingListCard(props) {
 
       <View style={styles.imageContainer}>
         <Image
-          source={require("../../assets/park.png")}
+          source={require("../../../assets/park.png")}
           style={[styles.image, { tintColor: "#2E3740" }]}
         />
       </View>

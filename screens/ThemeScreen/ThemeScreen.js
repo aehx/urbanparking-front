@@ -7,9 +7,9 @@ import {
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
-import { changeTheme } from "../reducers/user";
+import { changeTheme } from "../../reducers/user";
 
-export default function Themescreen() {
+export default function ThemeScreen() {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.user.value.theme);
 
@@ -75,9 +75,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#2E3740",
     paddingTop: "20%",
   },
-
-  //   TITLE
-
   header: {
     flexDirection: "row",
     alignItems: "center",

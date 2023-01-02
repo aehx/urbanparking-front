@@ -1,13 +1,13 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import ParkingSelected from "../ParkingScreen/ParkingSelected";
-import FavParkCard from "../ParkingScreen/favParkCard";
+import ParkingSelected from "../../components/parking/ParkingSelected";
+import FavoriteCard from "./components/FavoriteCard";
 import axios from "axios";
 
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
-export default function FavPark(props) {
+export default function FavoriteScreen(props) {
   // REDUCER
   const userFavoritesParkings = useSelector(
     (state) => state.user.value.favorisPark
@@ -110,7 +110,7 @@ export default function FavPark(props) {
   const test = userFavoris.map((el, i) => {
     // console.log("____________------------_____________----------", el);
     return (
-      <FavParkCard
+      <FavoriteCard
         {...el}
         key={i}
         displayCard={(state) => setParkingClicked(state)}

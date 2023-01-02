@@ -1,7 +1,5 @@
-// COMPONENT IMPORT
-
-import Updatescreen from "./Updatescreen";
-import FavParks from "./FavParks";
+import UpdateProfileScreen from "../ProfileScreen/UpdateProfileScreen";
+import FavoriteScreen from "../FavoriteScreen/FavoriteScreen";
 import axios from "axios";
 
 // STYLE
@@ -18,11 +16,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, addFavorite } from "../../reducers/user";
 
-// PARENT OF Updatescreen/FAVPARKS
-
-export default function Settings() {
-  // REDUCER & DISPATCH
-
+export default function SettingsScreen() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
@@ -68,10 +62,14 @@ export default function Settings() {
 
   if (updateProfil) {
     return (
-      <Updatescreen changeUpdateScreen={(state) => setUpdateProfil(state)} />
+      <UpdateProfileScreen
+        changeUpdateScreen={(state) => setUpdateProfil(state)}
+      />
     );
   } else if (favorisScreen) {
-    return <FavParks changeFavScreen={(state) => setFavorisScreen(state)} />;
+    return (
+      <FavoriteScreen changeFavScreen={(state) => setFavorisScreen(state)} />
+    );
   } else {
     return (
       <SafeAreaView style={[styles.globalContainer]}>

@@ -21,18 +21,10 @@ export default function ComParkScreen(props) {
     props.togglePostReview(false);
   };
 
-  // THEME
-
-  let text;
-  let bgCard;
-  let border;
-  let bgBtn;
-  if (theme) {
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-    border = { borderColor: "#87BBDD", borderWidth: 3 };
-  }
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
+  const border = theme && { borderColor: "#87BBDD", borderWidth: 3 };
 
   const postReview = () => {
     axios.post("https://urbanparking-backend.vercel.app/review/post", {
@@ -100,9 +92,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
   },
-
-  //   HEADER
-
   header: {
     backgroundColor: "#2E3740",
     flexDirection: "row",

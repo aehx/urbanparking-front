@@ -1,7 +1,4 @@
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import ReviewScreen from "../ParkingScreen/ReviewScreen";
-import axios from "axios";
-import { favorisPark } from "../../reducers/user";
+import { useState } from "react";
 import {
   View,
   Text,
@@ -9,13 +6,14 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { useState } from "react";
+import axios from "axios";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import ReviewScreen from "../../screens/ReviewScreen/ReviewScreen";
+import { favorisPark } from "../../reducers/user";
 import { useSelector, useDispatch } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
-export default function ParkingSelected(props) {
-  console.log(props.id);
-  // REDUCER & DISPATCH
 
+export default function ParkingSelected(props) {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.user.value.theme);
   const userFav = useSelector((state) => state.user.value.favorisPark);

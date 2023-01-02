@@ -1,7 +1,7 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import Animated, { SlideInDown } from "react-native-reanimated";
-import ComParkCard from "./ReviewCard";
-import PostReview from "./PostReview";
+import ComParkCard from "./components/ReviewCard";
+import PostReview from "./components/PostReview";
 
 import {
   StyleSheet,
@@ -14,7 +14,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-export default function ReviewParkScreen(props) {
+export default function ReviewScreen(props) {
   const theme = useSelector((state) => state.user.value.theme);
   const [reviewData, setReviewData] = useState(null);
   const [count, setCount] = useState(0);
@@ -22,14 +22,9 @@ export default function ReviewParkScreen(props) {
 
   // THEMES
 
-  let text;
-  let bgCard;
-  let bgBtn;
-  if (theme) {
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-  }
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
 
   useEffect(() => {
     axios
@@ -113,8 +108,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "105%",
   },
-  //   HEADER
-
   header: {
     backgroundColor: "#2E3740",
     flexDirection: "row",

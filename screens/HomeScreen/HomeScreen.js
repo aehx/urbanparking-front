@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import ParkingSelected from "../ParkingScreen/ParkingSelected";
+import ParkingSelected from "../../components/parking/ParkingSelected";
 import { addParking } from "../../reducers/parking";
 import { useDispatch, useSelector } from "react-redux";
 import parkPin from "../../assets/placeholder.png";
@@ -22,7 +22,7 @@ import FontAwesome from "react-native-vector-icons/FontAwesome";
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
-export default function Homescreen({ navigation }) {
+export default function HomeScreen({ navigation }) {
   //  dispatch
 
   const dispatch = useDispatch();
@@ -30,6 +30,7 @@ export default function Homescreen({ navigation }) {
   const { parkingList } = useSelector((state) => state.parking.value);
 
   // STATE LOCATION
+
   const [currentPosition, setCurrentPosition] = useState(null);
   const [region, setRegion] = useState({
     latitude: 48.51,
@@ -71,11 +72,12 @@ export default function Homescreen({ navigation }) {
   // GET PARKING
 
   const handleSearchParkings = async (search) => {
+    console.log(search);
     if (!search || (search && !search.length)) return dispatch(addParking([]));
 
-    const currentSearchedPosition = await axios.get(
-      `https://api-adresse.data.gouv.fr/search/?q=${search}`
-    );
+    const currentSearchedPosition = await axios
+      .get(`https://api-adresse.data.gouv.fr/search/?q=${search}`)
+      .catch((error) => console.log(error.toJSON()));
 
     if (!currentSearchedPosition?.data) return dispatch(addParking([]));
 
@@ -91,19 +93,23 @@ export default function Homescreen({ navigation }) {
       Keyboard.dismiss();
     }
 
-    const parkingsData = await axios.get(
-      "https://data.opendatasoft.com/api/records/1.0/search/?dataset=places-disponibles-parkings-saemes@saemes"
-    );
+    const parisParkingsData = await axios
+      .get(
+        "https://data.opendatasoft.com/api/records/1.0/search/?dataset=places-disponibles-parkings-saemes@saemes"
+      )
+      .catch((error) => console.log(error.toJSON()));
 
-    const orleans = await axios.get(
-      "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilite-places-disponibles-parkings-en-temps-reel@orleansmetropole&rows=20"
-    );
+    const orleansParkingsData = await axios
+      .get(
+        "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilite-places-disponibles-parkings-en-temps-reel@orleansmetropole&rows=20"
+      )
+      .catch((error) => console.log(error.toJSON()));
 
-    const filteredParis = parkingsData.data.records.filter(
+    const filteredParis = parisParkingsData.data.records.filter(
       (el) => el.geometry !== undefined
     );
 
-    const filteredOrleans = orleans.data.records.filter(
+    const filteredOrleans = orleansParkingsData.data.records.filter(
       (el) => el.geometry !== undefined
     );
 
