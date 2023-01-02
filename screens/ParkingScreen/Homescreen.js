@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ParkingSelected from "../ParkingScreen/ParkingSelected";
-import { addParking, removeParking } from "../../reducers/parking";
+import { addParking } from "../../reducers/parking";
 import { useDispatch, useSelector } from "react-redux";
 import parkPin from "../../assets/placeholder.png";
 import { getDistance } from "geolib";
@@ -27,6 +27,7 @@ export default function Homescreen({ navigation }) {
 
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.user.value.theme);
+  const { parkingList } = useSelector((state) => state.parking.value);
 
   // STATE LOCATION
   const [currentPosition, setCurrentPosition] = useState(null);
@@ -49,7 +50,6 @@ export default function Homescreen({ navigation }) {
 
   // STATE PARKINGS
   const [parkingClicked, setParkingClicked] = useState(null);
-  const [parisParking, setParking] = useState([]);
 
   // THEME
 
@@ -70,20 +70,101 @@ export default function Homescreen({ navigation }) {
 
   // GET PARKING
 
-  const parking = async () => {
+  const handleSearchParkings = async (search) => {
+    if (!search || (search && !search.length)) return dispatch(addParking([]));
+
+    const currentSearchedPosition = await axios.get(
+      `https://api-adresse.data.gouv.fr/search/?q=${search}`
+    );
+
+    if (!currentSearchedPosition?.data) return dispatch(addParking([]));
+
+    const searchedPlaceData = currentSearchedPosition.data.features[0];
+    if (currentSearchedPosition?.data?.features.length) {
+      setSearchedPlace({
+        latitude: searchedPlaceData.geometry.coordinates[1],
+        longitude: searchedPlaceData.geometry.coordinates[0],
+        latitudeDelta: 0.05,
+        longitudeDelta: 0.05,
+      });
+      setShowSearch(false);
+      Keyboard.dismiss();
+    }
+
     const parkingsData = await axios.get(
       "https://data.opendatasoft.com/api/records/1.0/search/?dataset=places-disponibles-parkings-saemes@saemes"
     );
+
     const orleans = await axios.get(
-      "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilite-places-disponibles-parkings-en-temps-reel@orleansmetropole"
+      "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilite-places-disponibles-parkings-en-temps-reel@orleansmetropole&rows=20"
     );
+
     const filteredParis = parkingsData.data.records.filter(
       (el) => el.geometry !== undefined
     );
+
     const filteredOrleans = orleans.data.records.filter(
       (el) => el.geometry !== undefined
     );
-    setParking([...filteredOrleans, ...filteredParis]);
+
+    const parkingsNeededData = [...filteredOrleans, ...filteredParis].map(
+      (el) => {
+        const distanceBetweenParkAndMe =
+          getDistance(
+            {
+              latitude: el.geometry.coordinates[1],
+              longitude: el.geometry.coordinates[0],
+            },
+            {
+              latitude: currentPosition?.latitude,
+              longitude: currentPosition?.longitude,
+            }
+          ) / 1000;
+
+        const distanceBetween =
+          getDistance(
+            {
+              latitude: el.geometry.coordinates[1],
+              longitude: el.geometry.coordinates[0],
+            },
+            {
+              latitude: searchedPlaceData.geometry.coordinates[1],
+              longitude: searchedPlaceData.geometry.coordinates[0],
+            }
+          ) / 1000;
+
+        return {
+          id: el.datasetid.includes("orleansmetropole")
+            ? el.fields.id
+            : el.recordid,
+          freeplaces:
+            el.fields.counterfreeplaces >= 0
+              ? el.fields.counterfreeplaces
+              : el.fields.dispo,
+          name: el.fields.nom_parking || el.fields.name,
+          latitude: el.geometry.coordinates[1],
+          longitude: el.geometry.coordinates[0],
+          distanceBetweenParkAndMe,
+          distanceBetween,
+          pinStyle: {
+            tintColor:
+              el?.fields.counterfreeplaces > 40 || el?.fields.dispo > 40
+                ? "green"
+                : el?.fields.counterfreeplaces > 0 || el?.fields.dispo > 0
+                ? "orange"
+                : "red",
+          },
+          schedule:
+            el.fields.horaires_d_acces_au_public_pour_les_usagers_non_abonnes,
+        };
+      }
+    );
+
+    const parkingsFilteredByDistance = parkingsNeededData.filter(
+      (el) => el.distanceBetween < 30
+    );
+
+    dispatch(addParking(parkingsFilteredByDistance));
   };
 
   // COMPONENT INIT
@@ -92,7 +173,7 @@ export default function Homescreen({ navigation }) {
     (async () => {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status === "granted") {
-        Location.watchPositionAsync({ distanceInterval: 10 }, (location) => {
+        Location.watchPositionAsync({ distanceInterval: 50 }, (location) => {
           setPositionGranted(true);
           setCurrentPosition({
             latitude: location.coords.latitude,
@@ -107,105 +188,8 @@ export default function Homescreen({ navigation }) {
     })();
   }, []);
 
-  // PARKINGS FILTERED BY DISTANCE
-
-  let parkingResults;
-  const dispatchParkings = () => {
-    if (searchedPlace) {
-      parkingResults = parisParking.map((el, i) => {
-        const distanceBetweenParkAndMe =
-          getDistance(
-            {
-              latitude: el.geometry.coordinates[1],
-              longitude: el.geometry.coordinates[0],
-            },
-            {
-              latitude: currentPosition.latitude,
-              longitude: currentPosition.longitude,
-            }
-          ) / 1000;
-        const distanceBetween =
-          getDistance(
-            {
-              latitude: el.geometry.coordinates[1],
-              longitude: el.geometry.coordinates[0],
-            },
-            {
-              latitude: searchedPlace.latitude,
-              longitude: searchedPlace.longitude,
-            }
-          ) / 1000;
-        const parkingFound = {
-          id: el.recordid,
-          name: el.fields.nom_parking || el.fields.name,
-          freeplace: el.fields.counterfreeplaces || el.fields.dispo,
-          horaire:
-            el.fields.horaires_d_acces_au_public_pour_les_usagers_non_abonnes ||
-            "24h/24, 7j/7",
-          distance: distanceBetweenParkAndMe,
-          latitude: el.geometry.coordinates[1],
-          longitude: el.geometry.coordinates[0],
-        };
-        {
-          distanceBetween < 60 && dispatch(addParking(parkingFound));
-        }
-      });
-    }
-  };
-
-  // PARKING PIN ON MAP
-
-  let parkingPin;
-  let pinStyle;
-  if (searchedPlace) {
-    parkingPin = parisParking.map((el, i) => {
-      if (el.fields.counterfreeplaces > 40 || el.fields.dispo > 40) {
-        pinStyle = { tintColor: "green" };
-      } else if (el.fields.counterfreeplaces > 0 || el.fields.dispo > 0) {
-        pinStyle = { tintColor: "orange" };
-      } else {
-        pinStyle = { tintColor: "red" };
-      }
-      const distanceBetween =
-        getDistance(
-          {
-            latitude: el.geometry.coordinates[1],
-            longitude: el.geometry.coordinates[0],
-          },
-          {
-            latitude: searchedPlace.latitude,
-            longitude: searchedPlace.longitude,
-          }
-        ) / 1000;
-      return (
-        searchedPlace &&
-        distanceBetween < 60 && (
-          <Marker
-            key={i}
-            coordinate={{
-              longitude: el.geometry.coordinates[0],
-              latitude: el.geometry.coordinates[1],
-            }}
-            onPress={() => {
-              setSearchedPlace({
-                latitude: el.geometry.coordinates[1],
-                longitude: el.geometry.coordinates[0],
-                latitudeDelta: 0.05,
-                longitudeDelta: 0.05,
-              }),
-                setParkingClicked(el);
-            }}
-          >
-            <Image source={parkPin} style={[styles.image, pinStyle]} />
-          </Marker>
-        )
-      );
-    });
-  }
-
   // POPUP PARKING
 
-  console.log(parkingClicked);
   let popupParkingClicked;
   if (parkingClicked) {
     // MAP REDIRECTION
@@ -214,29 +198,11 @@ export default function Homescreen({ navigation }) {
       android: "geo:0,0?q=",
     });
     const latLng = `${searchedPlace.latitude},${searchedPlace.longitude}`;
-    const label = `${
-      parkingClicked.fields.nom_parking || parkingClicked.fields.name
-    }`;
+    const label = `${parkingClicked.name}`;
     const url = Platform.select({
       ios: `${scheme}${label}@${latLng}`,
       android: `${scheme}${latLng}(${label})`,
     });
-
-    // PIN STYLE
-
-    if (
-      parkingClicked.fields.counterfreeplaces > 40 ||
-      parkingClicked.fields.dispo > 40
-    ) {
-      pinStyle = { backgroundColor: "green" };
-    } else if (
-      parkingClicked.fields.counterfreeplaces > 0 ||
-      parkingClicked.fields.dispo > 0
-    ) {
-      pinStyle = { backgroundColor: "orange" };
-    } else {
-      pinStyle = { backgroundColor: "red" };
-    }
 
     // JSX
 
@@ -246,9 +212,6 @@ export default function Homescreen({ navigation }) {
           <Image
             source={require("../../assets/park.png")}
             style={[styles.imagePopup, icon]}
-            onPress={() => {
-              setShowSelected(true);
-            }}
           />
         </View>
         <View
@@ -259,9 +222,7 @@ export default function Homescreen({ navigation }) {
             justifyContent: "space-between",
           }}
         >
-          <Text style={[styles.popupText, text]}>
-            {parkingClicked.fields.nom_parking || parkingClicked.fields.name}
-          </Text>
+          <Text style={[styles.popupText, text]}>{parkingClicked.name}</Text>
           <TouchableOpacity
             style={[styles.btnVoir, bgCard, border]}
             onPress={() => setShowSelected(true)}
@@ -269,11 +230,15 @@ export default function Homescreen({ navigation }) {
             <Text style={[styles.popupText, text]}>voir</Text>
           </TouchableOpacity>
           <Text style={[styles.popupText, text]}>
-            places : {parkingClicked.fields.counterfreeplaces}
-            {parkingClicked.fields.dispo}
+            places : {parkingClicked.freeplaces}
           </Text>
         </View>
-        <View style={[styles.pinFreeplaces, pinStyle]}></View>
+        <View
+          style={[
+            styles.pinFreeplaces,
+            { backgroundColor: parkingClicked.pinStyle.tintColor },
+          ]}
+        ></View>
         <TouchableOpacity
           style={[styles.btnGo, bgCard, border]}
           onPress={() => Linking.openURL(url)}
@@ -283,33 +248,10 @@ export default function Homescreen({ navigation }) {
       </View>
     );
   }
-  // LAUNCH RESEARCH
-
-  const handleSearch = () => {
-    axios
-      .get(`https://api-adresse.data.gouv.fr/search/?q=${search}`)
-      .then((response) => {
-        if (response.data.features.length === 0) {
-          return;
-        }
-
-        const searchedPlaceData = response.data.features[0];
-
-        setSearchedPlace({
-          latitude: searchedPlaceData.geometry.coordinates[1],
-          longitude: searchedPlaceData.geometry.coordinates[0],
-          latitudeDelta: 0.05,
-          longitudeDelta: 0.05,
-        });
-        setShowSearch(false);
-        Keyboard.dismiss();
-      });
-  };
 
   // BUTTON "VOIR"
 
   const handleSubmit = () => {
-    dispatchParkings();
     navigation.navigate("ParkingListScreen");
   };
 
@@ -321,8 +263,7 @@ export default function Homescreen({ navigation }) {
       <TouchableOpacity
         style={[styles.inputSearchBtn, bgBtn]}
         onPress={() => {
-          handleSearch();
-          parking();
+          handleSearchParkings(search);
         }}
       >
         <FontAwesome name="search" size={20} color="#444" />
@@ -333,13 +274,14 @@ export default function Homescreen({ navigation }) {
 
   // PRESS ON "TIMES" ICON
 
-  const handleSearchButton = () => {
+  const didPressCancelButton = () => {
     setShowSearch(true);
     setSearch(null);
     setSearchedPlace(null);
-    dispatch(removeParking());
     setParkingClicked(null);
+    dispatch(addParking([]));
   };
+
   return (
     <KeyboardAvoidingView style={styles.container}>
       {/* MAP */}
@@ -348,13 +290,35 @@ export default function Homescreen({ navigation }) {
         onPress={() => {
           Keyboard.dismiss();
         }}
-        animatedToRegion={{ region: region, duration: 3000 }}
         style={StyleSheet.absoluteFillObject}
         showsUserLocation={positionGranted}
         initialRegion={currentPosition ? currentPosition : region}
         region={searchedPlace ? searchedPlace : currentPosition}
       >
-        {searchedPlace && parkingPin}
+        {console.log(parkingList)}
+        {parkingList.map((el) => (
+          <Marker
+            key={el.id}
+            coordinate={{
+              latitude: el.latitude,
+              longitude: el.longitude,
+            }}
+            onPress={() => {
+              setParkingClicked(el),
+                setSearchedPlace({
+                  latitude: el.latitude,
+                  longitude: el.longitude,
+                  latitudeDelta: 0.05,
+                  longitudeDelta: 0.05,
+                });
+            }}
+          >
+            <Image
+              source={parkPin}
+              style={{ width: 30, height: 30, ...el.pinStyle }}
+            ></Image>
+          </Marker>
+        ))}
       </MapView>
 
       {/* INPUT CONTAINER  */}
@@ -374,9 +338,7 @@ export default function Homescreen({ navigation }) {
               size={25}
               color="#555"
               style={styles.filterBtn}
-              onPress={() => {
-                handleSearchButton();
-              }}
+              onPress={didPressCancelButton}
             />
           )}
         </View>
@@ -405,16 +367,7 @@ export default function Homescreen({ navigation }) {
           ]}
         >
           <ParkingSelected
-            freeplace={
-              parkingClicked.fields.counterfreeplaces ||
-              parkingClicked.fields.dispo
-            }
-            name={
-              parkingClicked.fields.nom_parking || parkingClicked.fields.name
-            }
-            latitude={parkingClicked.geometry.coordinates[1]}
-            longitude={parkingClicked.geometry.coordinates[0]}
-            id={parkingClicked.recordid}
+            {...parkingClicked}
             changeState={(state) => setShowSelected(state)}
           />
         </SafeAreaView>

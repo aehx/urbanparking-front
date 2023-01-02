@@ -6,17 +6,6 @@ import { useSelector } from "react-redux";
 export default function ParkingListCard(props) {
   const theme = useSelector((state) => state.user.value.theme);
 
-  // STYLE PIN PARKING
-
-  let pinColor;
-  if (props.freeplace > 40 || props.dispo) {
-    pinColor = { backgroundColor: "green" };
-  } else if (props.freeplace > 0 || props.dispo) {
-    pinColor = { backgroundColor: "orange" };
-  } else {
-    pinColor = { backgroundColor: "red" };
-  }
-
   // THEME
 
   let border;
@@ -45,12 +34,17 @@ export default function ParkingListCard(props) {
     >
       <View style={[styles.distance, bgBtn, borderLight]}>
         <Text style={{ fontWeight: "bold", color: "#2E3740" }}>
-          {props.distance.toFixed(0)} km
+          {props.distanceBetweenParkAndMe.toFixed(0)} km
         </Text>
       </View>
       {/* PIN */}
 
-      <View style={[styles.pinFreeplaces, pinColor]}></View>
+      <View
+        style={[
+          styles.pinFreeplaces,
+          { backgroundColor: props.pinStyle.tintColor },
+        ]}
+      ></View>
 
       {/* PICTURE */}
 
@@ -65,18 +59,8 @@ export default function ParkingListCard(props) {
 
       <View style={styles.parkingsContainer}>
         <Text style={{ fontWeight: "bold" }}>{props.name}</Text>
-        <View style={styles.infosContainer}>
-          <View style={styles.horaire}>
-            <Text style={{ fontWeight: "bold" }}>
-              {" "}
-              places : {props.freeplace}
-              {props.dispo}
-            </Text>
-          </View>
-          <View style={styles.freeplace}>
-            <Text style={{ fontWeight: "bold" }}>{props.horaire}</Text>
-          </View>
-        </View>
+        <Text style={{ fontWeight: "bold" }}> places : {props.freeplaces}</Text>
+        <Text style={{ fontWeight: "bold" }}>{props.schedule}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -99,11 +83,10 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   parkingsContainer: {
+    justifyContent: "space-around",
     flex: 1,
     height: "100%",
     paddingTop: 10,
-    height: Platform.OS === "android" ? 80 : null,
-    marginTop: Platform.OS === "android" ? 24 : null,
   },
 
   // PICTURE
@@ -134,16 +117,6 @@ const styles = StyleSheet.create({
     width: "30%",
     height: 30,
     backgroundColor: "#FC727B",
-  },
-  infosContainer: {
-    justifyContent: "flex-start",
-  },
-  horaire: {
-    marginTop: 10,
-    marginTop: 1,
-  },
-  freeplace: {
-    marginTop: 10,
   },
   pinFreeplaces: {
     position: "absolute",

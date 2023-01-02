@@ -1,6 +1,6 @@
 // COMPONENT IMPORT
 
-import UpdateProfil from "./Updatescreen";
+import Updatescreen from "./Updatescreen";
 import FavParks from "./FavParks";
 import axios from "axios";
 
@@ -18,7 +18,7 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, addFavorite } from "../../reducers/user";
 
-// PARENT OF UpdateProfil/FAVPARKS
+// PARENT OF Updatescreen/FAVPARKS
 
 export default function Settings() {
   // REDUCER & DISPATCH
@@ -68,7 +68,7 @@ export default function Settings() {
 
   if (updateProfil) {
     return (
-      <UpdateProfil changeUpdateScreen={(state) => setUpdateProfil(state)} />
+      <Updatescreen changeUpdateScreen={(state) => setUpdateProfil(state)} />
     );
   } else if (favorisScreen) {
     return <FavParks changeFavScreen={(state) => setFavorisScreen(state)} />;

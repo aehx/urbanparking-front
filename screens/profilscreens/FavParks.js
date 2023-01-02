@@ -9,14 +9,13 @@ import { useEffect, useState } from "react";
 
 export default function FavPark(props) {
   // REDUCER
-  const dispatch = useDispatch();
-  const userFav = useSelector((state) => state.user.value.favorisPark);
+  const userFavoritesParkings = useSelector(
+    (state) => state.user.value.favorisPark
+  );
   const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
   const [count, setCount] = useState(0);
-  const [userParisFavoris, setUserParisFavoris] = useState([]);
-  const [userOrleansFavoris, setUserOrleansFavoris] = useState([]);
   const [userFavoris, setUserFavoris] = useState([]);
 
   const [parkingClicked, setParkingClicked] = useState(null);
@@ -33,46 +32,75 @@ export default function FavPark(props) {
     icon = { color: "#87BBDD" };
   }
 
+  console.log(userFavoritesParkings);
   // FUNCTION
 
   // GET USER FAVPARK
 
-  const parking = () => {
-    let favPark = [];
-    let orleansPark = [];
-    const paris = axios
-      .get(
-        "https://data.opendatasoft.com/api/records/1.0/search/?dataset=places-disponibles-parkings-saemes@saemes"
+  const getUserFavorites = async () => {
+    let paris =
+      "https://data.opendatasoft.com/api/records/1.0/search/?dataset=places-disponibles-parkings-saemes@saemes";
+    let orleans =
+      "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilite-places-disponibles-parkings-en-temps-reel@orleansmetropole&rows=20";
+    const parisData = await axios.get(paris);
+    const orleansData = await axios.get(orleans);
+    let parkingsData = [];
+    let favoriteOfUser = [];
+    axios
+      .all([parisData, orleansData])
+      .then(
+        axios.spread((...responses) => {
+          const responseParis = responses[0];
+          const responseOrleans = responses[1];
+
+          parkingsData = [
+            ...responseParis.data.records,
+            ...responseOrleans.data.records,
+          ].forEach((el) => {
+            // console.log(
+            //   el.datasetid,
+            //   el.recordid,
+            //   userFavoritesParkings.includes(el.recordid)
+            // );
+            if (
+              userFavoritesParkings.includes(el.fields.id) ||
+              userFavoritesParkings.includes(el.recordid)
+            ) {
+              favoriteOfUser.push({
+                id: el.datasetid.includes("orleansmetropole")
+                  ? el.fields.id
+                  : el.recordid,
+                freeplaces:
+                  el.fields.counterfreeplaces >= 0
+                    ? el.fields.counterfreeplaces
+                    : el.fields.dispo,
+                name: el.fields.nom_parking || el.fields.name,
+                latitude: el.geometry.coordinates[1],
+                longitude: el.geometry.coordinates[0],
+                pinStyle: {
+                  tintColor:
+                    el?.fields.counterfreeplaces > 40 || el?.fields.dispo > 40
+                      ? "green"
+                      : el?.fields.counterfreeplaces > 0 || el?.fields.dispo > 0
+                      ? "orange"
+                      : "red",
+                },
+                schedule:
+                  el.fields
+                    .horaires_d_acces_au_public_pour_les_usagers_non_abonnes,
+              });
+            }
+          });
+          setUserFavoris([...favoriteOfUser]);
+        })
       )
-      .then((response) => {
-        const fav = response.data.records.forEach((el) => {
-          if (userFav.includes(el.recordid)) {
-            favPark.push(el);
-          }
-        });
-        setUserParisFavoris(favPark);
-      });
-    const orleans = axios
-      .get(
-        "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilite-places-disponibles-parkings-en-temps-reel@orleansmetropole"
-      )
-      .then((response) => {
-        const fav = response.data.records.forEach((el) => {
-          if (userFav.includes(el.recordid)) {
-            orleansPark.push(el);
-          }
-        });
-        setUserOrleansFavoris(orleansPark);
-      });
-    console.log(userParisFavoris);
-    // console.log(userOrleansFavoris);
+      .catch((err) => console.error(err));
   };
 
   // COMPONENT INIT
 
   useEffect(() => {
-    parking();
-    setUserFavoris([...userParisFavoris, ...userOrleansFavoris]);
+    getUserFavorites();
   }, [count]);
 
   const handleFav = () => {
@@ -80,17 +108,10 @@ export default function FavPark(props) {
   };
 
   const test = userFavoris.map((el, i) => {
+    // console.log("____________------------_____________----------", el);
     return (
       <FavParkCard
-        name={el.fields.nom_parking || el.fields.name}
-        freeplace={el.fields.counterfreeplaces}
-        dispo={el.fields.dispo}
-        horaire={
-          el.fieldshoraires_d_acces_au_public_pour_les_usagers_non_abonnes
-        }
-        latitude={el.geometry.coordinates[1]}
-        longitude={el.geometry.coordinates[0]}
-        id={el.recordid}
+        {...el}
         key={i}
         displayCard={(state) => setParkingClicked(state)}
         displaySelectedCard={(state) => setShowClickedParking(state)}

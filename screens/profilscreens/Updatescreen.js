@@ -368,6 +368,7 @@ const styles = StyleSheet.create({
     height: "10%",
     justifyContent: "center",
     alignItems: "center",
+    marginBottom: 25,
   },
   progressBarEmpty: {
     borderWidth: 1.5,

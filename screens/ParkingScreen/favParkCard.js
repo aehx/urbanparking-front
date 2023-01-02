@@ -13,17 +13,6 @@ export default function FavParkCard(props) {
     border = { borderColor: "#87BBDD" };
   }
 
-  // STYLE PIN PARKING
-
-  let pinColor;
-  if (props.freeplace > 40) {
-    pinColor = { backgroundColor: "green" };
-  } else if (props.freeplace > 0) {
-    pinColor = { backgroundColor: "orange" };
-  } else {
-    pinColor = { backgroundColor: "red" };
-  }
-
   // INVERSE DATA FLOW DISPLAY/DON'T DISPLAY COMPONENT
 
   const handleclick = () => {
@@ -41,7 +30,12 @@ export default function FavParkCard(props) {
     >
       {/* PIN */}
 
-      <View style={[styles.pinFreeplaces, pinColor]}></View>
+      <View
+        style={[
+          styles.pinFreeplaces,
+          { backgroundColor: props.pinStyle.tintColor },
+        ]}
+      ></View>
 
       {/* PICTURE */}
 
@@ -53,18 +47,8 @@ export default function FavParkCard(props) {
 
       <View style={styles.parkingsContainer}>
         <Text style={{ fontWeight: "bold" }}>{props.name}</Text>
-        <View style={styles.infosContainer}>
-          <View style={styles.horaire}>
-            <Text style={{ fontWeight: "bold" }}>
-              {" "}
-              places : {props.freeplace}
-              {props.dispo}
-            </Text>
-          </View>
-          <View style={styles.freeplace}>
-            <Text style={{ fontWeight: "bold" }}>{props.horaire}</Text>
-          </View>
-        </View>
+        <Text style={{ fontWeight: "bold" }}> places : {props.freeplaces}</Text>
+        <Text style={{ fontWeight: "bold" }}>{props.schedule}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -87,9 +71,9 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   parkingsContainer: {
+    justifyContent: "space-around",
     flex: 1,
     height: "100%",
-    paddingTop: 10,
   },
 
   // PICTURE
@@ -110,12 +94,7 @@ const styles = StyleSheet.create({
   infosContainer: {
     justifyContent: "space-between",
   },
-  horaire: {
-    marginTop: 10,
-  },
-  freeplace: {
-    marginTop: 10,
-  },
+
   pinFreeplaces: {
     position: "absolute",
     top: "50%",

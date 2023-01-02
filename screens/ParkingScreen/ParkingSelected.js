@@ -1,7 +1,7 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import ReviewScreen from "../ParkingScreen/ReviewScreen";
 import axios from "axios";
-import { favorisPark, addFavorite } from "../../reducers/user";
+import { favorisPark } from "../../reducers/user";
 import {
   View,
   Text,
@@ -9,10 +9,11 @@ import {
   TouchableOpacity,
   Linking,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
 export default function ParkingSelected(props) {
+  console.log(props.id);
   // REDUCER & DISPATCH
 
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ export default function ParkingSelected(props) {
     longitudeDelta: 0.05,
   });
   const [showComs, setShowComs] = useState(false);
+  const [star, setStar] = useState(false);
 
   // STAR ICON & COLOR
 
@@ -57,31 +59,18 @@ export default function ParkingSelected(props) {
     border = { borderColor: "#87BBDD" };
   }
 
-  // COMPONENT INIT
-
-  useEffect(() => {
-    axios
-      .get(
-        `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`
-      )
-      .then((response) => {
-        console.log(response.data.favoris === []);
-        if (response.data.favoris.length > 0) {
-          dispatch(addFavorite(response.data.favoris));
-        }
-      });
-  }, []);
-
   // MODIFY IN DB
-
   const addToFavoris = async () => {
-    await axios.put(
-      `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`,
-      { parkId: props.id }
-    );
-    dispatch(favorisPark(props.id));
+    if (user.token) {
+      await axios.put(
+        `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`,
+        { parkId: props.id }
+      );
+      dispatch(favorisPark(props.id));
+    } else {
+      return;
+    }
   };
-  console.log(userFav);
   // MAP REDIRECTION
 
   const scheme = Platform.select({ ios: "maps:0,0?q=", android: "geo:0,0?q=" });
@@ -110,14 +99,39 @@ export default function ParkingSelected(props) {
           size={30}
           style={[{ color: "white" }, text]}
           onPress={() => {
+            setStar(false);
             props.changeState(false);
           }}
         />
+        {!user.token && star && (
+          <View>
+            <Text
+              style={[
+                { fontSize: 16, fontWeight: "bold", color: "white" },
+                text,
+              ]}
+            >
+              Inscrivez-vous pour{" "}
+            </Text>
+            <Text
+              style={[
+                { fontSize: 16, fontWeight: "bold", color: "white" },
+                text,
+              ]}
+            >
+              {" "}
+              ajouter aux favoris{" "}
+            </Text>
+          </View>
+        )}
         <FontAwesome
           name={starIcon}
           size={30}
           style={starColor}
           onPress={() => {
+            if (!user.token) {
+              setStar(true);
+            }
             addToFavoris();
           }}
         />
@@ -155,11 +169,11 @@ export default function ParkingSelected(props) {
         <View style={styles.textContainer}>
           <View>
             <Text style={[styles.text, text]}>
-              places disponibles : {props.freeplace}
+              places disponibles : {props.freeplaces}
             </Text>
           </View>
           <View>
-            <Text style={[styles.text, text]}>{props.horaire}</Text>
+            <Text style={[styles.text, text]}>{props.schedule}</Text>
           </View>
         </View>
         <TouchableOpacity

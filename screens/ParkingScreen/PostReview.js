@@ -35,13 +35,11 @@ export default function ComParkScreen(props) {
   }
 
   const postReview = () => {
-    axios
-      .post("https://urbanparking-backend.vercel.app/review/post", {
-        token: user.token,
-        content: reviewContent,
-        parking: props.id,
-      })
-      .then((response) => console.log(response.data));
+    axios.post("https://urbanparking-backend.vercel.app/review/post", {
+      token: user.token,
+      content: reviewContent,
+      parking: props.id,
+    });
     props.togglePostReview(false);
   };
 
@@ -58,24 +56,36 @@ export default function ComParkScreen(props) {
         </View>
         <Text style={[styles.title, text]}>Votre avis</Text>
       </View>
-      <View style={[styles.ParkingsContainer, bgCard]}>
-        <TextInput
-          placeholder="Votre avis..."
-          multiline={true}
-          numberOfLines={10}
-          onChangeText={(e) => setReviewContent(e)}
-          value={reviewContent}
-          style={[styles.reviewInput, border]}
-        />
-        <TouchableOpacity
-          style={[styles.btn, bgBtn]}
-          onPress={() => postReview()}
-        >
-          <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
-          <Text style={{ fontWeight: "bold", color: "#2E3740" }}>Envoyer</Text>
-          <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
-        </TouchableOpacity>
-      </View>
+      {user.token ? (
+        <View style={[styles.ParkingsContainer, bgCard]}>
+          <TextInput
+            placeholder="Votre avis..."
+            multiline={true}
+            numberOfLines={10}
+            onChangeText={(e) => setReviewContent(e)}
+            value={reviewContent}
+            style={[styles.reviewInput, border]}
+          />
+          <TouchableOpacity
+            style={[styles.btn, bgBtn]}
+            onPress={() => postReview()}
+          >
+            <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
+            <Text style={{ fontWeight: "bold", color: "#2E3740" }}>
+              Envoyer
+            </Text>
+            <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <View style={[styles.ParkingsContainer, bgCard]}>
+          <Text
+            style={[{ color: "white", fontSize: 17, fontWeight: "bold" }, text]}
+          >
+            Inscrivez-vous pour commenter !
+          </Text>
+        </View>
+      )}
     </Animated.View>
   );
 }

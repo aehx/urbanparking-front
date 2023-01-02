@@ -10,7 +10,7 @@ export default function ComParkCard(props) {
 
   const day = x.getDate();
   const month = x.getMonth();
-  const monthformat = month < 10 ? "0" + month : month;
+  const monthformat = month < 10 ? "0" + (month + 1) : month + 1;
   const year = x.getFullYear();
   const newDate = `${day}/${monthformat}/${year}`;
 

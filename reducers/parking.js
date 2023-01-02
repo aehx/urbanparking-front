@@ -9,13 +9,10 @@ export const parkingSlice = createSlice({
   initialState,
   reducers: {
     addParking: (state, action) => {
-      state.value.parkingList.push(action.payload);
-    },
-    removeParking: (state) => {
-      state.value.parkingList = [];
+      state.value.parkingList = action.payload;
     },
   },
 });
 
-export const { addParking, removeParking } = parkingSlice.actions;
+export const { addParking } = parkingSlice.actions;
 export default parkingSlice.reducer;

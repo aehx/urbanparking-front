@@ -7,6 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   TouchableOpacity,
+  Keyboard,
 } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
@@ -178,7 +179,9 @@ export default function Signup(props) {
           </View>
           <Text style={[styles.title, text]}>Inscription</Text>
         </View>
-
+        <Text style={[{ color: "white", fontSize: 16 }, text]}>
+          ** Champs obligatoires
+        </Text>
         {/* PROGRESS BAR  */}
 
         <View style={styles.progressContainer}>
@@ -207,10 +210,9 @@ export default function Signup(props) {
 
         <View style={fields}>
           {/* STEP 1 */}
-
-          <View style={[styles.step, bgCard]}>
+          <View style={[styles.step, bgCard, { paddingBottom: 20 }]}>
             <TextInput
-              placeholder="Nom d'utilisateur"
+              placeholder="** Nom d'utilisateur"
               style={[styles.input, border]}
               value={newUser.username}
               onChangeText={(value) =>
@@ -218,7 +220,7 @@ export default function Signup(props) {
               }
             />
             <TextInput
-              placeholder="E-mail"
+              placeholder="** E-mail"
               textContentType={"emailAddress"}
               keyboardType="email-address"
               style={[styles.input, border]}
@@ -227,7 +229,7 @@ export default function Signup(props) {
             />
             <View style={styles.password}>
               <TextInput
-                placeholder="Mot de passe"
+                placeholder="** Mot de passe"
                 secureTextEntry={showPassword}
                 textContentType={"password"}
                 style={[styles.input, border]}
@@ -248,7 +250,9 @@ export default function Signup(props) {
             <View style={styles.btnContainer}>
               <TouchableOpacity
                 style={[styles.btn, bgBtn]}
-                onPress={() => handleStepPlus()}
+                onPress={() => {
+                  handleStepPlus(), Keyboard.dismiss();
+                }}
               >
                 <Text style={styles.btnText}>suivant</Text>
               </TouchableOpacity>
@@ -279,13 +283,17 @@ export default function Signup(props) {
             <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
               <TouchableOpacity
                 style={[styles.btn, styles.btnMiddle, bgBtn]}
-                onPress={() => handleStepMoins()}
+                onPress={() => {
+                  handleStepMoins(), Keyboard.dismiss();
+                }}
               >
                 <Text style={styles.btnText}>Precedent</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.btn, styles.btnMiddle, bgBtn]}
-                onPress={() => handleStepPlus()}
+                onPress={() => {
+                  handleStepPlus(), Keyboard.dismiss();
+                }}
               >
                 <Text style={styles.btnText}>suivant</Text>
               </TouchableOpacity>
@@ -294,7 +302,7 @@ export default function Signup(props) {
 
           {/* STEP 3 */}
 
-          <View style={[styles.step, bgCard]}>
+          <View style={[styles.step, bgCard, { marginBottom: 20 }]}>
             <TextInput
               placeholder="Ville"
               style={[styles.input, border]}
@@ -321,8 +329,10 @@ export default function Signup(props) {
             />
             <View style={styles.btnContainer}>
               <TouchableOpacity
-                style={[styles.btn, bgBtn]}
-                onPress={() => handleStepMoins()}
+                style={[styles.btn, bgBtn, { marginBottom: 10 }]}
+                onPress={() => {
+                  handleStepMoins(), Keyboard.dismiss();
+                }}
               >
                 <Text style={styles.btnText}>Precedent</Text>
               </TouchableOpacity>

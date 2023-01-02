@@ -1,5 +1,5 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Animated, { SlideInDown, SlideInUp } from "react-native-reanimated";
+import Animated, { SlideInDown } from "react-native-reanimated";
 import ComParkCard from "./ReviewCard";
 import PostReview from "./PostReview";
 
@@ -14,7 +14,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
-export default function ComParkScreen(props) {
+export default function ReviewParkScreen(props) {
   const theme = useSelector((state) => state.user.value.theme);
   const [reviewData, setReviewData] = useState(null);
   const [count, setCount] = useState(0);
@@ -35,14 +35,13 @@ export default function ComParkScreen(props) {
     axios
       .get(`https://urbanparking-backend.vercel.app/review/all/${props.id}`)
       .then((response) => {
-        if (response.data.review.length > 0) {
+        if (response.data.review && response.data.review.length > 0) {
           setReviewData(response.data.review);
         }
       });
-  }, [showPostReview, count]);
+  }, [count]);
 
   let reviews;
-
   if (reviewData !== null) {
     reviews = reviewData.map((el, i) => {
       return (

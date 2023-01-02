@@ -77,7 +77,7 @@ const TabNavigator = (props) => {
         tabBarInactiveTintColor: "#2E3740",
         headerShown: false,
       })}
-      initialRouteName="Parkings"
+      initialRouteName="Profil"
     >
       <Tab.Screen name="Themes" component={Themescreen} />
       <Tab.Screen name="Parkings" component={Homescreen} />

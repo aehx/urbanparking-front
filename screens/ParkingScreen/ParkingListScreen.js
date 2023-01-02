@@ -17,7 +17,7 @@ import { useState } from "react";
 export default function Parkingscreen({ navigation }) {
   // REDUCER
 
-  const parkReducer = useSelector((state) => state.parking.value.parkingList);
+  const { parkingList } = useSelector((state) => state.parking.value);
   const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
@@ -53,7 +53,7 @@ export default function Parkingscreen({ navigation }) {
 
   // PARKING
 
-  const parking = parkReducer.map((el, i) => {
+  const parking = parkingList.map((el, i) => {
     return (
       <ParkingListCard
         {...el}
@@ -66,9 +66,9 @@ export default function Parkingscreen({ navigation }) {
 
   // PARKING BY PLACES
 
-  const parkingFilteredByPlace = [...parkReducer]
+  const parkingFilteredByPlace = [...parkingList]
     .sort((a, b) => {
-      return a.distance - b.distance;
+      return a.distanceBetweenParkAndMe - b.distanceBetweenParkAndMe;
     })
     .map((el, i) => {
       return (
@@ -83,12 +83,12 @@ export default function Parkingscreen({ navigation }) {
 
   // PARKING DISPO
 
-  const parkingFilteredByDispo = parkReducer
+  const parkingFilteredByDispo = parkingList
     .filter((el, i) => {
-      return el.freeplace > 0;
+      return el.freeplaces > 0;
     })
     .sort((a, b) => {
-      return b.freeplace - a.freeplace;
+      return b.freeplaces - a.freeplaces;
     })
     .map((el, i) => {
       return (
@@ -242,7 +242,7 @@ const styles = StyleSheet.create({
 
   ParkingsContainer: {
     width: "90%",
-    height: "75%", // PREVIOUS 80%
+    height: "75%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
