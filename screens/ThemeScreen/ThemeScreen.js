@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useDispatch, useSelector } from "react-redux";
-import { changeTheme } from "../../reducers/user";
+import { changeTheme } from "../../redux/reducers/user";
 
 export default function ThemeScreen() {
   const dispatch = useDispatch();

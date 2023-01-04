@@ -1,5 +1,6 @@
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { login } from "../../reducers/user";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import {
   View,
   Text,
@@ -9,11 +10,9 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-
-import { useSelector, useDispatch } from "react-redux";
-
-import { useState } from "react";
-import axios from "axios";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { login } from "../../redux/reducers/user";
+import ProgressBar from "../../components/ProgressBar";
 
 export default function UpdateProfileScreen(props) {
   // DISPATCH & REDUCER
@@ -95,62 +94,22 @@ export default function UpdateProfileScreen(props) {
     }
   };
 
-  // THEME
+  const bg = theme && { backgroundColor: "#FFF" };
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
+  const border = theme && { borderColor: "#87BBDD" };
 
-  let bg;
-  let text;
-  let bgCard;
-  let border;
-  let bgBtn;
-  if (theme) {
-    bg = { backgroundColor: "#FFF" };
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-    border = { borderColor: "#87BBDD" };
-  }
-
-  //   SELECT FIELDS
-
-  let fields;
-  if (step === 0) {
-    fields = [styles.inputContainer, styles.inputContainer1];
-  } else if (step === 1) {
-    fields = [styles.inputContainer, styles.inputContainer2];
-  } else if (step === 2) {
-    fields = [styles.inputContainer, styles.inputContainer3];
-  }
-
-  //   InsideCircle style
-
-  let circle2Style;
-  let circle3Style;
-  let barInsideStyle;
-  if (step < 1) {
-    barInsideStyle = [styles.progressBarInside, { width: 0 }];
-    circle2Style = { display: "none" };
-    circle3Style = { display: "none" };
-  } else if (step === 1) {
-    barInsideStyle = [styles.progressBarInside, { width: "50%" }, bgBtn];
-    circle2Style = [
-      styles.progressBarCircleInside,
-      styles.circle2Inside,
-      { right: -6 },
-    ];
-  } else if (step === 2) {
-    barInsideStyle = [styles.progressBarInside, { width: "100%" }, bgBtn];
-    circle2Style = [styles.progressBarCircleInside, styles.circle2Inside];
-    circle3Style = [styles.progressBarCircleInside, styles.circle3Inside];
-  }
-
-  //   PASSWORD SHOW/DON'T SHOW
-
-  let eye;
-  if (!showPassword) {
-    eye = "eye-slash";
-  } else {
-    eye = "eye";
-  }
+  const fields = (() => {
+    switch (step) {
+      case 0:
+        return [styles.inputContainer, styles.inputContainer1];
+      case 1:
+        return [styles.inputContainer, styles.inputContainer2];
+      case 2:
+        return [styles.inputContainer, styles.inputContainer3];
+    }
+  })();
 
   return (
     <SafeAreaView style={[styles.globalContainer]}>
@@ -174,29 +133,7 @@ export default function UpdateProfileScreen(props) {
           <Text style={[styles.title, text]}>Mise à jour</Text>
         </View>
 
-        {/* PROGRESS BAR  */}
-
-        <View style={styles.progressContainer}>
-          <View style={styles.progressBarEmpty}>
-            <View style={[styles.progressBarCircle, styles.circle1]}></View>
-            <View style={[styles.progressBarCircle, styles.circle2]}></View>
-            <View style={[styles.progressBarCircle, styles.circle3]}></View>
-
-            {/* BAR Inside  */}
-
-            <View style={barInsideStyle}>
-              <View
-                style={[
-                  styles.progressBarCircleInside,
-                  styles.circle1Inside,
-                  bgBtn,
-                ]}
-              ></View>
-              <View style={[circle2Style, bgBtn]}></View>
-              <View style={[circle3Style, bgBtn]}></View>
-            </View>
-          </View>
-        </View>
+        <ProgressBar step={step} />
 
         {/* INPUT CONTAINER */}
 
@@ -334,9 +271,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#2E3740",
     alignItems: "center",
   },
-
-  //   TITLE
-
   header: {
     flexDirection: "row",
     alignItems: "center",

@@ -9,7 +9,7 @@ import {
 import axios from "axios";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import ReviewScreen from "../../screens/ReviewScreen/ReviewScreen";
-import { favorisPark } from "../../reducers/user";
+import { favorisPark } from "../../redux/reducers/user";
 import { useSelector, useDispatch } from "react-redux";
 import MapView, { Marker } from "react-native-maps";
 
@@ -27,7 +27,7 @@ export default function ParkingSelected(props) {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
-  const [showComs, setShowComs] = useState(false);
+  const [showReview, setShowReview] = useState(false);
   const [star, setStar] = useState(false);
 
   // STAR ICON & COLOR
@@ -176,7 +176,7 @@ export default function ParkingSelected(props) {
         </View>
         <TouchableOpacity
           style={[styles.btn, bgBtn]}
-          onPress={() => setShowComs(true)}
+          onPress={() => setShowReview(true)}
         >
           <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
           <Text>Avis</Text>
@@ -184,9 +184,9 @@ export default function ParkingSelected(props) {
         </TouchableOpacity>
       </View>
 
-      {showComs && (
+      {showReview && (
         <ReviewScreen
-          toggleComPage={(state) => setShowComs(state)}
+          toggleComPage={(state) => setShowReview(state)}
           id={props.id}
         />
       )}

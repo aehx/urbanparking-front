@@ -27,7 +27,7 @@ export default function ComParkScreen(props) {
   const border = theme && { borderColor: "#87BBDD", borderWidth: 3 };
 
   const postReview = () => {
-    axios.post("https://urbanparking-backend.vercel.app/review/post", {
+    axios.post("https://urbanparking-backend.vercel.app/review/postReview", {
       token: user.token,
       content: reviewContent,
       parking: props.id,

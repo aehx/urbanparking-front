@@ -11,7 +11,7 @@ import {
 } from "react-native";
 
 import { useSelector, useDispatch } from "react-redux";
-import { login } from "../../reducers/user";
+import { login } from "../../redux/reducers/user";
 
 import { useState } from "react";
 import axios from "axios";

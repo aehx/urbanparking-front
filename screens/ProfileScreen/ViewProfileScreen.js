@@ -12,73 +12,60 @@ import SignInScreen from "../SignInScreen/SignInScreen";
 import SignUpScreen from "../SignUpScreen/SignUpScreen";
 
 export default function ViewProfileScreen() {
-  // REDUCER
   const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
+  const [showSignIn, setShowSignIn] = useState(false);
+  const [showSignUp, setShowSignUp] = useState(false);
 
-  // STATE
-  const [showSignin, setShowSignin] = useState(false);
-  const [showSignup, setShowSignup] = useState(false);
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
 
-  // THEME
-
-  let text;
-  let bgCard;
-  let bgBtn;
-  if (theme) {
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-  }
-
-  // REDIRECT DEPENDS OF USER ALREADY CONNECTED OR NOT
-
+  // Redirect user to the Settings Screen if logged in
   if (user.token) {
     return (
       <SettingsScreen
         changeSignup={(state) => {
-          setShowSignup(state);
+          setShowSignUp(state);
         }}
         changeSignin={(state) => {
-          setShowSignin(state);
+          setShowSignIn(state);
         }}
       />
     );
-  } else {
-    return (
-      <SafeAreaView style={[styles.globalContainer]}>
-        <View style={[styles.container, bgCard]}>
-          <Text style={[styles.title, text]}>Bienvenue sur</Text>
-          <Text style={[styles.title, text]}>Urban Parkings</Text>
-          <View style={styles.btnContainer}>
-            {/* INVERSE DATA FLOW */}
-
-            <TouchableOpacity
-              style={[styles.btn, bgBtn]}
-              onPress={() => setShowSignup(true)}
-            >
-              <Text style={styles.btnText}>Inscription</Text>
-            </TouchableOpacity>
-            <Text style={[styles.text, text]}>
-              Déjà inscrit ? Connectez-vous !
-            </Text>
-            <TouchableOpacity
-              style={[styles.btn, bgBtn]}
-              onPress={() => setShowSignin(true)}
-            >
-              <Text style={styles.btnText}>Connexion</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        {showSignin && (
-          <SignInScreen changeSignin={(state) => setShowSignin(state)} />
-        )}
-        {showSignup && (
-          <SignUpScreen changeSignup={(state) => setShowSignup(state)} />
-        )}
-      </SafeAreaView>
-    );
   }
+
+  return (
+    <SafeAreaView style={[styles.globalContainer]}>
+      <View style={[styles.container, bgCard]}>
+        <Text style={[styles.title, text]}>Bienvenue sur</Text>
+        <Text style={[styles.title, text]}>Urban Parkings</Text>
+        <View style={styles.btnContainer}>
+          <TouchableOpacity
+            style={[styles.btn, bgBtn]}
+            onPress={() => setShowSignUp(true)}
+          >
+            <Text style={styles.btnText}>Inscription</Text>
+          </TouchableOpacity>
+          <Text style={[styles.text, text]}>
+            Déjà inscrit ? Connectez-vous !
+          </Text>
+          <TouchableOpacity
+            style={[styles.btn, bgBtn]}
+            onPress={() => setShowSignIn(true)}
+          >
+            <Text style={styles.btnText}>Connexion</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+      {showSignIn && (
+        <SignInScreen changeSignin={(state) => setShowSignIn(state)} />
+      )}
+      {showSignUp && (
+        <SignUpScreen changeSignup={(state) => setShowSignUp(state)} />
+      )}
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({

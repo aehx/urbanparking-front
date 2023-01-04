@@ -1,114 +1,35 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import ParkingSelected from "../../components/parking/ParkingSelected";
 import FavoriteCard from "./components/FavoriteCard";
-import axios from "axios";
+import { getUserFavorites } from "../../services/FavoriteService";
 
 import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 
 export default function FavoriteScreen(props) {
-  // REDUCER
-  const userFavoritesParkings = useSelector(
-    (state) => state.user.value.favorisPark
-  );
   const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
   const [count, setCount] = useState(0);
-  const [userFavoris, setUserFavoris] = useState([]);
+  const [userFavorites, setUserFavorites] = useState([]);
 
   const [parkingClicked, setParkingClicked] = useState(null);
   const [showClickedParking, setShowClickedParking] = useState(false);
 
-  // THEME
-
-  let text;
-  let bgCard;
-  let icon;
-  if (theme) {
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    icon = { color: "#87BBDD" };
-  }
-
-  console.log(userFavoritesParkings);
-  // FUNCTION
-
-  // GET USER FAVPARK
-
-  const getUserFavorites = async () => {
-    let paris =
-      "https://data.opendatasoft.com/api/records/1.0/search/?dataset=places-disponibles-parkings-saemes@saemes";
-    let orleans =
-      "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilite-places-disponibles-parkings-en-temps-reel@orleansmetropole&rows=20";
-    const parisData = await axios.get(paris);
-    const orleansData = await axios.get(orleans);
-    let parkingsData = [];
-    let favoriteOfUser = [];
-    axios
-      .all([parisData, orleansData])
-      .then(
-        axios.spread((...responses) => {
-          const responseParis = responses[0];
-          const responseOrleans = responses[1];
-
-          parkingsData = [
-            ...responseParis.data.records,
-            ...responseOrleans.data.records,
-          ].forEach((el) => {
-            // console.log(
-            //   el.datasetid,
-            //   el.recordid,
-            //   userFavoritesParkings.includes(el.recordid)
-            // );
-            if (
-              userFavoritesParkings.includes(el.fields.id) ||
-              userFavoritesParkings.includes(el.recordid)
-            ) {
-              favoriteOfUser.push({
-                id: el.datasetid.includes("orleansmetropole")
-                  ? el.fields.id
-                  : el.recordid,
-                freeplaces:
-                  el.fields.counterfreeplaces >= 0
-                    ? el.fields.counterfreeplaces
-                    : el.fields.dispo,
-                name: el.fields.nom_parking || el.fields.name,
-                latitude: el.geometry.coordinates[1],
-                longitude: el.geometry.coordinates[0],
-                pinStyle: {
-                  tintColor:
-                    el?.fields.counterfreeplaces > 40 || el?.fields.dispo > 40
-                      ? "green"
-                      : el?.fields.counterfreeplaces > 0 || el?.fields.dispo > 0
-                      ? "orange"
-                      : "red",
-                },
-                schedule:
-                  el.fields
-                    .horaires_d_acces_au_public_pour_les_usagers_non_abonnes,
-              });
-            }
-          });
-          setUserFavoris([...favoriteOfUser]);
-        })
-      )
-      .catch((err) => console.error(err));
-  };
-
-  // COMPONENT INIT
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const icon = theme && { color: "#87BBDD" };
 
   useEffect(() => {
-    getUserFavorites();
+    getUserFavorites().then((favorites) => setUserFavorites(favorites));
   }, [count]);
 
   const handleFav = () => {
     props.changeFavScreen(false);
   };
 
-  const test = userFavoris.map((el, i) => {
-    // console.log("____________------------_____________----------", el);
+  const test = userFavorites.map((el, i) => {
     return (
       <FavoriteCard
         {...el}
@@ -191,9 +112,6 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "red",
   },
-
-  //   TITLE
-
   header: {
     flexDirection: "row",
     alignItems: "center",

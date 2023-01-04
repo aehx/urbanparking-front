@@ -11,7 +11,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { login } from "../../reducers/user";
+import { login } from "../../redux/reducers/user";
 
 export default function SignInScreen(props) {
   // DISPATCH & REDUCER

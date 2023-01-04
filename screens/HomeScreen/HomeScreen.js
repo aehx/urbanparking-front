@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ParkingSelected from "../../components/parking/ParkingSelected";
-import { addParking } from "../../reducers/parking";
+import { addParking } from "../../redux/reducers/parking";
 import { useDispatch, useSelector } from "react-redux";
 import parkPin from "../../assets/placeholder.png";
 import { getDistance } from "geolib";

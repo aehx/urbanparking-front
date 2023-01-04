@@ -14,7 +14,7 @@ import {
 
 import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { logout, addFavorite } from "../../reducers/user";
+import { logout, addFavorite } from "../../redux/reducers/user";
 
 export default function SettingsScreen() {
   const dispatch = useDispatch();
