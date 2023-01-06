@@ -1,10 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import { useSelector } from "react-redux";
 import { stringify } from "../../../utils/DateTimeUtils";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function ReviewCard(props) {
   const date = stringify(new Date(props.date));
+
   const theme = useSelector((state) => state.user.value.theme);
   const border = theme && { borderColor: "#87BBDD" };
 
