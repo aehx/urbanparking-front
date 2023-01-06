@@ -14,25 +14,16 @@ import SignUpScreen from "../SignUpScreen/SignUpScreen";
 export default function ViewProfileScreen() {
   const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
-  const [showSignIn, setShowSignIn] = useState(false);
-  const [showSignUp, setShowSignUp] = useState(false);
+
+  const [showSignInScreen, setShowSignInScreen] = useState(false);
+  const [showSignUpScreen, setShowSignUpScreen] = useState(false);
 
   const text = theme && { color: "#333" };
   const bgCard = theme && { backgroundColor: "#DAE9F2" };
   const bgBtn = theme && { backgroundColor: "#87BBDD" };
 
-  // Redirect user to the Settings Screen if logged in
   if (user.token) {
-    return (
-      <SettingsScreen
-        changeSignup={(state) => {
-          setShowSignUp(state);
-        }}
-        changeSignin={(state) => {
-          setShowSignIn(state);
-        }}
-      />
-    );
+    return <SettingsScreen />;
   }
 
   return (
@@ -43,7 +34,7 @@ export default function ViewProfileScreen() {
         <View style={styles.btnContainer}>
           <TouchableOpacity
             style={[styles.btn, bgBtn]}
-            onPress={() => setShowSignUp(true)}
+            onPress={() => setShowSignUpScreen(true)}
           >
             <Text style={styles.btnText}>Inscription</Text>
           </TouchableOpacity>
@@ -52,17 +43,17 @@ export default function ViewProfileScreen() {
           </Text>
           <TouchableOpacity
             style={[styles.btn, bgBtn]}
-            onPress={() => setShowSignIn(true)}
+            onPress={() => setShowSignInScreen(true)}
           >
             <Text style={styles.btnText}>Connexion</Text>
           </TouchableOpacity>
         </View>
       </View>
-      {showSignIn && (
-        <SignInScreen changeSignin={(state) => setShowSignIn(state)} />
+      {showSignInScreen && (
+        <SignInScreen changeSignin={(state) => setShowSignInScreen(state)} />
       )}
-      {showSignUp && (
-        <SignUpScreen changeSignup={(state) => setShowSignUp(state)} />
+      {showSignUpScreen && (
+        <SignUpScreen changeSignup={(state) => setShowSignUpScreen(state)} />
       )}
     </SafeAreaView>
   );

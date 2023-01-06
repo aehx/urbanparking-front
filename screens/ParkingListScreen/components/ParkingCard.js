@@ -4,13 +4,11 @@ import { useSelector } from "react-redux";
 export default function ParkingCard(props) {
   const theme = useSelector((state) => state.user.value.theme);
 
-  // THEME
-
   const bgBtn = theme && { backgroundColor: "#87BBDD" };
   const border = theme && { borderColor: "#87BBDD" };
   const borderLight = theme && { borderColor: "#DAE9F2" };
 
-  const handleclick = () => {
+  const showSelectedCard = () => {
     props.displayCard(props);
     props.displaySelectedCard(true);
   };
@@ -19,7 +17,7 @@ export default function ParkingCard(props) {
     <TouchableOpacity
       style={[styles.container, border]}
       onPress={() => {
-        handleclick();
+        showSelectedCard();
       }}
     >
       <View style={[styles.distance, bgBtn, borderLight]}>
