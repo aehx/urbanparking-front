@@ -34,7 +34,7 @@ export default function HomeScreen({ navigation }) {
     latitudeDelta: 10,
     longitudeDelta: 10,
   });
-  const [showSearch, setShowSearch] = useState(true);
+  const [showSearchButton, setShowSearch] = useState(true);
   const [positionGranted, setPositionGranted] = useState(false);
   const [showSelected, setShowSelected] = useState(false);
   const [searchedPlace, setSearchedPlace] = useState(null);
@@ -232,13 +232,11 @@ export default function HomeScreen({ navigation }) {
     );
   }
 
-  // BUTTON "VOIR"
-
   const RedirectionToParkingListScreen = () => {
     navigation.navigate("ParkingListScreen");
   };
 
-  const inputSearchButton = search && showSearch && (
+  const inputSearchButton = search && showSearchButton && (
     <TouchableOpacity
       style={[styles.inputSearchBtn, bgBtn]}
       onPress={() => {
@@ -309,7 +307,7 @@ export default function HomeScreen({ navigation }) {
             value={search}
             onChangeText={(value) => setInputSearchValue(value)}
           />
-          {!showSearch && (
+          {!showSearchButton && (
             <FontAwesome
               name="times"
               size={25}

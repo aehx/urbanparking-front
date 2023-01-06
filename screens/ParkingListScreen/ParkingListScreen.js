@@ -1,6 +1,5 @@
-import ParkingCard from "./components/ParkingCard";
-import ParkingSelected from "../../components/parking/ParkingSelected";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import {
   View,
   Text,
@@ -9,45 +8,21 @@ import {
   ScrollView,
   SafeAreaView,
 } from "react-native";
-import { useSelector } from "react-redux";
-import { useState } from "react";
+import ParkingCard from "./components/ParkingCard";
+import ParkingSelected from "../../components/parking/ParkingSelected";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function ParkingListScreen({ navigation }) {
   const { parkingList } = useSelector((state) => state.parking.value);
   const theme = useSelector((state) => state.user.value.theme);
 
-  const [parkingClicked, setParkingClicked] = useState(null);
+  const [parkingClickedInfos, setParkingClickedInfos] = useState(null);
   const [showClickedParking, setShowClickedParking] = useState(false);
-  const [filteredByDispo, setFilteredByDispo] = useState(false);
-  const [filteredByPlaces, setFilteredByPlaces] = useState(false);
-
-  // FILTER TITLE
-
-  let filterTitle;
-  if (filteredByDispo) {
-    filterTitle = "Parkings disponibles";
-  }
-  if (filteredByPlaces) {
-    filterTitle = "Les plus proches";
-  }
-  if (!filteredByPlaces && !filteredByDispo) {
-    filterTitle = "Aucun";
-  }
+  const [filteredParkingChoice, setFilteredParkingChoice] = useState(0);
 
   const text = theme && { color: "#333" };
   const bgCard = theme && { backgroundColor: "#DAE9F2" };
   const bgBtn = theme && { backgroundColor: "#87BBDD" };
-
-  const parkingNotFiltered = parkingList.map((el, i) => {
-    return (
-      <ParkingCard
-        {...el}
-        key={i}
-        displayCard={(state) => setParkingClicked(state)}
-        displaySelectedCard={(state) => setShowClickedParking(state)}
-      />
-    );
-  });
 
   const parkingFilteredByPlace = [...parkingList]
     .sort((a, b) => {
@@ -58,7 +33,7 @@ export default function ParkingListScreen({ navigation }) {
         <ParkingCard
           {...el}
           key={i}
-          displayCard={(state) => setParkingClicked(state)}
+          displayCard={(state) => setParkingClickedInfos(state)}
           displaySelectedCard={(state) => setShowClickedParking(state)}
         />
       );
@@ -76,11 +51,22 @@ export default function ParkingListScreen({ navigation }) {
         <ParkingCard
           {...el}
           key={i}
-          displayCard={(state) => setParkingClicked(state)}
+          displayCard={(state) => setParkingClickedInfos(state)}
           displaySelectedCard={(state) => setShowClickedParking(state)}
         />
       );
     });
+
+  const ParkingFilteredTitle = (() => {
+    switch (filteredParkingChoice) {
+      case 0:
+        return "Les plus proches";
+      case 1:
+        return "Parkings disponibles";
+      default:
+        return "";
+    }
+  })();
 
   return (
     <SafeAreaView style={[styles.globalContainer]}>
@@ -88,7 +74,7 @@ export default function ParkingListScreen({ navigation }) {
         {showClickedParking && (
           <View style={styles.popupContainer}>
             <ParkingSelected
-              {...parkingClicked}
+              {...parkingClickedInfos}
               changeState={(state) => setShowClickedParking(state)}
             />
           </View>
@@ -117,15 +103,14 @@ export default function ParkingListScreen({ navigation }) {
             text,
           ]}
         >
-          Filtre : {filterTitle}
+          Filtre : {ParkingFilteredTitle}
         </Text>
 
         <View style={styles.filterBtnContainer}>
           <TouchableOpacity
             style={[styles.btn, bgBtn]}
             onPress={() => {
-              setFilteredByPlaces(!filteredByPlaces);
-              setFilteredByDispo(false);
+              setFilteredParkingChoice(0);
             }}
           >
             <Text style={styles.btnText}>Proche</Text>
@@ -133,8 +118,7 @@ export default function ParkingListScreen({ navigation }) {
           <TouchableOpacity
             style={[styles.btn, bgBtn]}
             onPress={() => {
-              setFilteredByDispo(!filteredByDispo);
-              setFilteredByPlaces(false);
+              setFilteredParkingChoice(1);
             }}
           >
             <Text style={styles.btnText}>Dispo</Text>
@@ -153,11 +137,9 @@ export default function ParkingListScreen({ navigation }) {
               bgCard,
             ]}
           >
-            {/* THE DISPLAY DEPENDS ON THE STATE */}
-
-            {!filteredByDispo && !filteredByPlaces && parkingNotFiltered}
-            {filteredByDispo && parkingFilteredByDispo}
-            {filteredByPlaces && parkingFilteredByPlace}
+            {filteredParkingChoice === 0
+              ? parkingFilteredByPlace
+              : parkingFilteredByDispo}
           </ScrollView>
         </View>
       </View>

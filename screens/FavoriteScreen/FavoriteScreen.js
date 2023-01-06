@@ -127,7 +127,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#FFF",
   },
-
   ParkingsContainer: {
     width: "90%",
     height: "80%",
@@ -135,26 +134,5 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#2E3740",
     marginBottom: 65,
-  },
-  filterBtnContainer: {
-    flexDirection: "row",
-    marginBottom: 10,
-  },
-  btn: {
-    marginRight: 10,
-    flexDirection: "row",
-    backgroundColor: "#FC727B",
-    borderRadius: 15,
-    paddingTop: 10,
-    paddingBottom: 10,
-    paddingRight: 20,
-    paddingLeft: 20,
-    width: "35%",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  btnText: {
-    fontWeight: "bold",
-    color: "#2E3740",
   },
 });
