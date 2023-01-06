@@ -72,7 +72,6 @@ export default function HomeScreen({ navigation }) {
   // GET PARKING
 
   const handleSearchParkings = async (search) => {
-    console.log(search);
     if (!search || (search && !search.length)) return dispatch(addParking([]));
 
     const currentSearchedPosition = await axios

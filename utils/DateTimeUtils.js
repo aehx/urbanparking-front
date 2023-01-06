@@ -9,6 +9,7 @@ export function stringify(date) {
   const month = date.getMonth();
   const monthFormat = month < 10 ? "0" + (month + 1) : month + 1;
   const day = date.getDate();
+  const dayFormat = day < 10 ? "0" + day : day;
 
-  return `${day}/${monthFormat}/${year}`;
+  return `${dayFormat}/${monthFormat}/${year}`;
 }

@@ -1,5 +1,6 @@
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Animated, { SlideInDown } from "react-native-reanimated";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import {
   View,
   Text,
@@ -9,12 +10,9 @@ import {
   TouchableOpacity,
   Keyboard,
 } from "react-native";
-
-import { useSelector, useDispatch } from "react-redux";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
+import Animated, { SlideInDown } from "react-native-reanimated";
 import { login } from "../../redux/reducers/user";
-
-import { useState } from "react";
-import axios from "axios";
 
 export default function SignUpScreen(props) {
   // DISPATCH & REDUCER

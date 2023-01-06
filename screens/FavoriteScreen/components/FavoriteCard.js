@@ -4,12 +4,7 @@ import { useSelector } from "react-redux";
 export default function FavoriteCard(props) {
   const theme = useSelector((state) => state.user.value.theme);
 
-  // THEME
-
-  let border;
-  if (theme) {
-    border = { borderColor: "#87BBDD" };
-  }
+  const border = theme && { borderColor: "#87BBDD" };
 
   // INVERSE DATA FLOW DISPLAY/DON'T DISPLAY COMPONENT
 

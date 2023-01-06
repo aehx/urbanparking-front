@@ -1,4 +1,3 @@
-import { useSelector } from "react-redux";
 import { store } from "../redux/store";
 import axios from "axios";
 

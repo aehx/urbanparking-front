@@ -28,9 +28,7 @@ export default function ReviewScreen(props) {
 
   useEffect(() => {
     axios
-      .get(
-        `https://urbanparking-backend.vercel.app/review/getReview/${props.id}`
-      )
+      .get(`https://urbanparking-backend.vercel.app/review/all/${props.id}`)
       .then((response) => {
         if (response.data.review && response.data.review.length > 0) {
           setReviewData(response.data.review);

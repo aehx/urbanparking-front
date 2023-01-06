@@ -19,7 +19,6 @@ export default function FavoriteScreen(props) {
 
   const text = theme && { color: "#333" };
   const bgCard = theme && { backgroundColor: "#DAE9F2" };
-  const icon = theme && { color: "#87BBDD" };
 
   useEffect(() => {
     getUserFavorites().then((favorites) => setUserFavorites(favorites));
