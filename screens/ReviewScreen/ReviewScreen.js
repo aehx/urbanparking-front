@@ -1,8 +1,6 @@
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Animated, { SlideInDown } from "react-native-reanimated";
-import ComParkCard from "./components/ReviewCard";
-import PostReview from "./components/PostReview";
-
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -10,17 +8,17 @@ import {
   ScrollView,
   View,
 } from "react-native";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import ComParkCard from "./components/ReviewCard";
+import PostReview from "./components/PostReview";
+import Animated, { SlideInDown } from "react-native-reanimated";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function ReviewScreen(props) {
   const theme = useSelector((state) => state.user.value.theme);
-  const [reviewData, setReviewData] = useState(null);
-  const [count, setCount] = useState(0);
-  const [showPostReview, setShowPostReview] = useState(false);
 
-  // THEMES
+  const [reviewData, setReviewData] = useState(null);
+  const [refreshPage, setRefreshPage] = useState(0);
+  const [showPostReview, setShowPostReview] = useState(false);
 
   const text = theme && { color: "#333" };
   const bgCard = theme && { backgroundColor: "#DAE9F2" };
@@ -34,11 +32,11 @@ export default function ReviewScreen(props) {
           setReviewData(response.data.review);
         }
       });
-  }, [count]);
+  }, [refreshPage]);
 
-  let reviews;
-  if (reviewData !== null) {
-    reviews = reviewData.map((el, i) => {
+  const reviews =
+    reviewData !== null &&
+    reviewData.map((el, i) => {
       return (
         <ComParkCard
           name={el.author.username}
@@ -48,9 +46,8 @@ export default function ReviewScreen(props) {
         />
       );
     });
-  }
 
-  const showComPage = () => {
+  const leaveReviewScreen = () => {
     props.toggleReviewScreen(false);
   };
 
@@ -68,7 +65,7 @@ export default function ReviewScreen(props) {
             name="arrow-left"
             size={30}
             style={[{ color: "white" }, text]}
-            onPress={() => showComPage()}
+            onPress={() => leaveReviewScreen()}
           />
         </View>
         <Text style={[styles.title, text]}>Avis</Text>
@@ -77,7 +74,7 @@ export default function ReviewScreen(props) {
             name="refresh"
             size={25}
             style={[{ color: "white" }, text]}
-            onPress={() => setCount(count + 1)}
+            onPress={() => setRefreshPage(refreshPage + 1)}
           />
         </View>
       </View>
