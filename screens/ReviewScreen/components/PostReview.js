@@ -1,6 +1,6 @@
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Animated, { SlideInDown } from "react-native-reanimated";
-
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 import {
   StyleSheet,
   TouchableOpacity,
@@ -8,13 +8,13 @@ import {
   TextInput,
   View,
 } from "react-native";
-import axios from "axios";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import Animated, { SlideInDown } from "react-native-reanimated";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function ComParkScreen(props) {
   const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
+
   const [reviewContent, setReviewContent] = useState("");
 
   const showPostReview = () => {
