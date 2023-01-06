@@ -16,26 +16,26 @@ import MapView, { Marker } from "react-native-maps";
 export default function ParkingSelected(props) {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.user.value.theme);
-  const userFav = useSelector((state) => state.user.value.favorisPark);
+  const userFavoritePark = useSelector((state) => state.user.value.favorisPark);
   const user = useSelector((state) => state.user.value);
 
   // STATE
 
-  const [parkingLocation, setParkingLocation] = useState({
+  const [parkingLocation] = useState({
     latitude: props.latitude,
     longitude: props.longitude,
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
   const [showReview, setShowReview] = useState(false);
-  const [star, setStar] = useState(false);
+  const [userNotLogged, setUserNotLogged] = useState(false);
 
   // STAR ICON & COLOR
 
   let starColor;
   let starIcon;
 
-  if (userFav && userFav.includes(props.id)) {
+  if (userFavoritePark && userFavoritePark.includes(props.id)) {
     starColor = { color: "yellow" };
     starIcon = "star";
   } else {
@@ -58,15 +58,13 @@ export default function ParkingSelected(props) {
   }
 
   // MODIFY IN DB
-  const addToFavoris = async () => {
+  const addOrRemoveFavorite = async () => {
     if (user.token) {
       await axios.put(
         `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`,
         { parkId: props.id }
       );
       dispatch(favorisPark(props.id));
-    } else {
-      return;
     }
   };
   // MAP REDIRECTION
@@ -97,11 +95,11 @@ export default function ParkingSelected(props) {
           size={30}
           style={[{ color: "white" }, text]}
           onPress={() => {
-            setStar(false);
+            setUserNotLogged(false);
             props.changeState(false);
           }}
         />
-        {!user.token && star && (
+        {!user.token && userNotLogged && (
           <View>
             <Text
               style={[
@@ -128,9 +126,9 @@ export default function ParkingSelected(props) {
           style={starColor}
           onPress={() => {
             if (!user.token) {
-              setStar(true);
+              setUserNotLogged(true);
             }
-            addToFavoris();
+            addOrRemoveFavorite();
           }}
         />
       </View>
@@ -186,7 +184,7 @@ export default function ParkingSelected(props) {
 
       {showReview && (
         <ReviewScreen
-          toggleComPage={(state) => setShowReview(state)}
+          toggleReviewScreen={(state) => setShowReview(state)}
           id={props.id}
         />
       )}

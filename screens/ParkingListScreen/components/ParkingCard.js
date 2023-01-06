@@ -6,16 +6,9 @@ export default function ParkingCard(props) {
 
   // THEME
 
-  let border;
-  let borderLight;
-  let bgBtn;
-  if (theme) {
-    bgBtn = { backgroundColor: "#87BBDD" };
-    border = { borderColor: "#87BBDD" };
-    borderLight = { borderColor: "#DAE9F2" };
-  }
-
-  // INVERSE DATA FLOW DISPLAY/DON'T DISPLAY COMPONENT
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
+  const border = theme && { borderColor: "#87BBDD" };
+  const borderLight = theme && { borderColor: "#DAE9F2" };
 
   const handleclick = () => {
     props.displayCard(props);
@@ -23,7 +16,6 @@ export default function ParkingCard(props) {
   };
 
   return (
-    //  CARD
     <TouchableOpacity
       style={[styles.container, border]}
       onPress={() => {
@@ -35,26 +27,18 @@ export default function ParkingCard(props) {
           {props.distanceBetweenParkAndMe.toFixed(0)} km
         </Text>
       </View>
-      {/* PIN */}
-
       <View
         style={[
           styles.pinFreeplaces,
           { backgroundColor: props.pinStyle.tintColor },
         ]}
       ></View>
-
-      {/* PICTURE */}
-
       <View style={styles.imageContainer}>
         <Image
           source={require("../../../assets/park.png")}
           style={[styles.image, { tintColor: "#2E3740" }]}
         />
       </View>
-
-      {/* PARKING INFOS */}
-
       <View style={styles.parkingsContainer}>
         <Text style={{ fontWeight: "bold" }}>{props.name}</Text>
         <Text style={{ fontWeight: "bold" }}> places : {props.freeplaces}</Text>
@@ -65,8 +49,6 @@ export default function ParkingCard(props) {
 }
 
 const styles = StyleSheet.create({
-  // CONTAINER
-
   container: {
     padding: 5,
     borderWidth: 3,
@@ -86,9 +68,6 @@ const styles = StyleSheet.create({
     height: "100%",
     paddingTop: 10,
   },
-
-  // PICTURE
-
   imageContainer: {
     width: "30%",
     marginRight: 5,
@@ -99,9 +78,6 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     borderRadius: 10,
   },
-
-  // PARKING INFO
-
   distance: {
     zIndex: 1,
     borderRadius: 10,

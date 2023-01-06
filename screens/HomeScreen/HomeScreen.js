@@ -23,51 +23,29 @@ import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
 export default function HomeScreen({ navigation }) {
-  //  dispatch
-
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.user.value.theme);
   const { parkingList } = useSelector((state) => state.parking.value);
 
-  // STATE LOCATION
-
   const [currentPosition, setCurrentPosition] = useState(null);
-  const [region, setRegion] = useState({
+  const [region] = useState({
     latitude: 48.51,
     longitude: 2.34,
     latitudeDelta: 10,
     longitudeDelta: 10,
   });
-
-  // STATE POSITION & searchedplace
-
   const [showSearch, setShowSearch] = useState(true);
   const [positionGranted, setPositionGranted] = useState(false);
   const [showSelected, setShowSelected] = useState(false);
   const [searchedPlace, setSearchedPlace] = useState(null);
+  const [search, setInputSearchValue] = useState(null);
+  const [parkingClicked, setParkingMarkerClicked] = useState(null);
 
-  // STATE SEARCH (input)
-  const [search, setSearch] = useState(null);
-
-  // STATE PARKINGS
-  const [parkingClicked, setParkingClicked] = useState(null);
-
-  // THEME
-
-  let text;
-  let bg;
-  let bgCard;
-  let border;
-  let bgBtn;
-  let icon;
-  if (theme) {
-    text = { color: "#333" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    border = { borderColor: "#87BBDD" };
-    bg = { borderColor: "#fff" };
-    icon = { tintColor: "#87BBDD" };
-  }
+  const text = theme && { color: "#333" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const border = theme && { borderColor: "#87BBDD" };
+  const icon = theme && { tintColor: "#87BBDD" };
 
   // GET PARKING
 
@@ -256,34 +234,29 @@ export default function HomeScreen({ navigation }) {
 
   // BUTTON "VOIR"
 
-  const handleSubmit = () => {
+  const RedirectionToParkingListScreen = () => {
     navigation.navigate("ParkingListScreen");
   };
 
-  // BUTTON RESEARCH INPUT
-
-  let searchButton;
-  if (search && showSearch) {
-    searchButton = (
-      <TouchableOpacity
-        style={[styles.inputSearchBtn, bgBtn]}
-        onPress={() => {
-          handleSearchParkings(search);
-        }}
-      >
-        <FontAwesome name="search" size={20} color="#444" />
-        <Text style={styles.sliderBtnText}>Voir les résultats</Text>
-      </TouchableOpacity>
-    );
-  }
+  const inputSearchButton = search && showSearch && (
+    <TouchableOpacity
+      style={[styles.inputSearchBtn, bgBtn]}
+      onPress={() => {
+        handleSearchParkings(search);
+      }}
+    >
+      <FontAwesome name="search" size={20} color="#444" />
+      <Text style={styles.sliderBtnText}>Voir les résultats</Text>
+    </TouchableOpacity>
+  );
 
   // PRESS ON "TIMES" ICON
 
   const didPressCancelButton = () => {
     setShowSearch(true);
-    setSearch(null);
+    setInputSearchValue(null);
     setSearchedPlace(null);
-    setParkingClicked(null);
+    setParkingMarkerClicked(null);
     dispatch(addParking([]));
   };
 
@@ -300,7 +273,6 @@ export default function HomeScreen({ navigation }) {
         initialRegion={currentPosition ? currentPosition : region}
         region={searchedPlace ? searchedPlace : currentPosition}
       >
-        {console.log(parkingList)}
         {parkingList.map((el) => (
           <Marker
             key={el.id}
@@ -309,7 +281,7 @@ export default function HomeScreen({ navigation }) {
               longitude: el.longitude,
             }}
             onPress={() => {
-              setParkingClicked(el),
+              setParkingMarkerClicked(el),
                 setSearchedPlace({
                   latitude: el.latitude,
                   longitude: el.longitude,
@@ -335,7 +307,7 @@ export default function HomeScreen({ navigation }) {
             style={styles.input}
             placeholder="Chercher un parking"
             value={search}
-            onChangeText={(value) => setSearch(value)}
+            onChangeText={(value) => setInputSearchValue(value)}
           />
           {!showSearch && (
             <FontAwesome
@@ -348,9 +320,7 @@ export default function HomeScreen({ navigation }) {
           )}
         </View>
 
-        {/* BUTTON SEARCH INPUT*/}
-
-        <View style={styles.inputSearchBtnContainer}>{searchButton}</View>
+        <View style={styles.inputSearchBtnContainer}>{inputSearchButton}</View>
       </View>
 
       {/* POPUP PARKING */}
@@ -381,7 +351,7 @@ export default function HomeScreen({ navigation }) {
 
       <TouchableOpacity
         style={[styles.btn, bgBtn]}
-        onPress={() => handleSubmit()}
+        onPress={() => RedirectionToParkingListScreen()}
       >
         <Text style={{ fontWeight: "bold", color: "#2E3740" }}>
           Liste des parkings

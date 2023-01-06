@@ -10,7 +10,6 @@ import { useEffect, useState } from "react";
 export default function FavoriteScreen(props) {
   const theme = useSelector((state) => state.user.value.theme);
 
-  // STATE
   const [count, setCount] = useState(0);
   const [userFavorites, setUserFavorites] = useState([]);
 
@@ -75,7 +74,6 @@ export default function FavoriteScreen(props) {
               {
                 width: "100%",
                 height: "100%",
-                backgroundColor: "#2E3740",
                 paddingTop: 30,
               },
               bgCard,
@@ -134,9 +132,10 @@ const styles = StyleSheet.create({
   ParkingsContainer: {
     width: "90%",
     height: "80%",
-    justifycontent: "center",
+    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "white",
+    backgroundColor: "#2E3740",
+    marginBottom: 65,
   },
   filterBtnContainer: {
     flexDirection: "row",

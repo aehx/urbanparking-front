@@ -14,33 +14,24 @@ export default function FavoriteCard(props) {
   };
 
   return (
-    //  CARD
     <TouchableOpacity
       style={[styles.container, border]}
       onPress={() => {
         handleclick();
       }}
     >
-      {/* PIN */}
-
       <View
         style={[
           styles.pinFreeplaces,
           { backgroundColor: props.pinStyle.tintColor },
         ]}
       ></View>
-
-      {/* PICTURE */}
-
       <View style={styles.imageContainer}>
         <Image
           source={require("../../../assets/park.png")}
           style={styles.image}
         />
       </View>
-
-      {/* PARKING INFOS */}
-
       <View style={styles.parkingsContainer}>
         <Text style={{ fontWeight: "bold" }}>{props.name}</Text>
         <Text style={{ fontWeight: "bold" }}> places : {props.freeplaces}</Text>
@@ -51,8 +42,6 @@ export default function FavoriteCard(props) {
 }
 
 const styles = StyleSheet.create({
-  // CONTAINER
-
   container: {
     padding: 5,
     borderWidth: 3,
@@ -71,9 +60,6 @@ const styles = StyleSheet.create({
     flex: 1,
     height: "100%",
   },
-
-  // PICTURE
-
   imageContainer: {
     width: "30%",
     marginRight: 5,
@@ -84,13 +70,9 @@ const styles = StyleSheet.create({
     resizeMode: "contain",
     borderRadius: 10,
   },
-
-  // PARKING INFO
-
   infosContainer: {
     justifyContent: "space-between",
   },
-
   pinFreeplaces: {
     position: "absolute",
     top: "50%",

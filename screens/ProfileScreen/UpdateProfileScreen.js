@@ -54,16 +54,6 @@ export default function UpdateProfileScreen(props) {
     props.changeUpdateScreen(false);
   };
 
-  // NEXT & PREVIOUS STEP
-
-  const handleStepPlus = () => {
-    setStep(step + 1);
-  };
-
-  const handleStepMoins = () => {
-    setStep(step - 1);
-  };
-
   //   FORM
 
   const formUpdate = () => {
@@ -162,7 +152,7 @@ export default function UpdateProfileScreen(props) {
             <View style={styles.btnContainer}>
               <TouchableOpacity
                 style={[styles.btn, bgBtn]}
-                onPress={() => handleStepPlus()}
+                onPress={() => setStep(step + 1)}
               >
                 <Text style={styles.btnText}>suivant</Text>
               </TouchableOpacity>
@@ -193,13 +183,13 @@ export default function UpdateProfileScreen(props) {
             <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
               <TouchableOpacity
                 style={[styles.btn, styles.btnMiddle, bgBtn]}
-                onPress={() => handleStepMoins()}
+                onPress={() => setStep(step - 1)}
               >
                 <Text style={styles.btnText}>Precedent</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.btn, styles.btnMiddle, bgBtn]}
-                onPress={() => handleStepPlus()}
+                onPress={() => setStep(step + 1)}
               >
                 <Text style={styles.btnText}>suivant</Text>
               </TouchableOpacity>
@@ -242,7 +232,7 @@ export default function UpdateProfileScreen(props) {
               )}
               <TouchableOpacity
                 style={[styles.btn, bgBtn]}
-                onPress={() => handleStepMoins()}
+                onPress={() => setStep(step - 1)}
               >
                 <Text style={styles.btnText}>Precedent</Text>
               </TouchableOpacity>

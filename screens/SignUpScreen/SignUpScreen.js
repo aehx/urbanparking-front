@@ -15,22 +15,12 @@ import Animated, { SlideInDown } from "react-native-reanimated";
 import { login } from "../../redux/reducers/user";
 
 export default function SignUpScreen(props) {
-  // DISPATCH & REDUCER
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
 
-  // STEP USESTATE
-
   const [step, setStep] = useState(0);
-
-  //   INPUT USESTATE
-
   const [emptyFields, setEmptyFields] = useState(false);
   const [showPassword, setShowPassword] = useState(true);
-
-  //   USER USESTATE
-
   const [newUser, setNewUser] = useState({
     username: "",
     email: "",
@@ -42,32 +32,14 @@ export default function SignUpScreen(props) {
     postal: null,
   });
 
-  // EMAIL TESTING
-
   const EMAIL_REGEX =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-  // INVERSE DATA FLOW
 
   const handleSignup = () => {
     props.changeSignup(false);
   };
 
-  // NEXT/PREVIOUS STEP
-
-  const handleStepPlus = () => {
-    setStep(step + 1);
-  };
-
-  const handleStepMoins = () => {
-    setStep(step - 1);
-  };
-
-  //   FORM
-
   const formSubmit = () => {
-    // CHECK FIELDS EMPTY OR NOT
-
     const checkFields = Object.entries(newUser);
     const check = checkFields.forEach((field) => {
       if (field[1] === "" || field[1] === null) {
@@ -76,8 +48,6 @@ export default function SignUpScreen(props) {
         setEmptyFields(false);
       }
     });
-
-    // PUSH IN DB IF MAIL & NOT EMPTY field
 
     if (!emptyFields && EMAIL_REGEX.test(newUser.email)) {
       setShowPassword(false);
@@ -93,34 +63,22 @@ export default function SignUpScreen(props) {
         );
     }
   };
-  // THEME
 
-  let bg;
-  let text;
-  let bgCard;
-  let border;
-  let icon;
-  let bgBtn;
-  if (theme) {
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-    icon = { color: "#87BBDD" };
-    border = { borderColor: "#87BBDD" };
-  }
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
+  const border = theme && { borderColor: "#87BBDD" };
 
-  //   SELECT FIELDS
-
-  let fields;
-  if (step === 0) {
-    fields = [styles.inputContainer, styles.inputContainer1];
-  } else if (step === 1) {
-    fields = [styles.inputContainer, styles.inputContainer2];
-  } else if (step === 2) {
-    fields = [styles.inputContainer, styles.inputContainer3];
-  }
-
-  //   InsideCircle style
+  const fields = (() => {
+    switch (step) {
+      case 0:
+        return [styles.inputContainer, styles.inputContainer1];
+      case 1:
+        return [styles.inputContainer, styles.inputContainer2];
+      case 2:
+        return [styles.inputContainer, styles.inputContainer3];
+    }
+  })();
 
   let circle2Style;
   let circle3Style;
@@ -142,14 +100,7 @@ export default function SignUpScreen(props) {
     circle3Style = [styles.progressBarCircleInside, styles.circle3Inside];
   }
 
-  //   PASSWORD SHOW/DON'T SHOW
-
-  let eye;
-  if (!showPassword) {
-    eye = "eye-slash";
-  } else {
-    eye = "eye";
-  }
+  const eyeIconForPassword = !showPassword ? "eye-slash" : "eye";
 
   return (
     <Animated.View
@@ -235,7 +186,7 @@ export default function SignUpScreen(props) {
                 }
               />
               <FontAwesome
-                name={eye}
+                name={eyeIconForPassword}
                 size={25}
                 style={styles.eye}
                 onPress={() => {
@@ -247,7 +198,7 @@ export default function SignUpScreen(props) {
               <TouchableOpacity
                 style={[styles.btn, bgBtn]}
                 onPress={() => {
-                  handleStepPlus(), Keyboard.dismiss();
+                  setStep(step + 1), Keyboard.dismiss();
                 }}
               >
                 <Text style={styles.btnText}>suivant</Text>
@@ -280,7 +231,7 @@ export default function SignUpScreen(props) {
               <TouchableOpacity
                 style={[styles.btn, styles.btnMiddle, bgBtn]}
                 onPress={() => {
-                  handleStepMoins(), Keyboard.dismiss();
+                  setStep(step - 1), Keyboard.dismiss();
                 }}
               >
                 <Text style={styles.btnText}>Precedent</Text>
@@ -288,7 +239,7 @@ export default function SignUpScreen(props) {
               <TouchableOpacity
                 style={[styles.btn, styles.btnMiddle, bgBtn]}
                 onPress={() => {
-                  handleStepPlus(), Keyboard.dismiss();
+                  setStep(step + 1), Keyboard.dismiss();
                 }}
               >
                 <Text style={styles.btnText}>suivant</Text>
@@ -327,7 +278,7 @@ export default function SignUpScreen(props) {
               <TouchableOpacity
                 style={[styles.btn, bgBtn, { marginBottom: 10 }]}
                 onPress={() => {
-                  handleStepMoins(), Keyboard.dismiss();
+                  setStep(step - 1), Keyboard.dismiss();
                 }}
               >
                 <Text style={styles.btnText}>Precedent</Text>

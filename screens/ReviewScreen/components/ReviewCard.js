@@ -17,7 +17,6 @@ export default function ReviewCard(props) {
             {props.name}
           </Text>
         </View>
-
         <Text style={styles.cardUserInfo}>{date}</Text>
       </View>
       <View style={styles.cardBorderContainer}>

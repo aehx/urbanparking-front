@@ -1,8 +1,9 @@
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { logout, addFavorite } from "../../redux/reducers/user";
+import axios from "axios";
 import UpdateProfileScreen from "../ProfileScreen/UpdateProfileScreen";
 import FavoriteScreen from "../FavoriteScreen/FavoriteScreen";
-import axios from "axios";
-
-// STYLE
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {
   StyleSheet,
@@ -12,36 +13,20 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useState, useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { logout, addFavorite } from "../../redux/reducers/user";
-
 export default function SettingsScreen() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
 
-  // STATE
-
   const [updateProfil, setUpdateProfil] = useState(false);
   const [favorisScreen, setFavorisScreen] = useState(false);
 
-  // THEME
-
-  let text;
-  let bgCard;
-  let border;
-  let icon;
-  let userText;
-  let bgBtn;
-  if (theme) {
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-    userText = { color: "#87BBDD" };
-    icon = { color: "#87BBDD" };
-    border = { borderColor: "#87BBDD" };
-  }
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
+  const userText = theme && { color: "#87BBDD" };
+  const icon = theme && { color: "#87BBDD" };
+  const border = theme && { borderColor: "#87BBDD" };
 
   useEffect(() => {
     axios
@@ -79,8 +64,6 @@ export default function SettingsScreen() {
             <Text style={[styles.userName, userText]}>{user.username}</Text>
           </Text>
 
-          {/* UPDATE PROFIL */}
-
           <View style={styles.btnContainer}>
             <TouchableOpacity
               style={[styles.btn, border]}
@@ -95,8 +78,6 @@ export default function SettingsScreen() {
                 <Text style={styles.text}>Modifier mon profil</Text>
               </View>
             </TouchableOpacity>
-
-            {/* FAVORITE */}
 
             <TouchableOpacity
               style={[styles.btn, border]}
@@ -137,9 +118,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     alignItems: "center",
   },
-
-  // HEADER
-
   title: {
     color: "#FFF",
     fontSize: 30,
@@ -147,18 +125,12 @@ const styles = StyleSheet.create({
   userName: {
     color: "#FC727B",
   },
-
-  // BTN CONTAINER
-
   btnContainer: {
     flex: 1,
     alignItems: "center",
     paddingTop: "25%",
     width: "100%",
   },
-
-  // BTN
-
   btn: {
     borderRadius: 15,
     width: "90%",
@@ -176,9 +148,6 @@ const styles = StyleSheet.create({
   cardIcon: {
     color: "#FC727B",
   },
-
-  // TEXT
-
   btnText: {
     flex: 1,
     paddingLeft: "15%",

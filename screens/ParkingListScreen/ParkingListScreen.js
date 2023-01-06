@@ -13,12 +13,8 @@ import { useSelector } from "react-redux";
 import { useState } from "react";
 
 export default function ParkingListScreen({ navigation }) {
-  // REDUCER
-
   const { parkingList } = useSelector((state) => state.parking.value);
   const theme = useSelector((state) => state.user.value.theme);
-
-  // STATE
 
   const [parkingClicked, setParkingClicked] = useState(null);
   const [showClickedParking, setShowClickedParking] = useState(false);
@@ -38,20 +34,11 @@ export default function ParkingListScreen({ navigation }) {
     filterTitle = "Aucun";
   }
 
-  // THEME
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
 
-  let text;
-  let bgCard;
-  let bgBtn;
-  if (theme) {
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-  }
-
-  // PARKING
-
-  const parking = parkingList.map((el, i) => {
+  const parkingNotFiltered = parkingList.map((el, i) => {
     return (
       <ParkingCard
         {...el}
@@ -61,8 +48,6 @@ export default function ParkingListScreen({ navigation }) {
       />
     );
   });
-
-  // PARKING BY PLACES
 
   const parkingFilteredByPlace = [...parkingList]
     .sort((a, b) => {
@@ -79,10 +64,8 @@ export default function ParkingListScreen({ navigation }) {
       );
     });
 
-  // PARKING DISPO
-
   const parkingFilteredByDispo = parkingList
-    .filter((el, i) => {
+    .filter((el) => {
       return el.freeplaces > 0;
     })
     .sort((a, b) => {
@@ -102,8 +85,6 @@ export default function ParkingListScreen({ navigation }) {
   return (
     <SafeAreaView style={[styles.globalContainer]}>
       <View style={[styles.container, bgCard]}>
-        {/* POP UP OF THIS PARKING */}
-
         {showClickedParking && (
           <View style={styles.popupContainer}>
             <ParkingSelected
@@ -112,8 +93,6 @@ export default function ParkingListScreen({ navigation }) {
             />
           </View>
         )}
-
-        {/* HEADER */}
 
         <View style={styles.header}>
           <View style={styles.icon}>
@@ -141,8 +120,6 @@ export default function ParkingListScreen({ navigation }) {
           Filtre : {filterTitle}
         </Text>
 
-        {/* BUTTON */}
-
         <View style={styles.filterBtnContainer}>
           <TouchableOpacity
             style={[styles.btn, bgBtn]}
@@ -164,8 +141,6 @@ export default function ParkingListScreen({ navigation }) {
           </TouchableOpacity>
         </View>
 
-        {/* PARKING LIST CONTAINER */}
-
         <View style={styles.ParkingsContainer}>
           <ScrollView
             style={[
@@ -180,7 +155,7 @@ export default function ParkingListScreen({ navigation }) {
           >
             {/* THE DISPLAY DEPENDS ON THE STATE */}
 
-            {!filteredByDispo && !filteredByPlaces && parking}
+            {!filteredByDispo && !filteredByPlaces && parkingNotFiltered}
             {filteredByDispo && parkingFilteredByDispo}
             {filteredByPlaces && parkingFilteredByPlace}
           </ScrollView>
@@ -212,9 +187,6 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "red",
   },
-
-  //   TITLE
-
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -235,22 +207,17 @@ const styles = StyleSheet.create({
     paddingRight: "10%",
     color: "#FFF",
   },
-
-  // PARKING LIST CONTAINER
-
   ParkingsContainer: {
     width: "90%",
-    height: "75%",
+    height: "65%",
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "white",
+    marginBottom: 65,
   },
-
-  // BTN CONTAINER
-
   filterBtnContainer: {
     flexDirection: "row",
-    marginBottom: 10,
+    marginBottom: 30,
     alignItems: "center",
     justifyContent: "center",
   },

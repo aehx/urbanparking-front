@@ -1,5 +1,5 @@
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Animated, { SlideInDown, SlideInUp } from "react-native-reanimated";
+import Animated, { SlideInDown } from "react-native-reanimated";
 import axios from "axios";
 import { useState } from "react";
 import {
@@ -17,7 +17,6 @@ export default function SignInScreen(props) {
   // DISPATCH & REDUCER
 
   const dispatch = useDispatch();
-  const users = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
 
   // STATE
@@ -27,20 +26,11 @@ export default function SignInScreen(props) {
 
   // THEME
 
-  let bg;
-  let text;
-  let bgCard;
-  let border;
-  let icon;
-  let bgBtn;
-  if (theme) {
-    bg = { backgroundColor: "#FFF" };
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-    icon = { color: "#87BBDD" };
-    border = { borderColor: "#87BBDD" };
-  }
+  const bg = theme && { backgroundColor: "#FFF" };
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
+  const border = theme && { borderColor: "#87BBDD" };
 
   // INVERSE DATA FLOW
 

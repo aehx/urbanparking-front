@@ -3,17 +3,16 @@ import axios from "axios";
 
 export const getUserFavorites = async () => {
   const userFavoritesParkings = store.getState().user.value.favorisPark;
-
-  let paris =
+  let parisParkingsDataFromAPI =
     "https://data.opendatasoft.com/api/records/1.0/search/?dataset=places-disponibles-parkings-saemes@saemes";
-  let orleans =
+  let orleansParkingsDataFromAPI =
     "https://data.opendatasoft.com/api/records/1.0/search/?dataset=mobilite-places-disponibles-parkings-en-temps-reel@orleansmetropole&rows=20";
-  const parisData = await axios.get(paris);
-  const orleansData = await axios.get(orleans);
+  const parisParkingsData = await axios.get(parisParkingsDataFromAPI);
+  const orleansParkingsData = await axios.get(orleansParkingsDataFromAPI);
   let parkingsData = [];
   let favoriteOfUser = [];
   return axios
-    .all([parisData, orleansData])
+    .all([parisParkingsData, orleansParkingsData])
     .then(
       axios.spread((...responses) => {
         const responseParis = responses[0];
@@ -52,7 +51,6 @@ export const getUserFavorites = async () => {
             });
           }
         });
-
         return [...favoriteOfUser];
       })
     )

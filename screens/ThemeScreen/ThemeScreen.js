@@ -15,16 +15,11 @@ export default function ThemeScreen() {
 
   // THEME
 
-  let text;
-  let bgCard;
-  let border;
-  let icon;
-  if (theme) {
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    icon = { color: "#87BBDD" };
-    border = { borderColor: "#87BBDD" };
-  }
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const icon = theme && { color: "#87BBDD" };
+  const border = theme && { borderColor: "#87BBDD" };
+
   return (
     <SafeAreaView style={[styles.globalContainer]}>
       <View style={[styles.container, bgCard]}>

@@ -51,7 +51,7 @@ export default function ReviewScreen(props) {
   }
 
   const showComPage = () => {
-    props.toggleComPage(false);
+    props.toggleReviewScreen(false);
   };
 
   return (
