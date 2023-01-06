@@ -1,11 +1,10 @@
-import FontAwesome from "react-native-vector-icons/FontAwesome";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
+import { getUserFavorites } from "../../services/FavoriteService";
 import ParkingSelected from "../../components/parking/ParkingSelected";
 import FavoriteCard from "./components/FavoriteCard";
-import { getUserFavorites } from "../../services/FavoriteService";
-
-import { View, Text, StyleSheet, ScrollView, SafeAreaView } from "react-native";
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function FavoriteScreen(props) {
   const theme = useSelector((state) => state.user.value.theme);
@@ -23,11 +22,11 @@ export default function FavoriteScreen(props) {
     getUserFavorites().then((favorites) => setUserFavorites(favorites));
   }, [count]);
 
-  const handleFav = () => {
+  const toggleFavoriteScreen = () => {
     props.changeFavScreen(false);
   };
 
-  const test = userFavorites.map((el, i) => {
+  const userFavoritesParkings = userFavorites.map((el, i) => {
     return (
       <FavoriteCard
         {...el}
@@ -55,7 +54,7 @@ export default function FavoriteScreen(props) {
               name="arrow-left"
               size={30}
               style={[{ color: "white" }, text]}
-              onPress={() => handleFav()}
+              onPress={() => toggleFavoriteScreen()}
             />
           </View>
           <Text style={[styles.title, text]}>Mes parkings</Text>
@@ -79,7 +78,7 @@ export default function FavoriteScreen(props) {
               bgCard,
             ]}
           >
-            {test}
+            {userFavoritesParkings}
           </ScrollView>
         </View>
       </View>
