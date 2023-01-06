@@ -6,9 +6,7 @@ export default function FavoriteCard(props) {
 
   const border = theme && { borderColor: "#87BBDD" };
 
-  // INVERSE DATA FLOW DISPLAY/DON'T DISPLAY COMPONENT
-
-  const handleclick = () => {
+  const ShowClickedCard = () => {
     props.displayCard(props);
     props.displaySelectedCard(true);
   };
@@ -17,7 +15,7 @@ export default function FavoriteCard(props) {
     <TouchableOpacity
       style={[styles.container, border]}
       onPress={() => {
-        handleclick();
+        ShowClickedCard();
       }}
     >
       <View
@@ -69,9 +67,6 @@ const styles = StyleSheet.create({
     height: "100%",
     resizeMode: "contain",
     borderRadius: 10,
-  },
-  infosContainer: {
-    justifyContent: "space-between",
   },
   pinFreeplaces: {
     position: "absolute",

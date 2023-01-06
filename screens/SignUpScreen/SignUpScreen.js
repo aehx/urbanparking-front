@@ -332,9 +332,6 @@ const styles = StyleSheet.create({
     paddingRight: "15%",
     color: "#FFF",
   },
-
-  //   PROGRESS BAR
-
   progressContainer: {
     width: "100%",
     height: "10%",
