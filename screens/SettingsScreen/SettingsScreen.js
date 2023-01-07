@@ -2,9 +2,6 @@ import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { logout, addFavorite } from "../../redux/reducers/user";
 import axios from "axios";
-import UpdateProfileScreen from "../ProfileScreen/UpdateProfileScreen";
-import FavoriteScreen from "../FavoriteScreen/FavoriteScreen";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import {
   StyleSheet,
   Text,
@@ -12,14 +9,17 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
+import UpdateProfileScreen from "../ProfileScreen/UpdateProfileScreen";
+import FavoriteScreen from "../FavoriteScreen/FavoriteScreen";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function SettingsScreen() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
 
-  const [updateProfil, setUpdateProfil] = useState(false);
-  const [favorisScreen, setFavorisScreen] = useState(false);
+  const [showUpdateProfilScreen, setShowUpdateProfilScreen] = useState(false);
+  const [showFavoritesScreen, setShowFavoritesScreen] = useState(false);
 
   const text = theme && { color: "#333" };
   const bgCard = theme && { backgroundColor: "#DAE9F2" };
@@ -39,21 +39,22 @@ export default function SettingsScreen() {
         }
       });
   }, []);
-  // FUNCTION
 
   const handleLogout = () => {
     dispatch(logout());
   };
 
-  if (updateProfil) {
+  if (showUpdateProfilScreen) {
     return (
       <UpdateProfileScreen
-        changeUpdateScreen={(state) => setUpdateProfil(state)}
+        changeUpdateScreen={(state) => setShowUpdateProfilScreen(state)}
       />
     );
-  } else if (favorisScreen) {
+  } else if (showFavoritesScreen) {
     return (
-      <FavoriteScreen changeFavScreen={(state) => setFavorisScreen(state)} />
+      <FavoriteScreen
+        changeFavScreen={(state) => setShowFavoritesScreen(state)}
+      />
     );
   } else {
     return (
@@ -67,7 +68,7 @@ export default function SettingsScreen() {
           <View style={styles.btnContainer}>
             <TouchableOpacity
               style={[styles.btn, border]}
-              onPress={() => setUpdateProfil(true)}
+              onPress={() => setShowUpdateProfilScreen(true)}
             >
               <FontAwesome
                 name="pencil-square-o"
@@ -81,7 +82,7 @@ export default function SettingsScreen() {
 
             <TouchableOpacity
               style={[styles.btn, border]}
-              onPress={() => setFavorisScreen(true)}
+              onPress={() => setShowFavoritesScreen(true)}
             >
               <FontAwesome
                 name="star-o"
