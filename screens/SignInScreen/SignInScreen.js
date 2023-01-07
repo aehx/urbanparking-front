@@ -1,7 +1,6 @@
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import Animated, { SlideInDown } from "react-native-reanimated";
-import axios from "axios";
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import axios from "axios";
 import {
   View,
   Text,
@@ -10,21 +9,16 @@ import {
   KeyboardAvoidingView,
   TouchableOpacity,
 } from "react-native";
-import { useSelector, useDispatch } from "react-redux";
 import { login } from "../../redux/reducers/user";
+import Animated, { SlideInDown } from "react-native-reanimated";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function SignInScreen(props) {
-  // DISPATCH & REDUCER
-
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.user.value.theme);
 
-  // STATE
-
   const [user, setUser] = useState({ username: "", password: "" });
-  const [securePassword, setSecurePassword] = useState(true);
-
-  // THEME
+  const [showPassword, setShowPassword] = useState(false);
 
   const bg = theme && { backgroundColor: "#FFF" };
   const text = theme && { color: "#333" };
@@ -32,15 +26,11 @@ export default function SignInScreen(props) {
   const bgBtn = theme && { backgroundColor: "#87BBDD" };
   const border = theme && { borderColor: "#87BBDD" };
 
-  // INVERSE DATA FLOW
-
-  const handleSignin = () => {
+  const leaveSigninScreen = () => {
     props.changeSignin(false);
   };
 
-  // FORM
-
-  const validateSignin = () => {
+  const validateSigninForm = () => {
     axios
       .post("https://urbanparking-backend.vercel.app/users/signin", user)
       .then((response) => {
@@ -53,14 +43,8 @@ export default function SignInScreen(props) {
       });
   };
 
-  // EYE STYLE
+  const eye = showPassword ? "eye" : "eye-slash";
 
-  let eye;
-  if (!securePassword) {
-    eye = "eye-slash";
-  } else {
-    eye = "eye";
-  }
   return (
     <Animated.View
       style={[styles.globalContainer, bgCard]}
@@ -70,21 +54,17 @@ export default function SignInScreen(props) {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={[styles.globalContainer, bgCard]}
       >
-        {/* HEADER */}
-
         <View style={styles.header}>
           <View style={[styles.icon]}>
             <FontAwesome
               name="arrow-left"
               size={30}
               style={[{ color: "white" }, text]}
-              onPress={() => handleSignin()}
+              onPress={() => leaveSigninScreen()}
             />
           </View>
           <Text style={[styles.title, text]}>Connexion</Text>
         </View>
-
-        {/* FIELD FOR CONNECTION */}
 
         <View style={[styles.inputContainer, bgCard]}>
           <TextInput
@@ -96,7 +76,7 @@ export default function SignInScreen(props) {
           <View style={styles.password}>
             <TextInput
               placeholder="Mot de passe"
-              secureTextEntry={securePassword}
+              secureTextEntry={showPassword}
               textContentType={"password"}
               style={[styles.input, bg, border]}
               onChangeText={(value) => setUser({ ...user, password: value })}
@@ -106,14 +86,14 @@ export default function SignInScreen(props) {
               size={25}
               style={styles.eye}
               onPress={() => {
-                setSecurePassword(!securePassword);
+                setShowPassword(!showPassword);
               }}
             />
           </View>
           <View style={styles.btnContainer}>
             <TouchableOpacity
               style={[styles.btn, bgBtn]}
-              onPress={() => validateSignin()}
+              onPress={() => validateSigninForm()}
             >
               <Text style={styles.btnText}>Valider</Text>
             </TouchableOpacity>
@@ -135,9 +115,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#2E3740",
     alignItems: "center",
   },
-
-  //   HEADER
-
   header: {
     flexDirection: "row",
     alignItems: "center",
@@ -159,9 +136,6 @@ const styles = StyleSheet.create({
     paddingRight: "15%",
     color: "#FFF",
   },
-
-  // FIELDS
-
   inputContainer: {
     flex: 1,
     width: "100%",
@@ -179,9 +153,6 @@ const styles = StyleSheet.create({
     marginBottom: "7%",
     borderRadius: 15,
   },
-
-  // PASSWORD INPUT
-
   password: {
     alignItems: "center",
     width: "100%",
@@ -191,7 +162,6 @@ const styles = StyleSheet.create({
     top: 9,
     right: "20%",
   },
-  // BUTTON
   btnContainer: {
     width: "100%",
     alignItems: "center",
