@@ -1,3 +1,4 @@
+import { useDispatch, useSelector } from "react-redux";
 import {
   View,
   Text,
@@ -5,15 +6,12 @@ import {
   TouchableOpacity,
   SafeAreaView,
 } from "react-native";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
-import { useDispatch, useSelector } from "react-redux";
 import { changeTheme } from "../../redux/reducers/user";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function ThemeScreen() {
   const dispatch = useDispatch();
   const theme = useSelector((state) => state.user.value.theme);
-
-  // THEME
 
   const text = theme && { color: "#333" };
   const bgCard = theme && { backgroundColor: "#DAE9F2" };
