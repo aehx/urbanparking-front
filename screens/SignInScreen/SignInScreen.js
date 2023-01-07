@@ -19,7 +19,6 @@ export default function SignInScreen(props) {
 
   const [user, setUser] = useState({ username: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-
   const bg = theme && { backgroundColor: "#FFF" };
   const text = theme && { color: "#333" };
   const bgCard = theme && { backgroundColor: "#DAE9F2" };
@@ -41,6 +40,7 @@ export default function SignInScreen(props) {
           })
         );
       });
+    leaveSigninScreen();
   };
 
   const eye = showPassword ? "eye" : "eye-slash";
@@ -76,7 +76,7 @@ export default function SignInScreen(props) {
           <View style={styles.password}>
             <TextInput
               placeholder="Mot de passe"
-              secureTextEntry={showPassword}
+              secureTextEntry={!showPassword}
               textContentType={"password"}
               style={[styles.input, bg, border]}
               onChangeText={(value) => setUser({ ...user, password: value })}
