@@ -14,6 +14,7 @@ import Animated, { SlideInDown } from "react-native-reanimated";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 
 export default function ReviewScreen(props) {
+  const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
 
   const [reviewData, setReviewData] = useState(null);
@@ -37,20 +38,13 @@ export default function ReviewScreen(props) {
   const reviews =
     reviewData !== null &&
     reviewData.map((el, i) => {
-      return (
-        <ComParkCard
-          name={el.author.username}
-          content={el.content}
-          date={el.creation_Date}
-          key={i}
-        />
-      );
+      const myReview = el.author.token === user.token;
+      return <ComParkCard {...el} key={i} isMyReview={myReview} />;
     });
 
   const leaveReviewScreen = () => {
     props.toggleReviewScreen(false);
   };
-
   return (
     <Animated.View entering={SlideInDown} style={styles.container}>
       {showPostReview && (

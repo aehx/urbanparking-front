@@ -18,7 +18,6 @@ import {
 } from "react-native";
 import axios from "axios";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
-
 import MapView, { Marker } from "react-native-maps";
 import * as Location from "expo-location";
 
@@ -34,12 +33,12 @@ export default function HomeScreen({ navigation }) {
     latitudeDelta: 10,
     longitudeDelta: 10,
   });
-  const [showSearchButton, setShowSearch] = useState(true);
+  const [showSearchButton, setShowSearchButton] = useState(true);
   const [positionGranted, setPositionGranted] = useState(false);
-  const [showSelected, setShowSelected] = useState(false);
+  const [showSelectedParking, setShowSelectedParking] = useState(false);
   const [searchedPlace, setSearchedPlace] = useState(null);
-  const [search, setInputSearchValue] = useState(null);
-  const [parkingClicked, setParkingMarkerClicked] = useState(null);
+  const [inputSearchValue, setInputSearchValue] = useState(null);
+  const [parkingMarkerClicked, setParkingMarkerClicked] = useState(null);
 
   const text = theme && { color: "#333" };
   const bgBtn = theme && { backgroundColor: "#87BBDD" };
@@ -66,7 +65,7 @@ export default function HomeScreen({ navigation }) {
         latitudeDelta: 0.05,
         longitudeDelta: 0.05,
       });
-      setShowSearch(false);
+      setShowSearchButton(false);
       Keyboard.dismiss();
     }
 
@@ -174,14 +173,14 @@ export default function HomeScreen({ navigation }) {
   // POPUP PARKING
 
   let popupParkingClicked;
-  if (parkingClicked) {
+  if (parkingMarkerClicked) {
     // MAP REDIRECTION
     const scheme = Platform.select({
       ios: "maps:0,0?q=",
       android: "geo:0,0?q=",
     });
     const latLng = `${searchedPlace.latitude},${searchedPlace.longitude}`;
-    const label = `${parkingClicked.name}`;
+    const label = `${parkingMarkerClicked.name}`;
     const url = Platform.select({
       ios: `${scheme}${label}@${latLng}`,
       android: `${scheme}${latLng}(${label})`,
@@ -205,21 +204,23 @@ export default function HomeScreen({ navigation }) {
             justifyContent: "space-between",
           }}
         >
-          <Text style={[styles.popupText, text]}>{parkingClicked.name}</Text>
+          <Text style={[styles.popupText, text]}>
+            {parkingMarkerClicked.name}
+          </Text>
           <TouchableOpacity
             style={[styles.btnVoir, bgCard, border]}
-            onPress={() => setShowSelected(true)}
+            onPress={() => setShowSelectedParking(true)}
           >
             <Text style={[styles.popupText, text]}>voir</Text>
           </TouchableOpacity>
           <Text style={[styles.popupText, text]}>
-            places : {parkingClicked.freeplaces}
+            places : {parkingMarkerClicked.freeplaces}
           </Text>
         </View>
         <View
           style={[
             styles.pinFreeplaces,
-            { backgroundColor: parkingClicked.pinStyle.tintColor },
+            { backgroundColor: parkingMarkerClicked.pinStyle.tintColor },
           ]}
         ></View>
         <TouchableOpacity
@@ -236,11 +237,11 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate("ParkingListScreen");
   };
 
-  const inputSearchButton = search && showSearchButton && (
+  const inputSearchButton = inputSearchValue && showSearchButton && (
     <TouchableOpacity
       style={[styles.inputSearchBtn, bgBtn]}
       onPress={() => {
-        handleSearchParkings(search);
+        handleSearchParkings(inputSearchValue);
       }}
     >
       <FontAwesome name="search" size={20} color="#444" />
@@ -251,7 +252,7 @@ export default function HomeScreen({ navigation }) {
   // PRESS ON "TIMES" ICON
 
   const didPressCancelButton = () => {
-    setShowSearch(true);
+    setShowSearchButton(true);
     setInputSearchValue(null);
     setSearchedPlace(null);
     setParkingMarkerClicked(null);
@@ -304,7 +305,7 @@ export default function HomeScreen({ navigation }) {
             type="text"
             style={styles.input}
             placeholder="Chercher un parking"
-            value={search}
+            value={inputSearchValue}
             onChangeText={(value) => setInputSearchValue(value)}
           />
           {!showSearchButton && (
@@ -323,8 +324,8 @@ export default function HomeScreen({ navigation }) {
 
       {/* POPUP PARKING */}
 
-      {parkingClicked && popupParkingClicked}
-      {showSelected && (
+      {parkingMarkerClicked && popupParkingClicked}
+      {showSelectedParking && (
         <SafeAreaView
           style={[
             styles.container,
@@ -340,8 +341,8 @@ export default function HomeScreen({ navigation }) {
           ]}
         >
           <ParkingSelected
-            {...parkingClicked}
-            showParkingSelected={(state) => setShowSelected(state)}
+            {...parkingMarkerClicked}
+            showParkingSelected={(state) => setShowSelectedParking(state)}
           />
         </SafeAreaView>
       )}

@@ -17,7 +17,7 @@ export default function SettingsScreen() {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.value);
   const theme = useSelector((state) => state.user.value.theme);
-
+  console.log(user);
   const [showUpdateProfilScreen, setShowUpdateProfilScreen] = useState(false);
   const [showFavoritesScreen, setShowFavoritesScreen] = useState(false);
 
@@ -34,6 +34,7 @@ export default function SettingsScreen() {
         `https://urbanparking-backend.vercel.app/users/favoris/${user.token}`
       )
       .then((response) => {
+        // console.log(response.data);
         if (response.data.favoris.length > 0) {
           dispatch(addFavorite(response.data.favoris));
         }
