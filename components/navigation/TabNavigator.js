@@ -5,7 +5,7 @@ import ViewProfileScreen from "../../screens/ProfileScreen/ViewProfileScreen";
 import ThemeScreen from "../../screens/ThemeScreen/ThemeScreen";
 import HomeScreen from "../../screens/HomeScreen/HomeScreen";
 
-const TabNavigator = (props) => {
+const TabNavigator = () => {
   const Tab = createBottomTabNavigator();
   const theme = useSelector((state) => state.user.value.theme);
   const icon = theme ? "#87BBDD" : "#FC727B";

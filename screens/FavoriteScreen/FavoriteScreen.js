@@ -44,7 +44,7 @@ export default function FavoriteScreen(props) {
           <View style={[styles.popupContainer]}>
             <ParkingSelected
               {...parkingClicked}
-              changeState={(state) => setShowClickedParking(state)}
+              showParkingSelected={(state) => setShowClickedParking(state)}
             />
           </View>
         )}

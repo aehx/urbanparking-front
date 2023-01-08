@@ -43,7 +43,7 @@ export default function SignInScreen(props) {
     leaveSigninScreen();
   };
 
-  const eye = showPassword ? "eye" : "eye-slash";
+  const eye = !showPassword ? "eye" : "eye-slash";
 
   return (
     <Animated.View

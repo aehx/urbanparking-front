@@ -17,10 +17,10 @@ export default function InputFields(props) {
   const theme = useSelector((state) => state.user.value.theme);
 
   const [stepNumber, setStepNumber] = useState(0);
-  const [showPassword, setShowPassword] = useState(true);
+  const [showPassword, setShowPassword] = useState(false);
   const [isValidEmail, setIsValidEmail] = useState(false);
   const [emptyFields, setEmptyFields] = useState(false);
-  const [updateUser, setUpdateUser] = useState({
+  const [userInfos, setUserInfos] = useState({
     username: "",
     email: "",
     firstname: "",
@@ -46,39 +46,40 @@ export default function InputFields(props) {
     }
   })();
 
-  const eyeIconForPassword = !showPassword ? "eye-slash" : "eye";
+  const eyeIconForPassword = !showPassword ? "eye" : "eye-slash";
+
   const EMAIL_REGEX =
     /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
-  const formUpdate = () => {
-    if (updateUser.email && !EMAIL_REGEX.test(updateUser.email)) {
+  const sendUpdateForm = () => {
+    if (userInfos.email && !EMAIL_REGEX.test(userInfos.email)) {
       setIsValidEmail(false);
       return;
     } else {
       setIsValidEmail(true);
-      for (let value in updateUser) {
-        if (!updateUser[value] || updateUser[value] === "") {
-          delete updateUser[value];
+      for (let value in userInfos) {
+        if (!userInfos[value] || userInfos[value] === "") {
+          delete userInfos[value];
         }
       }
       axios
         .put(
           `https://urbanparking-backend.vercel.app/users/update/${user.token}`,
-          updateUser
+          userInfos
         )
         .then((response) =>
           dispatch(
             login({
-              username: response.data.username,
               token: response.data.token,
+              username: response.data.username,
             })
           )
         );
     }
   };
 
-  const formSubmit = () => {
-    const checkFields = Object.entries(updateUser);
+  const sendSignupForm = () => {
+    const checkFields = Object.entries(userInfos);
     const check = checkFields.forEach((field) => {
       if (field[1] === "" || field[1] === null) {
         setEmptyFields(true);
@@ -87,13 +88,10 @@ export default function InputFields(props) {
       }
     });
 
-    if (!emptyFields && EMAIL_REGEX.test(updateUser.email)) {
+    if (!emptyFields && EMAIL_REGEX.test(userInfos.email)) {
       setShowPassword(false);
       axios
-        .post(
-          "https://urbanparking-backend.vercel.app/users/signup",
-          updateUser
-        )
+        .post("https://urbanparking-backend.vercel.app/users/signup", userInfos)
         .then((response) =>
           dispatch(
             login({
@@ -111,9 +109,9 @@ export default function InputFields(props) {
         <TextInput
           placeholder="Nom d'utilisateur"
           style={[styles.input, border, bg]}
-          value={updateUser.username}
+          value={userInfos.username}
           onChangeText={(value) =>
-            setUpdateUser({ ...updateUser, username: value })
+            setUserInfos({ ...userInfos, username: value })
           }
         />
         <TextInput
@@ -121,21 +119,19 @@ export default function InputFields(props) {
           textContentType={"emailAddress"}
           keyboardType="email-address"
           style={[styles.input, border, bg]}
-          value={updateUser.email}
-          onChangeText={(value) =>
-            setUpdateUser({ ...updateUser, email: value })
-          }
+          value={userInfos.email}
+          onChangeText={(value) => setUserInfos({ ...userInfos, email: value })}
         />
         {props.isSignupScreen && (
           <View style={styles.password}>
             <TextInput
               placeholder="** Mot de passe"
-              secureTextEntry={showPassword}
+              secureTextEntry={!showPassword}
               textContentType={"password"}
               style={[styles.input, border]}
-              value={updateUser.password}
+              value={userInfos.password}
               onChangeText={(value) =>
-                setUpdateUser({ ...updateUser, password: value })
+                setUserInfos({ ...userInfos, password: value })
               }
             />
             <FontAwesome
@@ -165,18 +161,18 @@ export default function InputFields(props) {
           placeholder="Prénom"
           textContentType={"name"}
           style={[styles.input, border, bg]}
-          value={updateUser.firstname}
+          value={userInfos.firstname}
           onChangeText={(value) =>
-            setUpdateUser({ ...updateUser, firstname: value })
+            setUserInfos({ ...userInfos, firstname: value })
           }
         />
         <TextInput
           placeholder="Nom"
           textContentType={"familyName"}
           style={[styles.input, border, bg]}
-          value={updateUser.lastname}
+          value={userInfos.lastname}
           onChangeText={(value) =>
-            setUpdateUser({ ...updateUser, lastname: value })
+            setUserInfos({ ...userInfos, lastname: value })
           }
         />
         <View style={[styles.btnContainer, styles.btnContainerMiddle]}>
@@ -203,17 +199,15 @@ export default function InputFields(props) {
         <TextInput
           placeholder="Ville"
           style={[styles.input, border, bg]}
-          value={updateUser.city}
-          onChangeText={(value) =>
-            setUpdateUser({ ...updateUser, city: value })
-          }
+          value={userInfos.city}
+          onChangeText={(value) => setUserInfos({ ...userInfos, city: value })}
         />
         <TextInput
           placeholder="Adresse"
           style={[styles.input, border, bg]}
-          value={updateUser.address}
+          value={userInfos.address}
           onChangeText={(value) =>
-            setUpdateUser({ ...updateUser, address: value })
+            setUserInfos({ ...userInfos, address: value })
           }
         />
         <TextInput
@@ -221,9 +215,9 @@ export default function InputFields(props) {
           textContentType={"postalCode"}
           keyboardType="phone-pad"
           style={[styles.input, border, bg]}
-          value={updateUser.postal}
+          value={userInfos.postal}
           onChangeText={(value) =>
-            setUpdateUser({ ...updateUser, postal: value })
+            setUserInfos({ ...userInfos, postal: value })
           }
         />
 
@@ -239,7 +233,9 @@ export default function InputFields(props) {
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.btn, bgBtn]}
-            onPress={() => (props.isSignupScreen ? formSubmit() : formUpdate())}
+            onPress={() =>
+              props.isSignupScreen ? sendSignupForm() : sendUpdateForm()
+            }
           >
             <Text style={styles.btnText}>valider le formulaire</Text>
           </TouchableOpacity>

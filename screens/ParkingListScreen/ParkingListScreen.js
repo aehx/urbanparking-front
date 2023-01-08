@@ -75,7 +75,7 @@ export default function ParkingListScreen({ navigation }) {
           <View style={styles.popupContainer}>
             <ParkingSelected
               {...parkingClickedInfos}
-              changeState={(state) => setShowClickedParking(state)}
+              showParkingSelected={(state) => setShowClickedParking(state)}
             />
           </View>
         )}

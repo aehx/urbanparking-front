@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import MapView, { Marker } from "react-native-maps";
 import {
   View,
   Text,
@@ -10,16 +12,12 @@ import axios from "axios";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import ReviewScreen from "../../screens/ReviewScreen/ReviewScreen";
 import { favorisPark } from "../../redux/reducers/user";
-import { useSelector, useDispatch } from "react-redux";
-import MapView, { Marker } from "react-native-maps";
 
 export default function ParkingSelected(props) {
   const dispatch = useDispatch();
-  const theme = useSelector((state) => state.user.value.theme);
-  const userFavoritePark = useSelector((state) => state.user.value.favorisPark);
   const user = useSelector((state) => state.user.value);
-
-  // STATE
+  const userFavoritePark = useSelector((state) => state.user.value.favorisPark);
+  const theme = useSelector((state) => state.user.value.theme);
 
   const [parkingLocation] = useState({
     latitude: props.latitude,
@@ -27,37 +25,22 @@ export default function ParkingSelected(props) {
     latitudeDelta: 0.05,
     longitudeDelta: 0.05,
   });
-  const [showReview, setShowReview] = useState(false);
+  const [showReviewScreen, setShowReviewScreen] = useState(false);
   const [userNotLogged, setUserNotLogged] = useState(false);
 
-  // STAR ICON & COLOR
+  const starIcon =
+    userFavoritePark && userFavoritePark.includes(props.id) ? "star" : "star-o";
+  const starColor = theme
+    ? { color: "#333" }
+    : userFavoritePark && userFavoritePark.includes(props.id)
+    ? { color: "yellow" }
+    : { color: "white" };
 
-  let starColor;
-  let starIcon;
+  const text = theme && { color: "#333" };
+  const bgCard = theme && { backgroundColor: "#DAE9F2" };
+  const bgBtn = theme && { backgroundColor: "#87BBDD" };
+  const border = theme && { borderColor: "#87BBDD" };
 
-  if (userFavoritePark && userFavoritePark.includes(props.id)) {
-    starColor = { color: "yellow" };
-    starIcon = "star";
-  } else {
-    starIcon = "star-o";
-    starColor = { color: "white" };
-  }
-
-  // THEME
-
-  let text;
-  let bgCard;
-  let border;
-  let bgBtn;
-  if (theme) {
-    starColor = { color: "#333" };
-    text = { color: "#333" };
-    bgCard = { backgroundColor: "#DAE9F2" };
-    bgBtn = { backgroundColor: "#87BBDD" };
-    border = { borderColor: "#87BBDD" };
-  }
-
-  // MODIFY IN DB
   const addOrRemoveFavorite = async () => {
     if (user.token) {
       await axios.put(
@@ -67,7 +50,6 @@ export default function ParkingSelected(props) {
       dispatch(favorisPark(props.id));
     }
   };
-  // MAP REDIRECTION
 
   const scheme = Platform.select({ ios: "maps:0,0?q=", android: "geo:0,0?q=" });
   const latLng = `${parkingLocation.latitude},${parkingLocation.longitude}`;
@@ -79,7 +61,6 @@ export default function ParkingSelected(props) {
 
   return (
     <View style={[styles.globalContainer, bgCard]}>
-      {/* HEADER */}
       <View
         style={[
           styles.header,
@@ -96,7 +77,7 @@ export default function ParkingSelected(props) {
           style={[{ color: "white" }, text]}
           onPress={() => {
             setUserNotLogged(false);
-            props.changeState(false);
+            props.showParkingSelected(false);
           }}
         />
         {!user.token && userNotLogged && (
@@ -135,9 +116,6 @@ export default function ParkingSelected(props) {
       <View style={styles.header}>
         <Text style={[styles.title, text]}>{props.name}</Text>
       </View>
-
-      {/* MAP */}
-
       <View style={styles.mapContainer}>
         <MapView region={parkingLocation} style={[styles.map, border]}>
           <Marker
@@ -148,9 +126,6 @@ export default function ParkingSelected(props) {
             title={props.name}
           ></Marker>
         </MapView>
-
-        {/* REDIRECT GOOGLE MAP */}
-
         <TouchableOpacity
           style={[styles.btn, bgBtn]}
           onPress={() => Linking.openURL(url)}
@@ -159,9 +134,6 @@ export default function ParkingSelected(props) {
           <Text>Y aller</Text>
           <FontAwesome name="car" size={20} style={{ color: "#2E3740" }} />
         </TouchableOpacity>
-
-        {/* PARK INFOS */}
-
         <View style={styles.textContainer}>
           <View>
             <Text style={[styles.text, text]}>
@@ -174,7 +146,7 @@ export default function ParkingSelected(props) {
         </View>
         <TouchableOpacity
           style={[styles.btn, bgBtn]}
-          onPress={() => setShowReview(true)}
+          onPress={() => setShowReviewScreen(true)}
         >
           <FontAwesome name="wechat" size={20} style={{ color: "#2E3740" }} />
           <Text>Avis</Text>
@@ -182,9 +154,9 @@ export default function ParkingSelected(props) {
         </TouchableOpacity>
       </View>
 
-      {showReview && (
+      {showReviewScreen && (
         <ReviewScreen
-          toggleReviewScreen={(state) => setShowReview(state)}
+          toggleReviewScreen={(state) => setShowReviewScreen(state)}
           id={props.id}
         />
       )}
@@ -203,21 +175,11 @@ const styles = StyleSheet.create({
     backgroundColor: "#2E3740",
     alignItems: "center",
   },
-
-  //   TITLE
-
   header: {
     flexDirection: "row",
     alignItems: "center",
     height: "10%",
     width: "100%",
-  },
-  icon: {
-    alignItems: "center",
-    justifyContent: "center",
-    width: "15%",
-    height: "100%",
-    paddingLeft: 20,
   },
   title: {
     flex: 1,
@@ -226,9 +188,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     color: "#FFF",
   },
-
-  // MAP
-
   mapContainer: {
     marginTop: "5%",
     flex: 1,
@@ -243,9 +202,6 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     borderColor: "#FC727B",
   },
-
-  // BTN REDIRECT GOOGLE MAP
-
   btn: {
     flexDirection: "row",
     backgroundColor: "#FC727B",
